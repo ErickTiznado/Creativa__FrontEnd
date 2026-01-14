@@ -1,0 +1,16 @@
+.imgUser{
+    display: flex;
+    align-items: center;
+    width: 46px;
+    height: 30px;
+    border: 1px solid var(--color-white);
+    border-radius: 25%;
+    margin-right: 10px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.imgUser img{
+    width: 100%;
+    height: auto;
+}

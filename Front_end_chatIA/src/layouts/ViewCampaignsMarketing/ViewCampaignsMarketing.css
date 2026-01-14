@@ -1,0 +1,59 @@
+body {
+    font-family: var(--font-Itim);
+    color: var(--color-white);
+    background-color: var(--color-dark-blue);
+    margin: 0%;
+    padding: 0%;
+}
+.header-ViewCampaignsMarketing{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    /* margin: 20px 20px 20px 20px; */
+    margin: 20px 4% 20px 4%;
+}
+h3{
+    font-weight: 400;
+    margin-left: 4%;
+}
+.cards-proceso{
+    margin-left: 4%;
+    margin-right: 4%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* justify-content: center; */
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.cards-aprobadas{
+    margin-left: 4%;
+    margin-right: 4%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* justify-content: center; */
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.cards-rechazadas{
+    margin-left: 4%;
+    margin-right: 4%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* justify-content: center; */
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.cards-canceladas{
+    margin-left: 4%;
+    margin-right: 4%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* justify-content: center; */
+    justify-content: space-between;
+    margin-top: 20px;
+}

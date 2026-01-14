@@ -1,0 +1,23 @@
+.ButtonAddContainer{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 180px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: var(--color-dark-red);
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border: none;
+    color: var(--color-white);
+    font-family: var(--font-Itim);
+    font-size: 16px;
+    cursor: pointer;
+}
+.ButtonAddContainer img{
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+.ButtonAddContainer:hover{
+    background-color: #B71C1C;
+}

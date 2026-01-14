@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet"');
+:root{
+    --color-dark-blue: #0B1E3D;
+    --color-white: #FFFFFF;
+    --color-navbar: #192C4A;
+    --color-card: rgba(255, 255, 255, 0.10);
+    --color-notification: rgba(255, 255, 255, 0.25);
+    --color-dark-red: #961713;
+
+}
+:root{
+    --font-Itim: 'Itim', cursive;
+}
