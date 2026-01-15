@@ -9,6 +9,9 @@
     align-items: center;
     cursor: pointer;
 }
+.FilterContainer:hover{
+    background-color: rgba(255, 255, 255, 0.35);
+}
 .FilterContainer img{
     width: 25px;
     height: 25px;
