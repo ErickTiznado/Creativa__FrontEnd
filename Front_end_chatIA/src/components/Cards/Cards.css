@@ -3,11 +3,11 @@
     padding: 20px;
     display: flex;
     align-items: center;
-    width: 230px;
-    height: 100px;
+    width: 260px;
+    height: 130px;
     border-radius: 15px;
     background-color: var(--color-card);
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.12);
+   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 .imgCard{
     width: 90px;
