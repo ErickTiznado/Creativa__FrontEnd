@@ -4,7 +4,7 @@ import Navbar from './components/Navbar/Navbar.jsx'
 import ViewCampaignsMarketing from './layouts/ViewCampaignsMarketing/ViewCampaignsMarketing.jsx';
 import ViewAssignmentsDesigner from './layouts/ViewAssignmentsDesigner/ViewAssignmentsDesigner.jsx';
 import ChatPage from './pages/ChatPage';
-import './App.css'
+import './App.css' 
 
 function App() {
   return (

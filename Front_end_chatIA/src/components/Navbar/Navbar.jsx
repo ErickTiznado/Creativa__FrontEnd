@@ -3,14 +3,14 @@ import campana from '../../assets/img/campana.svg';
 import ImageUser from '../ImageUser/ImageUser';
 import './Navbar.css';
 
-function Navbar() {
+function Navbar({ role = "Marketing" }) {
     return (
         <>
             <div className='Navbar'>
                 <img className='Logo' src={Logo_CS} alt="Logo" />
                 <div className='Notification'>
                     <img className='campana' src={campana} alt="campana" />
-                    <p>Marketing</p>
+                    <p>{role}</p>
                 </div>
                 <ImageUser />
             </div>
