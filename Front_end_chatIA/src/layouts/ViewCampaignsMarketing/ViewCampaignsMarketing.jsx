@@ -17,9 +17,6 @@ function ViewCampaignsMarketing() {
                     <Filter onClick={handleFilterClick}/>
                     <div className='FilterMenu' style={{display: filterMenu ? 'flex' : 'none'}}>
                         <li>
-                            <input type="checkbox" className="checkbox"/><label value="Todos">Todos</label>
-                        </li>
-                        <li>
                             <input type="checkbox" className="checkbox"/><label value="En proceso">En proceso</label>
                         </li>
                         <li>

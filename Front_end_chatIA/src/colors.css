@@ -6,6 +6,10 @@
     --color-card: rgba(255, 255, 255, 0.10);
     --color-notification: rgba(255, 255, 255, 0.25);
     --color-dark-red: #961713;
+    --color-proceso: #FFFF00;
+    --color-aprobado: #28A745;
+    --color-rechazado: #FF0000;
+    --color-cancelado: #A9A2A2;
 
 }
 :root{

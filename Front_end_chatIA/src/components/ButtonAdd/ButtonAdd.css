@@ -17,6 +17,7 @@
     width: 30px;
     height: 30px;
     margin-right: 10px;
+    margin-left: 10px;
 }
 .ButtonAddContainer:hover{
     background-color: #B71C1C;

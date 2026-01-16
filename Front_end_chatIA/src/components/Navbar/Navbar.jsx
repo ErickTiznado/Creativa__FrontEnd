@@ -10,7 +10,7 @@ function Navbar({ role = "Marketing" }) {
                 <img className='Logo' src={Logo_CS} alt="Logo" />
                 <div className='Notification'>
                     <img className='campana' src={campana} alt="campana" />
-                    <p>{role}</p>
+                    <p className='textNotification'>{role}</p>
                 </div>
                 <ImageUser />
             </div>

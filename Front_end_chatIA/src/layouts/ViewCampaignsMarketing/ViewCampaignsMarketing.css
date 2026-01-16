@@ -52,8 +52,7 @@ h4 {
 }
 
 .cards-proceso {
-    margin-left: 4%;
-    margin-right: 4%;
+    margin: 20px 4% 20px 4%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(1, 1fr);
@@ -62,8 +61,7 @@ h4 {
 }
 
 .cards-aprobadas {
-    margin-left: 4%;
-    margin-right: 4%;
+    margin: 20px 4% 20px 4%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(1, 1fr);
@@ -72,8 +70,7 @@ h4 {
 }
 
 .cards-rechazadas {
-    margin-left: 4%;
-    margin-right: 4%;
+    margin: 20px 4% 20px 4%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(1, 1fr);
@@ -82,8 +79,7 @@ h4 {
 }
 
 .cards-canceladas {
-    margin-left: 4%;
-    margin-right: 4%;
+    margin: 20px 4% 20px 4%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(1, 1fr);

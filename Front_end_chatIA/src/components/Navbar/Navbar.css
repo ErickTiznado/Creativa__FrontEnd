@@ -31,11 +31,11 @@
     width: 20px;
     height: 20px;
 }
-p{
+.textNotification{
     font-family: var(--font-Itim);
     padding-right: 10px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--color-white);
 }
 .Notification:hover{
