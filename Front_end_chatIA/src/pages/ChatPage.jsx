@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar/Navbar.jsx';
 import ChatSection from '../components/Chatbox/ChatSection';
 import Sidebar from '../components/Chatbox/Sidebar';
-import '../components/Chatbox/Chatbox.css'; // Importar CSS compartido
+import '../components/Chatbox/Chatbox.css'; 
 
 function ChatPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 800);

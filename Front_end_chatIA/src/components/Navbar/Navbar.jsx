@@ -7,7 +7,9 @@ function Navbar({ role = "Marketing" }) {
     return (
         <>
             <div className='Navbar'>
-                <img className='Logo' src={Logo_CS} alt="Logo" />
+                <a href="/">
+                     <img className='Logo'  src={Logo_CS} alt="Logo" />
+                </a>
                 <div className='Notification'>
                     <img className='campana' src={campana} alt="campana" />
                     <p className='textNotification'>{role}</p>
