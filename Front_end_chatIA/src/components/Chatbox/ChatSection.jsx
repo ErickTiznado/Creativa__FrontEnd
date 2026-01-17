@@ -1,4 +1,7 @@
 import React from 'react';
+import { FaPaperPlane, FaPlane, FaBars } from 'react-icons/fa'; 
+import logoChatbox from '../../assets/img/logoChatbox.png';
+import logostars from '../../assets/img/logostarts.png'; 
 import MessageBubble from './MessageBubble';
 
 const chatHistory = [
@@ -11,12 +14,20 @@ const chatHistory = [
   { id: 7, sender: 'bot', text: 'Perfecto, eh creado el proyecto "Reclutamiento de pasantes" ahora puedes avanzar a crear tus imágenes para esta campaña!.' },
 ];
 
-const ChatSection = () => {
+const ChatSection = ({ onToggleSidebar }) => {
   return (
     <section className="chat-section">
       <div className="chat-header-indicator">
-        <span className="bot-icon">🤖</span> CHAT
-        <span className="sparkles">✨</span>
+        <div className='bot-header'>
+          <img className="bot-icon" src={logoChatbox} alt="Chat Logo" />
+          <span>CHAT</span>
+        </div>
+        <div className="header-actions">
+          <button className="toggle-btn" onClick={onToggleSidebar}>
+            <FaBars />
+          </button>
+          <img className="sparkles" src={logostars} alt="Stars Logo" />
+        </div>
       </div>
       
       <div className="messages-list">
@@ -27,7 +38,7 @@ const ChatSection = () => {
 
       <div className="chat-input-area">
         <input type="text" placeholder="Escribe ...." />
-        <button className="send-btn">➤</button>
+        <button className="send-btn"><FaPaperPlane /></button>
       </div>
     </section>
   );

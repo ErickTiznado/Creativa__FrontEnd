@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaRocket, FaSearch, FaTimes } from 'react-icons/fa'; 
 
 const summaryData = [
   { label: 'Tipo', value: 'Reclutamiento' },
@@ -9,11 +10,14 @@ const summaryData = [
   { label: 'Descripcion', value: 'descripcion breve' },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ className, onToggle }) => {
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">
-        <span className="rocket">🚀</span> <h3>Tabla de resumen</h3>
+        <FaRocket /> <h3>Tabla de resumen</h3>
+        <button className="close-sidebar-btn" onClick={onToggle}>
+          <FaTimes />
+        </button>
       </div>
 
       <ul className="summary-list">
@@ -25,15 +29,24 @@ const Sidebar = () => {
       </ul>
 
       <div className="search-bar">
-        <span className="icon">🔍</span>
+        <span className="icon"><FaSearch /></span>
         <input type="text" placeholder="Buscar" />
       </div>
 
-      <div className="user-card">
-        <img src="https://i.pravatar.cc/150?img=11" alt="Juan" className="card-avatar" />
-        <div className="user-info">
-          <h4>Juan carlos</h4>
-          <p>Diseñador</p>
+      <div className='box-users'>
+        <div className="user-card">
+          <img src="https://i.pravatar.cc/150?img=11" alt="Juan" className="card-avatar" />
+          <div className="user-info">
+            <h4>Juan carlos</h4>
+            <p>Diseñador</p>
+          </div>
+        </div>
+        <div className="user-card">
+          <img src="https://i.pravatar.cc/150?img=11" alt="Juan" className="card-avatar" />
+          <div className="user-info">
+            <h4>Juan carlos</h4>
+            <p>Diseñador</p>
+          </div>
         </div>
       </div>
 
