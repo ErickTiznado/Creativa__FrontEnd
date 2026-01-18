@@ -1,13 +1,88 @@
 import React, { useState } from 'react';
 import './CampaignWorkspace.css';
 import './Generator.css';
-import userImg from '../../assets/img/user.jpg'; 
-import logostars from '../../assets/img/logostarts.png'; 
+import './ImgGenerated.css';
+import userImg from '../../assets/img/user.jpg';
+import logostars from '../../assets/img/logostarts.png';
 
 const CampaignWorkspace = () => {
     const [activeTab, setActiveTab] = useState('Repositorio');
+    const [activeEdit, setActiveEdit] = useState('Solicitud');
+    const textPrueba = "PRUEBA"
+    // Para mostrar el apartado de editar solicitud o editar imagen generada
+    const showEdit = () => {
+        if (activeEdit === 'Solicitud') {
+            return (
+                <>
+                    <div className="prompt-container-edit">
+                        <textarea
+                            className="prompt-input-edit"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                        />
+                    </div>
+                    <div className="controls-row-edit">
+                        <div className='box-options'>
+                            <div className="control-group-edit toggle-group-edit">
+                            </div>
+                            <div className="control-group-edit">
+                                <label className="label-edit">Relacion de aspecto</label>
+                                <select
+                                    className="custom-select-edit"
+                                    value={aspectRatio}
+                                    onChange={(e) => setAspectRatio(e.target.value)}
+                                >
+                                    <option>1:1 cuadrado</option>
+                                    <option>16:9 panoramico</option>
+                                    <option>9:16 vertical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button className="generate-back-btn" onClick={handleGenerateEdit}>
+                            Volver a generar
+                        </button>
+                    </div>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <div className="prompt-container-edit-img">
+                        <textarea
+                            className="prompt-input-edit-img"
+                            value={""}
+                            placeholder='Seleccione una imagen y escriba lo que desea cambiar'
+                            // value={textPrueba}
+                            onChange={(e) => setPrompt(e.target.value)}
+                        />
+                    </div>
+                    <div className="controls-row-edit">
+                        <div className='box-options'>
+                            <div className="control-group-edit toggle-group-edit">
+                            </div>
+                            <div className="control-group-edit">
+                                <label className="label-edit">Relacion de aspecto</label>
+                                <select
+                                    className="custom-select-edit"
+                                    value={aspectRatio}
+                                    onChange={(e) => setAspectRatio(e.target.value)}
+                                >
+                                    <option>1:1 cuadrado</option>
+                                    <option>16:9 panoramico</option>
+                                    <option>9:16 vertical</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button className="generate-back-btn" onClick={handleGenerateEdit}>
+                            Volver a generar
+                        </button>
+                    </div>
+                </>
+            );
+        }
+    }
     // Estado simple para simular selección de imágenes
-    const [selectedIds, setSelectedIds] = useState([1, 2]); 
+    const [selectedIds, setSelectedIds] = useState([1, 2]);
 
     // Estados para el generador
     const [prompt, setPrompt] = useState("Jóvenes universitarios , en oficina moderna, participando en Reunión en un ambiente profesional y colaborativo, colores y estilos alineados al manual de marca.");
@@ -46,35 +121,40 @@ const CampaignWorkspace = () => {
         // Lógica para generar imágenes (simular por ahora)
         const newImages = Array.from({ length: quantity }, (_, i) => `Generated IMG ${generatedImages.length + i + 1}`);
         setGeneratedImages([...generatedImages, ...newImages]);
+        setActiveTab('ImgGenerada');
+        handleGenerateIMG(quantity);
+    };
+    const handleGenerateEdit = () => {
+        // Lógica para editar imágenes y prompt(simular por ahora)
     };
 
     return (
         <>
             <div className='cw-layout'>
-                
+
                 {/* --- SIDEBAR --- */}
                 <aside className='cw-sidebar'>
                     <div className='cw-profile'>
                         <img src={userImg} alt="Designer" className='cw-avatar' />
                         <h3 className='cw-user-name'>{campaignData.designer}</h3>
                     </div>
-                    
+
                     <nav className='cw-nav-menu'>
-                        <button 
+                        <button
                             className={`cw-nav-item ${activeTab === 'Repositorio' ? 'active' : ''}`}
                             onClick={() => setActiveTab('Repositorio')}
                         >
                             {/* ICON */}
                             Repositorio
                         </button>
-                        <button 
+                        <button
                             className={`cw-nav-item ${activeTab === 'Generador' ? 'active' : ''}`}
                             onClick={() => setActiveTab('Generador')}
                         >
                             {/* ICON */}
                             Generador Img
                         </button>
-                        <button 
+                        <button
                             className={`cw-nav-item ${activeTab === 'Observaciones' ? 'active' : ''}`}
                             onClick={() => setActiveTab('Observaciones')}
                         >
@@ -86,7 +166,7 @@ const CampaignWorkspace = () => {
 
                 {/* --- CONTENIDO PRINCIPAL  --- */}
                 <main className='cw-main-content'>
-                    
+
                     {/* Encabezado Contextual */}
                     <header className='cw-header'>
                         <div className='cw-header-left'>
@@ -98,19 +178,19 @@ const CampaignWorkspace = () => {
                     {/* REPOSITORIO */}
                     {activeTab === 'Repositorio' && (
                         <div className='cw-workspace'>
-                            
+
                             <section className='cw-top-section'>
-                                
+
                                 {/* Buscador y Grid */}
                                 <div className='cw-panel'>
                                     <div className='cw-panel-header'>
                                         <h3 className='cw-panel-title'>Repositorio de Imágenes</h3>
                                     </div>
-                                    
+
                                     <div className='cw-search-container'>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Buscar recursos..." 
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar recursos..."
                                             className='cw-search-bar'
                                         />
                                         <div className='cw-tags'>
@@ -124,8 +204,8 @@ const CampaignWorkspace = () => {
                                         {campaignData.repoImages.map((imgId) => {
                                             const isSelected = selectedIds.includes(imgId);
                                             return (
-                                                <div 
-                                                    key={imgId} 
+                                                <div
+                                                    key={imgId}
                                                     className={`cw-img-card ${isSelected ? 'selected' : ''}`}
                                                     onClick={() => toggleSelection(imgId)}
                                                 >
@@ -177,7 +257,7 @@ const CampaignWorkspace = () => {
                                 <h3 className='cw-panel-title'>Imágenes seleccionadas para uso</h3>
                                 <div className='cw-selected-strip'>
                                     {selectedIds.length === 0 ? (
-                                        <p style={{color: 'var(--color-notification)'}}>No has seleccionado imágenes aún.</p>
+                                        <p style={{ color: 'var(--color-notification)' }}>No has seleccionado imágenes aún.</p>
                                     ) : (
                                         selectedIds.map((id) => (
                                             <div key={id} className='cw-selected-thumb'>
@@ -192,6 +272,7 @@ const CampaignWorkspace = () => {
                     )}
 
                     {/* GENERADOR DE IMÁGENES IA */}
+                    {/* lE CAMBIE EL NOMBRE SOLO PARA DESARROLLAR LA VISTA 👻 EMOJI PARA NO PERDERME */}
                     {activeTab === 'Generador' && (
                         <div className='cw-workspace'>
                             {/* Header del Generador */}
@@ -208,7 +289,7 @@ const CampaignWorkspace = () => {
                             {/* Panel del Generador */}
                             <section className="generator-panel">
                                 <div className="prompt-container">
-                                    <textarea 
+                                    <textarea
                                         className="prompt-input"
                                         value={prompt}
                                         onChange={(e) => setPrompt(e.target.value)}
@@ -219,8 +300,8 @@ const CampaignWorkspace = () => {
                                         <div className="control-group toggle-group">
                                             <label>Imagen de referencia</label>
                                             <label className="switch">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     checked={useReference}
                                                     onChange={(e) => setUseReference(e.target.checked)}
                                                 />
@@ -229,7 +310,7 @@ const CampaignWorkspace = () => {
                                         </div>
                                         <div className="control-group">
                                             <label>Relacion de aspecto</label>
-                                            <select 
+                                            <select
                                                 className="custom-select"
                                                 value={aspectRatio}
                                                 onChange={(e) => setAspectRatio(e.target.value)}
@@ -241,17 +322,94 @@ const CampaignWorkspace = () => {
                                         </div>
                                         <div className="control-group small-input">
                                             <label>Cantidad:</label>
-                                            <input 
-                                                type="number" 
+                                            <input
+                                                type="number"
                                                 value={quantity}
                                                 onChange={(e) => setQuantity(Number(e.target.value))}
-                                                className="qty-input" 
+                                                className="qty-input"
                                             />
                                         </div>
                                     </div>
                                     <button className="generate-btn" onClick={handleGenerate}>
                                         Generar
                                     </button>
+                                </div>
+                            </section>
+
+                            {/* Galería */}
+                            <section className="gallery-section">
+                                <div className="gallery-header">
+                                    <h3>Galeria</h3>
+                                    <button type='file' className="add-image-icon">
+                                        <span>Agregar</span> <span>+</span>
+                                    </button>
+                                </div>
+                                <div className={`gallery-content ${generatedImages.length === 0 ? 'empty' : ''}`}>
+                                    {generatedImages.length === 0 ? (
+                                        <p>No hay imagenes guardadas</p>
+                                    ) : (
+                                        generatedImages.map((img, index) => (
+                                            <div key={index} className="generated-image">
+                                                {img}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                    {/* IMAGENES GENERADAS */}
+                    {activeTab === 'ImgGenerada' && (
+                        <div className='cw-workspace'>
+
+                            {/* Panel del Generador */}
+                            <section className='cw-workspace-edit'>
+                                <div className="generator-panel-img">
+                                    {/* AQUI VAN LAS IMAGENES */}
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+                                    <div className="img-generator-container">
+                                        <div className="img-generator">
+                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div className="generator-panel-edit">
+                                    {/* Panel de edicion */}
+                                    <div className="edit-options">
+                                        <button className="Edit-prompt" onClick={() => setActiveEdit('Solicitud')} style={{ backgroundColor: activeEdit === 'Solicitud' ? 'rgba(255, 255, 255, 0.05)' : 'var(--bg-panel)' }}>Editar solicitud</button>
+                                        <button className="Edit-img" onClick={() => setActiveEdit('Imagen')} style={{ backgroundColor: activeEdit === 'Imagen' ? 'rgba(255, 255, 255, 0.05)' : 'var(--bg-panel)' }}>Editar imagen</button>
+                                    </div>
+                                    {showEdit()}
                                 </div>
                             </section>
 
