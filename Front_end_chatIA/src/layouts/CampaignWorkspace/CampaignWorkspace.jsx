@@ -12,6 +12,7 @@ const CampaignWorkspace = () => {
     const [activeTab, setActiveTab] = useState('Repositorio');
     const [activeEdit, setActiveEdit] = useState('Solicitud');
     const [selectedImg, setSelectedImg] = useState([]);
+    const [textEdit, setTextEdit] = useState("");
 
     const textPrueba = "PRUEBA"
     // Para mostrar el apartado de editar solicitud o editar imagen generada
@@ -55,10 +56,10 @@ const CampaignWorkspace = () => {
                     <div className="prompt-container-edit-img">
                         <textarea
                             className="prompt-input-edit-img"
-                            value={""}
+                            // value={}
                             placeholder='Seleccione una imagen y escriba lo que desea cambiar'
-                            // value={textPrueba}
-                            onChange={(e) => setPrompt(e.target.value)}
+                            value={textEdit}
+                            onChange={(e) => setTextEdit(e.target.value)}
                         />
                     </div>
                     <div className="controls-row-edit">
@@ -111,9 +112,9 @@ const CampaignWorkspace = () => {
         tags: ["Reclutamiento", "Oficina", "Jóvenes", "Tecnología", "Verano", "Equipo"],
         repoImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     };
-    const imgGenerates = {
-        imgGenerate: [1, 2, 3, 4, 5]
-    }
+    // const imgGenerates = {
+    //     imgGenerate: [1, 2, 3, 4, 5]
+    // }
 
     // Función para alternar selección
     const toggleSelection = (id) => {
@@ -128,11 +129,11 @@ const CampaignWorkspace = () => {
         if (selectedImg.includes(index)) {
             setSelectedImg(selectedImg.filter(itemId => itemId !== index));
         } else {
-            setSelectedImg([...selectedImg, index]);
+            setSelectedImg([selectedImg, index]);
         }
     };
     const [selectedSaveImg, setSelectedSaveImg] = useState([]);
-    
+
     const toggleSaveImg = (index) => {
         if (selectedSaveImg.includes(index)) {
             setSelectedSaveImg(selectedSaveImg.filter(itemId => itemId !== index));
@@ -140,6 +141,7 @@ const CampaignWorkspace = () => {
             setSelectedSaveImg([...selectedSaveImg, index]);
         }
     };
+
 
 
     // Función para generar imágenes (placeholder)
@@ -382,11 +384,11 @@ const CampaignWorkspace = () => {
                             </section>
                         </div>
                     )}
-                    
+
                     {/* IMAGENES GENERADAS */}
                     {activeTab === 'ImgGenerada' && (
                         <div className='cw-workspace'>
-                            
+
                             {/* Panel del Generador */}
                             <section className='cw-workspace-edit'>
                                 <div className="generator-panel-img">
@@ -397,21 +399,23 @@ const CampaignWorkspace = () => {
                                                 // const isSelectd = selectedIds.includes(imgId);
                                                 generatedImages.length === 0 ? (
                                                     <p>No hay imagenes guardadas</p>
-                                                ) : (
-                                                    generatedImages.map((img, index) => (
-                                                        <div key={index} className='img-generator-container'>
-                                                            <div className="img-generator">
-                                                                {activeEdit != "Solicitud" && (selectedImg.includes(index) ? 
-                                                                (<div className='cw-check activo' onClick={() => toggleSelectionImg(index)}>✓</div>) : (<div className='cw-check' onClick={() => toggleSelectionImg(index)}></div>)
-                                                                )}
-                                                                {activeEdit === "Solicitud" ? <div className="img-generator-saved" onClick={() => toggleSaveImg(index)}><img src={imgSaved} alt="saved" /></div> : null}
-                                                                <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                                            </div>
-                                                        </div>
-                                                    ))
+                                                ) : (generatedImages.map((img, index) => (
+                                            <div key={index} className='img-generator-container'>
+                                                <div className="img-generator">
+                                                    
+                                                    {activeEdit != "Solicitud" && (selectedImg.includes(index) ?
+                                                        (<div className='cw-check' onClick={() => toggleSelectionImg(index)}>✓</div>) : (<div className='cw-check' onClick={() => toggleSelectionImg(index)}></div>)
+                                                    )}
+                                                    {activeEdit === "Solicitud" ? <div className="img-generator-saved" onClick={() => toggleSaveImg(index)}><img src={imgSaved} alt="saved" /></div> : null}
+                                                    <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                                </div>
+                                            </div>
+                                            ))
                                                 )}
                                         </>
+
                                     }
+
                                 </div>
                                 <div className="generator-panel-edit">
                                     {/* Panel de edicion */}
@@ -431,9 +435,11 @@ const CampaignWorkspace = () => {
                                         <span>Agregar</span> <span>+</span>
                                     </button>
                                 </div>
-                                <div className={`gallery-content-generated ${selectedSaveImg.length === 0 ? 'empty' : ''}`} >
+                                <div className={`gallery-content-generated ${selectedSaveImg.length === 0 ? 'empty' : ''}`} style={selectedSaveImg.length === 0 ? { display: 'flex', justifyContent: 'center', alignItems: 'center' } : { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }} >
                                     {selectedSaveImg.length === 0 ? (
-                                        <p>No hay imagenes guardadas</p>
+                                        <>
+                                            <p className='gallery-content-empty-text'>No hay imagenes guardadas</p>
+                                        </>
                                     ) : (
                                         selectedSaveImg.map((img, index) => (
                                             // Hay que hacer esto un componente
