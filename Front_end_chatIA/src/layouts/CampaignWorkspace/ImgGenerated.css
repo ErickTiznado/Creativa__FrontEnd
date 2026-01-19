@@ -72,6 +72,8 @@
   width: 50%;
   max-height: 365px;
   display: grid;
+  justify-content: center;
+  align-items: center;
   grid-template-columns: repeat(2, 1fr);
   background-color: var(--bg-panel);
   padding: 20px;

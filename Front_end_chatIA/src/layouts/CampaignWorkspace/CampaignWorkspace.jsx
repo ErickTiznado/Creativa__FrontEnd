@@ -392,7 +392,7 @@ const CampaignWorkspace = () => {
 
                             {/* Panel del Generador */}
                             <section className='cw-workspace-edit'>
-                                <div className="generator-panel-img">
+                                <div className="generator-panel-img" style={{ display: selectedImg.length === 0 ? 'grid' : 'flex'}}>
                                     {generatedImages.length === 0 ? (
                                         <p>No hay imágenes guardadas</p>
                                     ) : (
