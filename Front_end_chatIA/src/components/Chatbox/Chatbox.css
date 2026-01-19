@@ -16,6 +16,7 @@
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
 }
 
 
@@ -73,7 +74,8 @@
   flex-direction: column;
   padding: 10px;
   position: relative;
-  background-color: #0d1b3e;
+  border-radius: 10px;
+  background-color: #192C4A;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
@@ -81,11 +83,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center; 
-  background: rgba(255,255,255,0.05);
-  border-radius: 8px;
+  background: #192C4A;
   margin-bottom: 20px;
   font-weight: bold;
   padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .messages-list {
@@ -138,11 +140,13 @@
   color: #000;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   line-height: 1.4;
+  font-family: var(--font-Itim);
 }
 
 .msg-bot .bubble {
   background-color: var(--bubble-bot);
   border-bottom-left-radius: 2px; /* Efecto de cola */
+  font-family: var(--font-Itim);
 }
 
 .msg-user .bubble {
@@ -184,6 +188,7 @@
   color: white;
   outline: none;
   font-size: 1rem;
+  font-family: var(--font-Itim);
 }
 
 .send-btn {
@@ -200,7 +205,7 @@
 /* --- SIDEBAR (RIGHT) --- */
 .sidebar {
   flex: 1; /* Ocupa 1/3 del espacio */
-  background-color: #1B3A6B;
+  background-color: #192C4A;
   margin: 20px;
   border-left: 1px solid #1f3a60;
   display: flex;
@@ -215,8 +220,9 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
-  color: #9BCD67;
+  color: white;
   background-color:#192C4A;
+  border: 1px solid rgba(255, 255, 255, 0.1);;
 }
 
 .close-sidebar-btn {
@@ -244,6 +250,7 @@
   font-size: 0.95rem;
   display: flex;
   gap: 10px;
+  font-family: var(--font-Itim);
 }
 
 .summary-list strong {
@@ -273,6 +280,7 @@
   color: white;
   width: 100%;
   outline: none;
+  font-family: var(--font-Itim);
 }
 .box-users{
   background-color:#0b1526 ;
@@ -289,6 +297,7 @@
   align-items: center;
   gap: 15px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  font-family: var(--font-Itim);
 }
 
 .card-avatar {
@@ -307,12 +316,14 @@
   padding: 15px;
   margin: 10px;
   border-radius: 8px;
+  font-family: var(--font-Itim);
 }
 
 .send-action-area label {
   display: block;
   margin-bottom: 10px;
   font-size: 0.9rem;
+  font-family: var(--font-Itim);
 }
 
 .recipient-tag {
@@ -324,6 +335,7 @@
   border-radius: 20px;
   margin-bottom: 15px;
   width: fit-content;
+  font-family: var(--font-Itim);
 }
 
 .recipient-tag img { width: 25px; height: 25px; border-radius: 50%; }
@@ -339,6 +351,7 @@
   font-weight: bold;
   cursor: pointer;
   font-size: 1rem;
+  font-family: var(--font-Itim);
 }
 
 .main-cta-btn:hover {
