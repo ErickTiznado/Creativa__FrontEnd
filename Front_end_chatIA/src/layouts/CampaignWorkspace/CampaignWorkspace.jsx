@@ -131,6 +131,15 @@ const CampaignWorkspace = () => {
             setSelectedImg([...selectedImg, index]);
         }
     };
+    const [selectedSaveImg, setSelectedSaveImg] = useState([]);
+    
+    const toggleSaveImg = (index) => {
+        if (selectedSaveImg.includes(index)) {
+            setSelectedSaveImg(selectedSaveImg.filter(itemId => itemId !== index));
+        } else {
+            setSelectedSaveImg([...selectedSaveImg, index]);
+        }
+    };
 
 
     // Función para generar imágenes (placeholder)
@@ -390,12 +399,12 @@ const CampaignWorkspace = () => {
                                                     <p>No hay imagenes guardadas</p>
                                                 ) : (
                                                     generatedImages.map((img, index) => (
-                                                        <div key={index} className='img-generator-container' onClick={() => toggleSelectionImg(index)}>
+                                                        <div key={index} className='img-generator-container'>
                                                             <div className="img-generator">
                                                                 {activeEdit != "Solicitud" && (selectedImg.includes(index) ? 
-                                                                (<div className='cw-check activo'>✓</div>) : (<div className='cw-check'></div>)
+                                                                (<div className='cw-check activo' onClick={() => toggleSelectionImg(index)}>✓</div>) : (<div className='cw-check' onClick={() => toggleSelectionImg(index)}></div>)
                                                                 )}
-                                                                {activeEdit === "Solicitud" ? <div className="img-generator-saved"><img src={imgSaved} alt="saved" /></div> : null}
+                                                                {activeEdit === "Solicitud" ? <div className="img-generator-saved" onClick={() => toggleSaveImg(index)}><img src={imgSaved} alt="saved" /></div> : null}
                                                                 <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
                                                             </div>
                                                         </div>
@@ -422,15 +431,16 @@ const CampaignWorkspace = () => {
                                         <span>Agregar</span> <span>+</span>
                                     </button>
                                 </div>
-                                <div className={`gallery-content-generated ${generatedImages.length === 0 ? 'empty' : ''}`}>
-                                    {generatedImages.length === 0 ? (
+                                <div className={`gallery-content-generated ${selectedSaveImg.length === 0 ? 'empty' : ''}`} >
+                                    {selectedSaveImg.length === 0 ? (
                                         <p>No hay imagenes guardadas</p>
                                     ) : (
-                                        generatedImages.map((img, index) => (
+                                        selectedSaveImg.map((img, index) => (
+                                            // Hay que hacer esto un componente
                                             <div key={index} className="generated-image-generated">
                                                 <div className='imgSaved-container'>
                                                     <div className='imgSaved-img'>
-                                                        {img}
+                                                        <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
                                                     </div>
                                                     <div className='imgSaved-description'>
                                                         <p className="imgSaved-description-text">Lorem ipsum dolor sit amet consectetur adipiscing elit metus, nisl urna turpis inceptos tincidunt </p></div>
