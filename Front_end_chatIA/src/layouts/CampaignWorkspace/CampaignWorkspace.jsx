@@ -3,11 +3,16 @@ import './CampaignWorkspace.css';
 import './Generator.css';
 import './ImgGenerated.css';
 import userImg from '../../assets/img/user.jpg';
+import imgSaved from '../../assets/img/Saved.png';
+import saveIcon from '../../assets/img/save.svg';
+import editIcon from '../../assets/img/editar.svg';
 import logostars from '../../assets/img/logostarts.png';
 
 const CampaignWorkspace = () => {
     const [activeTab, setActiveTab] = useState('Repositorio');
     const [activeEdit, setActiveEdit] = useState('Solicitud');
+    const [selectedImg, setSelectedImg] = useState([]);
+
     const textPrueba = "PRUEBA"
     // Para mostrar el apartado de editar solicitud o editar imagen generada
     const showEdit = () => {
@@ -106,6 +111,9 @@ const CampaignWorkspace = () => {
         tags: ["Reclutamiento", "Oficina", "Jóvenes", "Tecnología", "Verano", "Equipo"],
         repoImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     };
+    const imgGenerates = {
+        imgGenerate: [1, 2, 3, 4, 5]
+    }
 
     // Función para alternar selección
     const toggleSelection = (id) => {
@@ -115,6 +123,15 @@ const CampaignWorkspace = () => {
             setSelectedIds([...selectedIds, id]);
         }
     };
+    //Función para alternar selección de imagen generada
+    const toggleSelectionImg = (index) => {
+        if (selectedImg.includes(index)) {
+            setSelectedImg(selectedImg.filter(itemId => itemId !== index));
+        } else {
+            setSelectedImg([...selectedImg, index]);
+        }
+    };
+
 
     // Función para generar imágenes (placeholder)
     const handleGenerate = () => {
@@ -122,7 +139,6 @@ const CampaignWorkspace = () => {
         const newImages = Array.from({ length: quantity }, (_, i) => `Generated IMG ${generatedImages.length + i + 1}`);
         setGeneratedImages([...generatedImages, ...newImages]);
         setActiveTab('ImgGenerada');
-        handleGenerateIMG(quantity);
     };
     const handleGenerateEdit = () => {
         // Lógica para editar imágenes y prompt(simular por ahora)
@@ -272,7 +288,6 @@ const CampaignWorkspace = () => {
                     )}
 
                     {/* GENERADOR DE IMÁGENES IA */}
-                    {/* lE CAMBIE EL NOMBRE SOLO PARA DESARROLLAR LA VISTA 👻 EMOJI PARA NO PERDERME */}
                     {activeTab === 'Generador' && (
                         <div className='cw-workspace'>
                             {/* Header del Generador */}
@@ -358,50 +373,36 @@ const CampaignWorkspace = () => {
                             </section>
                         </div>
                     )}
+                    
                     {/* IMAGENES GENERADAS */}
                     {activeTab === 'ImgGenerada' && (
                         <div className='cw-workspace'>
-
+                            
                             {/* Panel del Generador */}
                             <section className='cw-workspace-edit'>
                                 <div className="generator-panel-img">
                                     {/* AQUI VAN LAS IMAGENES */}
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-                                    <div className="img-generator-container">
-                                        <div className="img-generator">
-                                            <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
-                                        </div>
-                                    </div>
-
+                                    {
+                                        <>
+                                            {
+                                                // const isSelectd = selectedIds.includes(imgId);
+                                                generatedImages.length === 0 ? (
+                                                    <p>No hay imagenes guardadas</p>
+                                                ) : (
+                                                    generatedImages.map((img, index) => (
+                                                        <div key={index} className='img-generator-container' onClick={() => toggleSelectionImg(index)}>
+                                                            <div className="img-generator">
+                                                                {activeEdit != "Solicitud" && (selectedImg.includes(index) ? 
+                                                                (<div className='cw-check activo'>✓</div>) : (<div className='cw-check'></div>)
+                                                                )}
+                                                                {activeEdit === "Solicitud" ? <div className="img-generator-saved"><img src={imgSaved} alt="saved" /></div> : null}
+                                                                <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                )}
+                                        </>
+                                    }
                                 </div>
                                 <div className="generator-panel-edit">
                                     {/* Panel de edicion */}
@@ -414,20 +415,30 @@ const CampaignWorkspace = () => {
                             </section>
 
                             {/* Galería */}
-                            <section className="gallery-section">
-                                <div className="gallery-header">
+                            <section className="gallery-section-generated">
+                                <div className="gallery-header-generated">
                                     <h3>Galeria</h3>
-                                    <button type='file' className="add-image-icon">
+                                    <button type='file' className="add-image-icon-generated">
                                         <span>Agregar</span> <span>+</span>
                                     </button>
                                 </div>
-                                <div className={`gallery-content ${generatedImages.length === 0 ? 'empty' : ''}`}>
+                                <div className={`gallery-content-generated ${generatedImages.length === 0 ? 'empty' : ''}`}>
                                     {generatedImages.length === 0 ? (
                                         <p>No hay imagenes guardadas</p>
                                     ) : (
                                         generatedImages.map((img, index) => (
-                                            <div key={index} className="generated-image">
-                                                {img}
+                                            <div key={index} className="generated-image-generated">
+                                                <div className='imgSaved-container'>
+                                                    <div className='imgSaved-img'>
+                                                        {img}
+                                                    </div>
+                                                    <div className='imgSaved-description'>
+                                                        <p className="imgSaved-description-text">Lorem ipsum dolor sit amet consectetur adipiscing elit metus, nisl urna turpis inceptos tincidunt </p></div>
+                                                    <div className='imgSaved-options'>
+                                                        <button className='imgSaved-Edit-img'><img className='imgSaved-edit' src={editIcon} alt="Editar" /></button>
+                                                        <button className='imgSaved-Save-img'><img className='imgSaved-save' src={saveIcon} alt="Guardar" /></button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))
                                     )}
@@ -437,7 +448,7 @@ const CampaignWorkspace = () => {
                     )}
 
                     {/* Vistas Placeholder */}
-                    {activeTab === 'Observaciones' && <div className='cw-placeholder-view'>Notas y Observaciones</div>}
+                    {activeTab === 'Observaciones' && <div className='cw-placeholder-view-generated'>Notas y Observaciones</div>}
 
                 </main>
             </div>
