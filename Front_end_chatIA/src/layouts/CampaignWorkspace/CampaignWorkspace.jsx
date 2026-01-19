@@ -127,9 +127,10 @@ const CampaignWorkspace = () => {
     //Función para alternar selección de imagen generada
     const toggleSelectionImg = (index) => {
         if (selectedImg.includes(index)) {
-            setSelectedImg(selectedImg.filter(itemId => itemId !== index));
+            //setSelectedImg(selectedImg.filter(itemId => itemId !== index));
+            setSelectedImg([]);
         } else {
-            setSelectedImg([selectedImg, index]);
+            setSelectedImg([index]);
         }
     };
     const [selectedSaveImg, setSelectedSaveImg] = useState([]);
@@ -392,30 +393,41 @@ const CampaignWorkspace = () => {
                             {/* Panel del Generador */}
                             <section className='cw-workspace-edit'>
                                 <div className="generator-panel-img">
-                                    {/* AQUI VAN LAS IMAGENES */}
-                                    {
-                                        <>
-                                            {
-                                                // const isSelectd = selectedIds.includes(imgId);
-                                                generatedImages.length === 0 ? (
-                                                    <p>No hay imagenes guardadas</p>
-                                                ) : (generatedImages.map((img, index) => (
-                                            <div key={index} className='img-generator-container'>
-                                                <div className="img-generator">
-                                                    
-                                                    {activeEdit != "Solicitud" && (selectedImg.includes(index) ?
-                                                        (<div className='cw-check' onClick={() => toggleSelectionImg(index)}>✓</div>) : (<div className='cw-check' onClick={() => toggleSelectionImg(index)}></div>)
-                                                    )}
-                                                    {activeEdit === "Solicitud" ? <div className="img-generator-saved" onClick={() => toggleSaveImg(index)}><img src={imgSaved} alt="saved" /></div> : null}
-                                                    <img src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                    {generatedImages.length === 0 ? (
+                                        <p>No hay imágenes guardadas</p>
+                                    ) : (
+                                        generatedImages.map((img, index) => {
+                                            // Lógica de visibilidad
+                                            const isVisible = selectedImg.length === 0 || selectedImg.includes(index);
+
+                                            // Si no debe ser visible, no renderizamos nada
+                                            if (!isVisible) return null;
+
+                                            return (
+                                                <div key={index} className='img-generator-container'>
+                                                    <div className="img-generator">
+                                                        {activeEdit !== "Solicitud" && (
+                                                            <div
+                                                                className='cw-check'
+                                                                onClick={() => toggleSelectionImg(index)}
+                                                                style={{ cursor: 'pointer' }}
+                                                            >
+                                                                {selectedImg.includes(index) ? '✓' : ''}
+                                                            </div>
+                                                        )}
+
+                                                        {activeEdit === "Solicitud" && (
+                                                            <div className="img-generator-saved" onClick={() => toggleSaveImg(index)}>
+                                                                <img src={imgSaved} alt="saved" />
+                                                            </div>
+                                                        )}
+
+                                                    <img style={{width: selectedImg.includes(index)? '300px' : '200px', height: selectedImg.includes(index) ? '300px' : '200px' }} src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            ))
-                                                )}
-                                        </>
-
-                                    }
-
+                                            );
+                                        })
+                                    )}
                                 </div>
                                 <div className="generator-panel-edit">
                                     {/* Panel de edicion */}
