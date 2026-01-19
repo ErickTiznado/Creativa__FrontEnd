@@ -47,11 +47,13 @@
 .header-text h1 {
   font-size: 1.6rem;
   font-weight: 600;
+  font-family: var(--font-Itim);
 }
 
 .header-text p {
   font-size: 0.9rem;
   color: var(--text-gray);
+  font-family: var(--font-Itim);
 }
 
 /* --- GENERATOR PANEL --- */
@@ -59,7 +61,6 @@
   background-color: var(--bg-panel);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
 }
 
 .prompt-container {
@@ -79,6 +80,7 @@
   resize: none;
   outline: none;
   line-height: 1.5;
+  font-family: var(--font-Itim);
 }
 
 .controls-row {
@@ -87,22 +89,26 @@
   align-items: flex-end; /* Alinea los inputs y el botón abajo */
   gap: 20px;
   justify-content: space-between;
+  font-family: var(--font-Itim);
 }
 .controls-row .box-options{
     display: flex;
     gap: 20px;
+    font-family: var(--font-Itim);
 }
 
 .control-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  font-family: var(--font-Itim);
 }
 
 .control-group label {
   font-size: 0.85rem;
   color: var(--text-white);
   font-weight: 500;
+  font-family: var(--font-Itim);
 }
 
 /* Estilos Inputs Comunes */
@@ -114,6 +120,7 @@
   color: var(--text-white);
   outline: none;
   font-size: 0.9rem;
+  font-family: var(--font-Itim);
 }
 
 .custom-select {
@@ -128,6 +135,7 @@
 
 /* Botón Generar */
 .generate-btn {
+  font-size: 1.2rem;
   background-color: var(--accent-blue);
   color: white;
   border: none;
@@ -137,6 +145,7 @@
   cursor: pointer;
   height: 40px; /* Misma altura que los inputs */
   transition: background 0.2s;
+  font-family: var(--font-Itim);
 }
 
 .generate-btn:hover {
@@ -217,16 +226,20 @@ input:checked + .slider:before {
 .gallery-header h3{
     margin: 0;
     font-size: 1.7rem;
+    
 }
 .add-image-icon {
-  padding: 5px;
+  background-color: var(--accent-blue);
+  font-size: 1.2rem;
+  color: white;
+  border: none;
+  padding: 10px 30px;
   border-radius: 5px;
-  background: none;
-  font-size: 1.5rem;
-  font-family: var(--font-Itim);
+  font-weight: 600;
   cursor: pointer;
-  color: var(--text-gray);
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  height: 40px; /* Misma altura que los inputs */
+  transition: background 0.2s;
+  font-family: var(--font-Itim);
 }
 .add-image-icon span{
     font-family: var(--font-Itim);
@@ -244,4 +257,5 @@ input:checked + .slider:before {
 .gallery-content.empty p {
   color: var(--text-gray);
   font-size: 0.95rem;
+  font-family: var(--font-Itim);
 }
