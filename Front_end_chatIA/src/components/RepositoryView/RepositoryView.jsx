@@ -40,9 +40,9 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection }) {
                         })}
                     </div>
 
-                    <button className='cw-btn-action'>
+                    {/* <button className='cw-btn-action'>
                         Usar estas imágenes ({selectedIds.length})
-                    </button>
+                    </button> */}
                 </div>
 
                 {/* Panel Derecho: Detalles (Brief) */}

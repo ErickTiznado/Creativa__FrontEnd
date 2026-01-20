@@ -170,12 +170,12 @@ const CampaignWorkspace = () => {
                     >
                         Generador Img
                     </button>
-                    <button
+                    {/* <button
                         className={`cw-nav-item ${activeTab === 'Observaciones' ? 'active' : ''}`}
                         onClick={() => setActiveTab('Observaciones')}
                     >
                         Observaciones
-                    </button>
+                    </button> */}
                 </nav>
             </aside>
 
@@ -286,7 +286,7 @@ const CampaignWorkspace = () => {
                     </div>
                 )}
 
-                {activeTab === 'Observaciones' && <div className='cw-placeholder-view-generated'>Notas y Observaciones</div>}
+                {/* {activeTab === 'Observaciones' && <div className='cw-placeholder-view-generated'>Notas y Observaciones</div>} */}
             </main>
         </div>
     );
