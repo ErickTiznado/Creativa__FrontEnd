@@ -121,8 +121,8 @@
 
 /* Button */
 .generate-btn {
-    background-color: var(--color-proceso); /* Verde/Amarillo proceso */
-    color: black;
+    background-color: var(--accent-blue); /* Verde/Amarillo proceso */
+    color: white;
     border: none;
     padding: 12px 30px;
     border-radius: 25px;
@@ -337,18 +337,6 @@ input:checked + .slider:before {
     min-width: auto;
 }
 
-/* Button */
-.generate-btn {
-    background-color: var(--color-proceso); /* Verde/Amarillo proceso */
-    color: black;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
-    height: fit-content;
-}
 
 .generate-btn:hover {
     transform: scale(1.05);
