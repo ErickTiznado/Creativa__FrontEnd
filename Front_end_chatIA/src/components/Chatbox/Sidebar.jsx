@@ -1,32 +1,49 @@
 import React from 'react';
-import { FaRocket, FaSearch, FaTimes } from 'react-icons/fa'; 
+import { FaRocket, FaSearch, FaTimes } from 'react-icons/fa';
 
-const summaryData = [
-  { label: 'Tipo', value: 'Reclutamiento' },
-  { label: 'Objetivo', value: 'Contactar estudiantes' },
-  { label: 'Publico', value: 'Universitario' },
-  { label: 'fecha', value: '12 de octubre' },
-  { label: 'Canal', value: 'redes sociales' },
-  { label: 'Descripcion', value: 'descripcion breve' },
-];
 
-const Sidebar = ({ className, onToggle }) => {
+const Sidebar = ({ className, onToggle, briefData = [] }) => {
+  const summaryData = Array.isArray(briefData) ? briefData : [];
+
+  // Mapeo de labels técnicos a nombres amigables en español
+  const labelTranslations = {
+    nombre_campaing: 'Nombre de campaña',
+    ContentType: 'Tipo de contenido',
+    Description: 'Descripción',
+    Objective: 'Objetivo',
+    observations: 'Observaciones',
+    publishing_channel: 'Canal de publicación',
+    fechaPublicacion: 'Fecha de publicación'
+  };
+
+  // Función para obtener el label traducido
+  const getTranslatedLabel = (key) => {
+    return labelTranslations[key] || key;
+  };
+
   return (
     <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">
-        <FaRocket /> <h3>Tabla de resumen</h3>
+        <FaRocket /> <h3>Resumen de Campaña</h3>
         <button className="close-sidebar-btn" onClick={onToggle}>
           <FaTimes />
         </button>
       </div>
 
-      <ul className="summary-list">
-        {summaryData.map((item, index) => (
-          <li key={index}>
-            <strong>{item.label}:</strong> {item.value}
-          </li>
-        ))}
-      </ul>
+      <div className="summary-list">
+        {summaryData.length > 0 ? (
+          summaryData.map((item, index) => (
+            <div key={index} className="summary-item">
+              <span className="summary-label">{getTranslatedLabel(item.label)}</span>
+              <span className="summary-value">{item.value}</span>
+            </div>
+          ))
+        ) : (
+          <div className="empty-message">
+            <p>💬 Conversa con el asistente para completar los datos de tu campaña</p>
+          </div>
+        )}
+      </div>
 
       <div className="search-bar">
         <span className="icon"><FaSearch /></span>

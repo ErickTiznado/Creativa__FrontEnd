@@ -1,20 +1,56 @@
-import React from 'react';
-import { FaPaperPlane, FaPlane, FaBars } from 'react-icons/fa'; 
+import { FaPaperPlane, FaPlane, FaBars } from 'react-icons/fa';
 import logoChatbox from '../../assets/img/logoChatbox.png';
-import logostars from '../../assets/img/logostarts.png'; 
 import MessageBubble from './MessageBubble';
+import { handlesend } from '../../../functions/handlesend.js';
+import { useState } from 'react';
 
-const chatHistory = [
-  { id: 1, sender: 'bot', text: 'Que campaña crearas hoy juan?' },
-  { id: 2, sender: 'user', text: 'Campaña de reclutamiento de pasantes.' },
-  { id: 3, sender: 'bot', text: 'Que ciudad?' },
-  { id: 4, sender: 'user', text: 'San salvador' },
-  { id: 5, sender: 'bot', text: 'Perfecto, algun objetivo para esta campaña?' },
-  { id: 6, sender: 'user', text: 'Contactar estudiantes de la universidad' },
-  { id: 7, sender: 'bot', text: 'Perfecto, eh creado el proyecto "Reclutamiento de pasantes" ahora puedes avanzar a crear tus imágenes para esta campaña!.' },
-];
 
-const ChatSection = ({ onToggleSidebar }) => {
+
+
+
+
+const ChatSection = ({ onToggleSidebar, onBriefData }) => {
+
+  const [message, setMessage] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputText, setInputText] = useState('');
+
+  const handleSendMessage = async () => {
+    if (inputText.trim() === '') return;
+
+    const userMsg = { sender: 'user', text: inputText }
+
+    setMessage((prevMessage) => [...prevMessage, userMsg]);
+
+    setInputText('');
+    setIsLoading(true);
+
+    try {
+      const response = await handlesend(inputText);
+
+      if (response.success === true) {
+        const botMsg = { sender: 'bot', text: response.response }
+        setMessage((prevMessage) => [...prevMessage, botMsg]);
+
+      }
+      else {
+        const botMsg = { sender: 'bot', text: 'Error al procesar la solicitud' }
+        setMessage((prevMessage) => [...prevMessage, botMsg]);
+      }
+    } catch (error) {
+      console.error('Error en handleSendMessage:', error);
+      const botMsg = { sender: 'bot', text: 'Error de conexión. Intenta de nuevo.' }
+      setMessage((prevMessage) => [...prevMessage, botMsg]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+
+  const handleOnChange = (e) => {
+    setInputText(e.target.value)
+  }
+
   return (
     <section className="chat-section">
       <div className="chat-header-indicator">
@@ -26,19 +62,23 @@ const ChatSection = ({ onToggleSidebar }) => {
           <button className="toggle-btn" onClick={onToggleSidebar}>
             <FaBars />
           </button>
-          <img className="sparkles" src={logostars} alt="Stars Logo" />
         </div>
       </div>
-      
+
       <div className="messages-list">
-        {chatHistory.map((msg) => (
-          <MessageBubble key={msg.id} sender={msg.sender} text={msg.text} />
+        {message.map((msg, index) => (
+          <MessageBubble key={index} sender={msg.sender} text={msg.text} />
         ))}
+        {isLoading === true && <div className='message-row msg-bot'>
+          <div className='bubble'>
+            Escribiendo...
+          </div>
+        </div>}
       </div>
 
       <div className="chat-input-area">
-        <input type="text" placeholder="Escribe ...." />
-        <button className="send-btn"><FaPaperPlane /></button>
+        <input type="text" value={inputText} placeholder="Escribe ...." onChange={handleOnChange} />
+        <button className="send-btn" onClick={handleSendMessage}><FaPaperPlane /></button>
       </div>
     </section>
   );
