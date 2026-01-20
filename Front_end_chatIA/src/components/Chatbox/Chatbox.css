@@ -283,6 +283,7 @@
   font-family: var(--font-Itim);
 }
 .box-users{
+  padding: 5px;
   background-color:#0b1526 ;
   margin: 10px;
   border-radius: 8px;
