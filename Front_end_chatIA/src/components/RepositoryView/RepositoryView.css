@@ -1,139 +1,19 @@
-/* Layout Principal */
-.cw-layout {
-    display: flex;
-    background-color: var(--color-dark-blue);
-    min-height: calc(100vh - 80px); 
-    color: var(--color-white);
-    font-family: var(--font-Itim);
-    padding: 20px;
-    gap: 20px;
-    box-sizing: border-box;
-}
-
-/* --- SIDEBAR (Barra Lateral) --- */
-.cw-sidebar {
-    width: 240px;
-    background-color: var(--color-navbar);
-    border-radius: 15px;
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-    flex-shrink: 0; 
-}
-
-.cw-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    text-align: center;
-}
-
-.cw-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 3px solid var(--color-white);
-    object-fit: cover;
-}
-
-.cw-user-name {
-    font-size: 1.2rem;
-    margin: 0;
-    font-weight: normal;
-}
-
-.cw-nav-menu {
-    display: flex;
-    flex-direction: column;
+/* Heredamos estilos base, pero aseguramos la fuente */
+.repository-container {
     width: 100%;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.cw-nav-item {
     display: flex;
-    align-items: center;
-    justify-content: flex-start; 
-    gap: 10px;
-    background: transparent;
-    border: none;
-    color: var(--color-notification);
+    flex-direction: column;
+    gap: 20px;
     font-family: var(--font-Itim);
-    font-size: 1.1rem;
-    text-align: left;
-    padding: 12px 15px;
-    cursor: pointer;
-    border-radius: 12px;
-    transition: all 0.2s ease-in-out;
 }
 
-.cw-nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--color-white);
+/* Asegurar fuente en inputs y botones locales */
+.repository-container input, 
+.repository-container button {
+    font-family: var(--font-Itim);
 }
 
-.cw-nav-item.active {
-    background-color: rgba(255, 255, 255, 0.15); 
-    color: var(--color-white);
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-button, input, textarea, select {
-    font-family: var(--font-Itim) !important; /* Forzamos la fuente del repositorio */
-}
-
-/* --- MAIN CONTENT (Área Derecha) --- */
-.cw-main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 100%; 
-}
-
-/* Encabezado */
-.cw-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-    margin-bottom: 5px;
-}
-
-.cw-header-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.cw-title {
-    margin: 0;
-    font-size: 1.6rem;
-    font-weight: normal;
-}
-
-.cw-status {
-    background-color: var(--color-proceso); 
-    color: #000;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-/* Estructura Interna del Workspace */
-.cw-workspace {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: 100%;
-}
-
-/* Fila Superior: Repositorio + Detalles */
+/* Reutilizando clases de layout pero definicdas aquí para modularidad */
 .cw-top-section {
     display: grid;
     grid-template-columns: 2fr 1fr; 
@@ -165,7 +45,7 @@ button, input, textarea, select {
     font-size: 1.3rem;
 }
 
-/* --- Panel Repositorio Específico --- */
+/* Buscador y Tags */
 .cw-search-container {
     display: flex;
     flex-direction: column;
@@ -178,7 +58,6 @@ button, input, textarea, select {
     border-radius: 10px;
     padding: 12px 15px;
     color: var(--color-white);
-    font-family: inherit;
     width: 100%;
     box-sizing: border-box;
 }
@@ -202,6 +81,7 @@ button, input, textarea, select {
     background-color: rgba(255,255,255,0.2);
 }
 
+/* Grid de Imágenes */
 .cw-image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -209,10 +89,10 @@ button, input, textarea, select {
     margin-top: 10px;
     overflow-y: auto;
     padding-right: 5px;
-    max-height: 300px; 
+    max-height: 300px;
 }
 
-/* Scrollbar personalizada */
+/* Scrollbar */
 .cw-image-grid::-webkit-scrollbar {
     width: 6px;
 }
@@ -239,7 +119,6 @@ button, input, textarea, select {
     background-color: #354a6b;
 }
 
-/* Estado Seleccionado */
 .cw-img-card.selected {
     border-color: var(--color-proceso); 
     background-color: rgba(255, 255, 255, 0.1);
@@ -261,8 +140,9 @@ button, input, textarea, select {
     font-weight: bold;
 }
 
+/* BOTÓN DE ACCIÓN - CORREGIDO (Menos brilloso) */
 .cw-btn-action {
-    background-color: #ad665e;
+    background-color: #b91c1c; /* Rojo más opaco/oscuro */
     color: var(--color-white);
     border: none;
     padding: 15px;
@@ -272,17 +152,14 @@ button, input, textarea, select {
     font-size: 1rem;
     margin-top: auto; 
     width: 50%;
-    transition: background-color 0.3s ease, filter 0.3s;
-    align-self: center;
+    transition: background 0.3s ease;
 }
 
 .cw-btn-action:hover {
-    background-color: #a93226;
-    filter: none;
-    transform: scale(1.01);
+    background-color: #bb5248; /* Aún más oscuro al hover */
 }
 
-/* --- Panel Detalles --- */
+/* Detalles */
 .cw-details-content {
     display: flex;
     flex-direction: column;
@@ -307,7 +184,7 @@ button, input, textarea, select {
     line-height: 1.4;
 }
 
-/* --- Sección Inferior (Seleccionadas) --- */
+/* Bottom Section */
 .cw-bottom-section {
     background-color: var(--color-navbar);
     border-radius: 15px;
