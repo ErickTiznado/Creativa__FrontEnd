@@ -21,6 +21,7 @@ h3 {
     font-weight: 400;
     margin: 20px 4% 20px 4%;
     font-size: 24px;
+    border: rgb(red, green, blue);
 }
 
 h4 {
@@ -146,4 +147,12 @@ h4 {
     .header-ViewCampaignsMarketing {
         margin: 20px 2% 20px 2%;
     }
+}
+
+.section-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 10px 0;
+    width: 100%;
+    border: none;
 }
