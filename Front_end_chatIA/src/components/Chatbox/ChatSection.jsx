@@ -1,5 +1,6 @@
 import { FaPaperPlane, FaPlane, FaBars } from 'react-icons/fa';
 import logoChatbox from '../../assets/img/logoChatbox.png';
+import logostarts from '../../assets/img/logostarts.png';
 import MessageBubble from './MessageBubble';
 import { handlesend } from '../../../functions/handlesend.js';
 import { useState } from 'react';
@@ -66,6 +67,7 @@ const ChatSection = ({ onToggleSidebar, onBriefData }) => {
           <button className="toggle-btn" onClick={onToggleSidebar}>
             <FaBars />
           </button>
+           <img className="bot-icon" src={logostarts} alt="Logo Stars" />
         </div>
       </div>
 
