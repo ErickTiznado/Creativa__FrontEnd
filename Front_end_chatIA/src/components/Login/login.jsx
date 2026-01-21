@@ -12,8 +12,6 @@ const Login = () => {
         
         {/* Cabecera del Login */}
         <div className="login-header">
-          {/* Puedes descomentar la siguiente línea si quieres añadir el logo "creativa studios" */}
-          {/* <div className="login-logo">creativa <span>studios</span></div> */}
             <img className="login-logo" src={Logo_CS} alt="Creativa Studios Logo" />
           <p>Inicia sesión para continuar</p>
         </div>
@@ -58,13 +56,11 @@ const Login = () => {
             </label>
           </div>
 
-          {/* Botón Principal */}
           <button type="submit" className="login-button">
             Iniciar Sesión
           </button>
         </form>
-
-        {/* Pie del Login */}
+        
         <div className="login-footer">
           <p>¿Necesitas recuperar tu cuenta? <a href="#">Recuperar ahora</a></p>
         </div>
