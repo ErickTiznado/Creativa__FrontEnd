@@ -1,0 +1,203 @@
+/* --- VARIABLES (Basadas en el diseño anterior) --- */
+:root {
+  --bg-dark: #0a192f;        /* Fondo principal muy oscuro */
+  --bg-panel: #112240;       /* Fondo de la tarjeta */
+  --input-bg: #1a2744;       /* Fondo de los inputs */
+  --border-color: #1f3a60;   /* Color de bordes sutiles */
+  --text-white: #ffffff;
+  --text-gray: #a8b2d1;
+  --accent-red: #b91c1c;     /* Color de acento (botón) */
+}
+
+/* Reset básico para este componente */
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-dark);
+  padding: 20px;
+}
+
+/* --- TARJETA DE LOGIN --- */
+.login-card {
+  background-color: var(--bg-panel);
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+/* Cabecera */
+.login-logo {
+    color: var(--text-white);
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+.login-logo span { font-weight: 300; opacity: 0.8; }
+
+.login-header {
+  margin-bottom: 35px;
+}
+
+.login-header .login-logo{
+    width: 200px;
+    margin-bottom: 15px;
+}
+
+.login-header p {
+  color: var(--text-gray);
+  font-size: 0.95rem;
+}
+
+/* Formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  text-align: left;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  color: var(--text-white);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+/* Wrapper para input con icono */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  color: var(--text-gray);
+  font-size: 1.1rem;
+  opacity: 0.7;
+}
+.input-wrappe .eye-password-toggle{
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+    margin-bottom: 20px;
+}
+.input-wrapper .eye-icon {
+    right: 15px;
+    left: auto;
+    cursor: pointer;
+}
+.input-wrapper .eye-icon-slash {
+    right: 15px;
+    left: auto;
+    cursor: pointer;
+    display: none;
+    
+}
+.input-wrapper input {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  padding: 12px 15px 12px 45px; /* Padding izquierdo extra para el icono */
+  border-radius: 8px;
+  color: var(--text-white);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--text-gray);
+  background-color: #1f2e4d;
+}
+.input-wrapper input::placeholder {
+    color: rgba(168, 178, 209, 0.4);
+}
+
+/* Acciones secundarias (Checkbox y Olvidé contraseña) */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  margin-top: -5px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+    accent-color: var(--accent-red);
+}
+
+
+
+/* Botón de Login */
+.login-button {
+  background-color: var(--accent-red); /* Usando el rojo del diseño anterior */
+  color: var(--text-white);
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #d32f2f; /* Un rojo un poco más claro al pasar el mouse */
+}
+.login-button:active {
+    transform: scale(0.98);
+}
+
+/* Pie */
+.login-footer {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: var(--text-gray);
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}
+
+.login-footer a {
+  color: var(--text-white);
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}

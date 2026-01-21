@@ -5,6 +5,7 @@ import ViewCampaignsMarketing from './layouts/ViewCampaignsMarketing/ViewCampaig
 import ViewAssignmentsDesigner from './layouts/ViewAssignmentsDesigner/ViewAssignmentsDesigner.jsx';
 import CampaignWorkspace from './layouts/CampaignWorkspace/CampaignWorkspace.jsx';
 import ChatPage from './pages/ChatPage';
+import Login from './components/Login/login.jsx';
 import './App.css' 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           }/>
 
         <Route path="/chat" element={<ChatPage />} /> {/* Nueva vista del chatbox */}
+        <Route path="/login" element={<Login />} /> {/* Nueva vista del login */}
 
         <Route path="/designer" element={
             <>
