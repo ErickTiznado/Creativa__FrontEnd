@@ -427,7 +427,7 @@ input:checked + .slider:before {
     color: var(--color-notification);
 }
 /*responsive*/
-@media (max-width: 870px) {
+@media (max-width: 600px) {
     .controls-row {
         display: flex;
         justify-content: space-between;

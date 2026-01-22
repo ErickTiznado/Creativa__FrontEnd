@@ -334,3 +334,204 @@ button, input, textarea, select {
     justify-content: center;
     border: 1px dashed var(--color-notification);
 }
+
+/* Toggle button (hidden en desktop, visible en mobile) */
+.cw-toggle-sidebar {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--color-white);
+    font-size: 1.4rem;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* Overlay que aparece cuando el sidebar está abierto en mobile */
+.cw-overlay {
+    display: none;
+}
+
+/* Estilos para el filtro mejorado (usado por ViewCampaignsMarketing) */
+.filter-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Panel desplegable */
+/* Ajustes: usar right:0 para situarlo junto al botón, y top suficiente para quedar debajo */
+.filter-menu {
+    left: 110%;             /* removed: left pushes panel demasiado lejos */
+    display: none;
+    position: absolute;
+    top: 1px;                   /* aparece debajo del trigger (ajusta si tu header difiere) */
+    width: 260px;                /* tamaño razonable para contenido */
+    background: var(--color-navbar);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    padding: 12px;
+    gap: 8px;
+    flex-direction: column;
+    z-index: 1500;
+    transform: translateY(-6px);
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+
+.filter-menu.open {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.filter-menu-inner {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    gap: 20px;
+}
+
+.filter-close {
+    background: transparent;
+    border: none;
+    color: var(--color-notification);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 6px;
+}
+
+.filter-list {
+    list-style: none;
+    margin: 8px 0 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 0.12s ease;
+    cursor: pointer;
+}
+
+.filter-list li:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.filter-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.btn-clear {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--color-notification);
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.btn-apply {
+    background: var(--color-proceso);
+    border: none;
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Mobile / Responsive behavior */
+@media (max-width: 950px) {
+    .cw-sidebar {
+        position: fixed;
+        top: 60px; /* ajusta según header */
+        left: 0;
+        width: 240px;
+        height: calc(100% - 80px);
+        background-color: var(--color-navbar);
+        border-radius: 0 12px 12px 0;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        transform: translateX(-110%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1200;
+    }
+
+    /* Cuando está abierto */
+    .cw-sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Simple clase para closed (opc.) */
+    .cw-sidebar.closed {
+        transform: translateX(-110%);
+    }
+
+    /* Mostrar el toggle en el header */
+    .cw-toggle-sidebar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Ajustes del layout cuando el sidebar está mobile (no ocupar espacio) */
+    .cw-layout {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    /* Overlay visible cuando sidebar abierto */
+    .cw-overlay.visible {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.2);
+        z-index: 1100;
+    }
+
+    /* Asegurar que el main content se muestre por encima si el sidebar está cerrado */
+    .cw-main-content {
+        z-index: 0;
+    }
+}
+
+/* Responsive: en pantallas pequeñas mostrar el panel como tarjeta centrada / full-width */
+@media (max-width: 600px) {
+    .filter-menu {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        top: 76px;
+        width: auto;
+        padding: 14px;
+        border-radius: 12px;
+        transform: translateY(-8px);
+        display: none;
+    }
+    .filter-menu.open {
+        display: flex;
+        transform: translateY(0);
+    }
+}

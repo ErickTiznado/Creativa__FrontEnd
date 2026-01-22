@@ -6,13 +6,222 @@ body {
     padding: 0%;
 }
 
+/* Ajustes del header para alojar el filtro horizontal */
 .header-ViewAssignmentsDesigner {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    /* margin: 20px 20px 20px 20px; */
+    /* justify-content: flex-end; */
     margin: 20px 4% 20px 4%;
+    gap: 12px;
+}
+
+/* Nuevo wrapper y estilos del filtro (diseño horizontal en desktop) */
+.filter-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Menú del filtro en forma compacta (desktop) */
+/* .filter-menu {
+    display: flex;
+    align-items: center;
+    background: var(--color-navbar);
+    border-radius: 10px;
+    padding: 6px 10px;
+    gap: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+} */
+
+/* contenedor interno */
+.filter-menu-inner {
+    display: flex;
+    align-items: center;
+}
+
+/* Lista horizontal para items */
+.filter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Variante horizontal (clase añadida desde JSX) */
+.filter-list.horizontal {
+    flex-direction: row;
+}
+
+/* Items compactos */
+.filter-list li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background 0.12s ease;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.filter-list li:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+/* Estilo para los checkbox dentro del header (compacto) */
+.filter-list input.checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-proceso);
+}
+
+/* -- Compatibilidad con el antiguo .FilterMenu (si queda en otras vistas) */
+.FilterMenu {
+    display: none; /* ya no se usa en esta vista; oculto para evitar solapamientos */
+}
+
+/* Estilos del filtro independiente para la vista Designer */
+.designer-filter {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--color-navbar);
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.04);
+    /* margin-left: auto;  */
+    max-width: 880px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Título / icono del filtro */
+.designer-filter-title {
+    font-size: 0.95rem;
+    color: var(--color-notification);
+    margin-right: 6px;
+}
+
+/* Lista compacta horizontal de checkboxes */
+.designer-filter-list {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    flex: 1;
+    overflow: auto;
+}
+
+.designer-filter-list li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+    color: var(--color-white);
+    transition: background 0.12s ease;
+}
+
+.designer-filter-list li:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.designer-filter-list input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-proceso);
+}
+
+/* Acciones (botones) a la derecha, compactos */
+.designer-filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.df-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: transparent;
+    color: var(--color-white);
+}
+
+.df-btn-apply {
+    background: var(--color-proceso);
+    color: #000;
+    border: none;
+    font-weight: 700;
+}
+
+/* Responsive: en pantallas pequeñas el filtro pasa a panel vertical y ocupa ancho */
+@media (max-width: 600px) {
+    .header-ViewAssignmentsDesigner {
+        justify-content: center;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 20px 2% 12px 2%;
+    }
+
+    .filter-wrapper {
+        /* width: 100%; */
+        justify-content: center;
+    }
+
+    .filter-menu {
+        position: relative;
+        width: calc(100% - 32px);
+        padding: 12px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .filter-menu-inner {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .filter-list {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .filter-list li {
+        padding: 10px;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 760px) {
+    .designer-filter {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+        gap: 10px;
+        max-width: none;
+    }
+    .designer-filter-list {
+        flex-direction: column;
+        gap: 8px;
+        overflow: visible;
+    }
+    .designer-filter-actions {
+        justify-content: flex-end;
+    }
 }
 
 h3 {
@@ -26,29 +235,6 @@ h3 {
 h4 {
     font-family: var(--font-Itim);
     font-weight: 400;
-}
-
-.FilterMenu {
-    border-radius: 10px;
-    background-color: var(--color-navbar);
-    box-shadow: 0px 4px 20px 0px rgba(0.6, 0.6, 0.6, 0.6);
-    padding: 10px;
-    width: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: space-between;
-    position: absolute;
-    top: 125px;
-    right: 4%;
-    z-index: 1;
-}
-
-.FilterMenu li {
-    display: flex;
-    flex-direction: row;
-    padding-left: 10px;
-    gap: 10px;
 }
 
 .cards-proceso {
@@ -102,7 +288,7 @@ h4 {
     }
 
     .header-ViewAssignmentsDesigner {
-        flex-direction: column;
+       
         align-items: flex-start;
         gap: 10px;
     }
@@ -123,11 +309,14 @@ h4 {
     }
 
     .header-ViewAssignmentsDesigner {
-        flex-direction: column;
+        
         align-items: flex-start;
         gap: 10px;
     }
 }
+
+
+
 
 /* @media (max-width: 480px) { */
 @media (max-width: 570px) {
