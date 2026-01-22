@@ -1,7 +1,7 @@
 import Cards from '../../components/Cards/cards.jsx'
 import './ViewAssignmentsDesigner.css'
 
-// Componente presentacional independiente para la vista Designer (sin funcionalidad)
+// Componente presentacional independiente para la vista Designer (sin funcionalidad ni toggle)
 const DesignerFilter = () => {
     return (
         <div className="designer-filter" role="region" aria-label="Filtro diseñador">
@@ -46,6 +46,7 @@ function ViewAssignmentsDesigner() {
                         <Cards />
                         <Cards />
                         <Cards />
+                        <Cards />
                     </div>
                     <h3>Campañas rechazadas</h3>
                     <div className='cards-rechazadas'>
@@ -53,9 +54,11 @@ function ViewAssignmentsDesigner() {
                         <Cards />
                         <Cards />
                         <Cards />
+                        <Cards />
                     </div>
                     <h3>Campañas canceladas</h3>
                     <div className='cards-canceladas'>
+                        <Cards />
                         <Cards />
                         <Cards />
                         <Cards />
