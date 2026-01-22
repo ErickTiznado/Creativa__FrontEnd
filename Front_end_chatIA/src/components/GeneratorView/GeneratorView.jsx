@@ -79,7 +79,7 @@ function GeneratorView({
                 </div>
             </section>
 
-            <section className="gallery-section">
+            {/* <section className="gallery-section">
                 <div className="gallery-header">
                     <h3>Galería</h3>
                     <button className="add-image-icon">
@@ -97,7 +97,7 @@ function GeneratorView({
                         ))
                     )}
                 </div>
-            </section>
+            </section> */}
         </div>
     );
 }

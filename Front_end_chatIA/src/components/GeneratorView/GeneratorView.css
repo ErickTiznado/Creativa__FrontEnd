@@ -57,6 +57,9 @@
     flex-direction: column;
     gap: 20px;
 }
+.generator-panel-img{
+    height: auto;
+}
 
 .prompt-container {
     width: 100%;
@@ -422,4 +425,12 @@ input:checked + .slider:before {
     align-items: center;
     height: 150px;
     color: var(--color-notification);
+}
+/*responsive*/
+@media (max-width: 600px) {
+    .controls-row {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
 }

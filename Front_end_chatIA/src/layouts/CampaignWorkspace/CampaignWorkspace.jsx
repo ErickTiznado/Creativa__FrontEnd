@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CampaignWorkspace.css';
 import './ImgGenerated.css';
 
@@ -31,6 +31,9 @@ const CampaignWorkspace = () => {
     const [textEdit, setTextEdit] = useState("");
     const [selectedSaveImg, setSelectedSaveImg] = useState([]);
 
+    // NEW: control sidebar abierto/cerrado (responsive)
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
     // Mock Data
     const campaignData = {
         designer: "Juan Carlos",
@@ -46,6 +49,20 @@ const CampaignWorkspace = () => {
         tags: ["Reclutamiento", "Oficina", "Jóvenes", "Tecnología", "Verano", "Equipo"],
         repoImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     };
+
+    useEffect(() => {
+        // Cerrar sidebar por defecto en pantallas pequeñas
+        const handleResize = () => {
+            if (window.innerWidth <= 950) {
+                setIsSidebarOpen(false);
+            } else {
+                setIsSidebarOpen(true);
+            }
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // --- FUNCIONES ---
     const toggleSelection = (id) => {
@@ -79,7 +96,7 @@ const CampaignWorkspace = () => {
     };
 
     const handleGenerateEdit = () => {
-        // Lógica futura para editar
+        // Lógica futura para editar 
     };
 
     const showEdit = () => {
@@ -151,7 +168,14 @@ const CampaignWorkspace = () => {
 
     return (
         <div className='cw-layout'>
-            <aside className='cw-sidebar'>
+            {/* Overlay para mobile cuando el sidebar está abierto */}
+            <div
+                className={`cw-overlay ${isSidebarOpen ? 'visible' : ''}`}
+                onClick={() => setIsSidebarOpen(false)}
+            />
+
+            {/* Sidebar: agregada clase dinámica open/closed */}
+            <aside className={`cw-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className='cw-profile'>
                     <img src={userImg} alt="Designer" className='cw-avatar' />
                     <h3 className='cw-user-name'>{campaignData.designer}</h3>
@@ -170,18 +194,21 @@ const CampaignWorkspace = () => {
                     >
                         Generador Img
                     </button>
-                    {/* <button
-                        className={`cw-nav-item ${activeTab === 'Observaciones' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Observaciones')}
-                    >
-                        Observaciones
-                    </button> */}
                 </nav>
             </aside>
 
             <main className='cw-main-content'>
                 <header className='cw-header'>
                     <div className='cw-header-left'>
+                        {/* Botón toggle visible en pantallas pequeñas */}
+                        <button
+                            className="cw-toggle-sidebar"
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            aria-label="Toggle sidebar"
+                        >
+                            ☰
+                        </button>
+
                         <h1 className='cw-title'>{campaignData.title}</h1>
                         <span className='cw-status'>{campaignData.status}</span>
                     </div>
