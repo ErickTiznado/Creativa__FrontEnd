@@ -67,7 +67,6 @@ const ChatSection = ({ onToggleSidebar, onBriefData }) => {
           <button className="toggle-btn" onClick={onToggleSidebar}>
             <FaBars />
           </button>
-           <img className="bot-icon" src={logostarts} alt="Logo Stars" />
         </div>
       </div>
 

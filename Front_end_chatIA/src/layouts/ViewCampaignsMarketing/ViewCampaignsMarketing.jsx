@@ -20,6 +20,7 @@ function ViewCampaignsMarketing() {
             try {
                 const result = await handleGetCampaigns()
                 if (result.success) {
+                    console.log(result.data)
                     setCampaigns(result.data)
                 }
             } catch (error) {
@@ -91,6 +92,7 @@ function ViewCampaignsMarketing() {
                 <div className='cards-ViewCampaignsMarketing'>
                     <h3>Campañas en proceso</h3>
                     <div className='cards-proceso'>
+                        {console.log(`En proceso: ${draft}`)}
                         {
                             draft.map((c, index) => {
                                 return <Cards key={index} titulo={c.brief_data.nombre_campaing} estado={staus[`${c.status}`]} fecha={c.brief_data.fechaPublicacion} />

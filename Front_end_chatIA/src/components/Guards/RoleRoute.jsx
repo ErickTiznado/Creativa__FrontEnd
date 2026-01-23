@@ -4,8 +4,8 @@ import AccessDenied from "../AccessDenied/AccessDenied"
 
 const RoleRoute = ({ allowedRoles }) => {
     const { user, isAuth, loading } = useAuth()
+    console.log(user)
 
-    // Show loading state
     if (loading) {
         return (
             <div className="private-route-loader">

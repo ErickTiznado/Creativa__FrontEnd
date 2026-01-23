@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar.jsx'
 import ViewCampaignsMarketing from './layouts/ViewCampaignsMarketing/ViewCampaignsMarketing.jsx';
 import ViewAssignmentsDesigner from './layouts/ViewAssignmentsDesigner/ViewAssignmentsDesigner.jsx';
@@ -17,38 +17,40 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route element={<PrivateRoute />} >
-            <>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Protected Routes */}
+          <Route element={<PrivateRoute />}>
+
+            {/* Marketing Routes */}
+            <Route element={<RoleRoute allowedRoles={['marketing']} />}>
               <Route path='/' element={
                 <>
                   <Navbar role='Marketing' />
-
                   <ViewCampaignsMarketing />
                 </>
               } />
-
               <Route path="/chat" element={<ChatPage />} />
+            </Route>
 
-            </>
+            {/* Designer Routes */}
+            <Route element={<RoleRoute allowedRoles={['designer']} />}>
+              <Route path="/designer" element={
+                <>
+                  <Navbar role='Diseñador' />
+                  <ViewAssignmentsDesigner />
+                </>
+              } />
+              <Route path="/designer/repository" element={
+                <>
+                  <Navbar role='Diseñador' />
+                  <CampaignWorkspace />
+                </>
+              } />
+            </Route>
+
           </Route>
-
-
-          <Route path="/login" element={<Login />} /> {/* Nueva vista del login */}
-
-          <Route path="/designer" element={
-            <>
-              <Navbar role='Diseñador' />
-              <ViewAssignmentsDesigner />
-            </>
-          } />
-
-          <Route path="/designer/repository" element={
-            <>
-              <Navbar role='Diseñador' />
-              <CampaignWorkspace />
-            </>
-          } />
-
         </Routes>
       </Router>
     </AuthProvider >

@@ -6,7 +6,6 @@ import Logo from '../../assets/img/Logo_CS.png'
 const PrivateRoute = () => {
     const { isAuth, loading } = useAuth();
 
-    // Show elaborate loader while checking authentication
     if (loading) {
         return (
             <div className="private-route-loader">

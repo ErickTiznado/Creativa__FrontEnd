@@ -7,6 +7,6 @@ export const authLogin = async (email, password) => {
 
 export const getAuthProfile = async () => {
 
-    const response = await api.get(`/auth/profile/`);
+    const response = await api.get(`/auth/profile`);
     return response;
 }

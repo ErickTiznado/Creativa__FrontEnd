@@ -14,7 +14,7 @@ const authProvider = ({ children }) => {
             if (token) {
                 const response = await getAuthProfile()
                 if (response.status === 200) {
-                    setUser(response.id)
+                    setUser(response.data)
                     setIsAuth(true)
                     localStorage.setItem('token', token)
                     setLoading(false)
