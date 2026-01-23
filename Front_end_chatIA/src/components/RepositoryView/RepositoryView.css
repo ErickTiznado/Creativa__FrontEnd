@@ -1,0 +1,213 @@
+/* Heredamos estilos base, pero aseguramos la fuente */
+.repository-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: var(--font-Itim);
+}
+
+/* Asegurar fuente en inputs y botones locales */
+.repository-container input, 
+.repository-container button {
+    font-family: var(--font-Itim);
+}
+
+/* Reutilizando clases de layout pero definicdas aquí para modularidad */
+.cw-top-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr; 
+    gap: 20px;
+    min-height: 450px;
+}
+
+.cw-panel {
+    background-color: var(--color-navbar);
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.cw-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+    margin-bottom: 5px;
+}
+
+.cw-panel-title {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+/* Buscador y Tags */
+.cw-search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cw-search-bar {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 12px 15px;
+    color: var(--color-white);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cw-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cw-tag {
+    background-color: rgba(255,255,255,0.1);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cw-tag:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Grid de Imágenes */
+.cw-image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+    overflow-y: auto;
+    padding-right: 5px;
+    max-height: 300px;
+}
+
+/* Scrollbar */
+.cw-image-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.cw-image-grid::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
+.cw-img-card {
+    background-color: #2a3b55; 
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.cw-img-card:hover {
+    transform: translateY(-2px);
+    background-color: #354a6b;
+}
+
+.cw-img-card.selected {
+    border-color: var(--color-proceso); 
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cw-check-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--color-proceso);
+    color: #000;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* BOTÓN DE ACCIÓN - CORREGIDO (Menos brilloso) */
+.cw-btn-action {
+    background-color: #b91c1c; /* Rojo más opaco/oscuro */
+    color: var(--color-white);
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: auto; 
+    width: 50%;
+    transition: background 0.3s ease;
+}
+
+.cw-btn-action:hover {
+    background-color: #bb5248; /* Aún más oscuro al hover */
+}
+
+/* Detalles */
+.cw-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cw-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cw-detail-label {
+    color: var(--color-notification);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cw-detail-value {
+    font-size: 1.05rem;
+    line-height: 1.4;
+}
+
+/* Bottom Section */
+.cw-bottom-section {
+    background-color: var(--color-navbar);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cw-selected-strip {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.cw-selected-thumb {
+    min-width: 120px;
+    height: 100px;
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--color-notification);
+}

@@ -1,0 +1,436 @@
+.generator-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: var(--font-Itim);
+}
+
+/* Asegurar fuente */
+.generator-container input,
+.generator-container textarea,
+.generator-container select,
+.generator-container button {
+    font-family: var(--font-Itim);
+}
+
+/* Header */
+.gen-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: var(--color-navbar);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.icon-container {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sparkles {
+    width: 100%;
+    height: auto;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+.header-text p {
+    margin: 0;
+    color: var(--color-notification);
+    font-size: 0.9rem;
+}
+
+/* Generator Panel */
+.generator-panel {
+    background-color: var(--color-navbar);
+    padding: 25px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.generator-panel-img{
+    height: auto;
+}
+
+.prompt-container {
+    width: 100%;
+}
+
+.prompt-input {
+    width: 100%;
+    height: 100px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    color: white;
+    resize: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.prompt-input:focus {
+    outline: 1px solid var(--color-proceso);
+}
+
+/* Controls */
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.box-options {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    color: var(--color-notification);
+}
+
+/* Select & Inputs */
+.custom-select, .qty-input {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    min-width: 140px;
+}
+
+.small-input .qty-input {
+    width: 60px;
+    min-width: auto;
+}
+
+/* Button */
+.generate-btn {
+    background-color: var(--accent-blue); /* Verde/Amarillo proceso */
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    height: fit-content;
+}
+
+.generate-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--color-proceso);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Gallery Section */
+.gallery-section {
+    background-color: var(--color-navbar);
+    padding: 20px;
+    border-radius: 15px;
+    min-height: 200px;
+}
+
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.add-image-icon {
+    background: transparent;
+    border: 1px dashed var(--color-notification);
+    color: var(--color-notification);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 5px;
+}
+
+.gallery-content {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.gallery-content.empty {
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    color: var(--color-notification);
+}.generator-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: var(--font-Itim);
+}
+
+/* Asegurar fuente */
+.generator-container input,
+.generator-container textarea,
+.generator-container select,
+.generator-container button {
+    font-family: var(--font-Itim);
+}
+
+/* Header */
+.gen-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: var(--color-navbar);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.icon-container {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sparkles {
+    width: 100%;
+    height: auto;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: normal;
+}
+.header-text p {
+    margin: 0;
+    color: var(--color-notification);
+    font-size: 0.9rem;
+}
+
+/* Generator Panel */
+.generator-panel {
+    background-color: var(--color-navbar);
+    padding: 25px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.prompt-container {
+    width: 100%;
+}
+
+.prompt-input {
+    width: 100%;
+    height: 100px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    color: white;
+    resize: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.prompt-input:focus {
+    outline: 1px solid var(--color-proceso);
+}
+
+/* Controls */
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.box-options {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    color: var(--color-notification);
+}
+
+/* Select & Inputs */
+.custom-select, .qty-input {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    min-width: 140px;
+}
+
+.small-input .qty-input {
+    width: 60px;
+    min-width: auto;
+}
+
+
+.generate-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--color-proceso);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Gallery Section */
+.gallery-section {
+    background-color: var(--color-navbar);
+    padding: 20px;
+    border-radius: 15px;
+    min-height: 200px;
+}
+
+.gallery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.add-image-icon {
+    background: transparent;
+    border: 1px dashed var(--color-notification);
+    color: var(--color-notification);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 5px;
+}
+
+.gallery-content {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.gallery-content.empty {
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    color: var(--color-notification);
+}
+/*responsive*/
+@media (max-width: 600px) {
+    .controls-row {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+}

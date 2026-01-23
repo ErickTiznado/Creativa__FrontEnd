@@ -229,17 +229,14 @@ input:checked + .slider:before {
     
 }
 .add-image-icon {
-  background-color: var(--accent-blue);
-  font-size: 1.2rem;
-  color: white;
-  border: none;
-  padding: 10px 30px;
-  border-radius: 5px;
-  font-weight: 600;
-  cursor: pointer;
-  height: 40px; /* Misma altura que los inputs */
-  transition: background 0.2s;
-  font-family: var(--font-Itim);
+  background: transparent;
+    border: 1px dashed var(--color-notification);
+    color: var(--color-notification);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 5px;
 }
 .add-image-icon span{
     font-family: var(--font-Itim);

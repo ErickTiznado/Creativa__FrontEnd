@@ -1,40 +1,40 @@
 import Cards from '../../components/Cards/cards.jsx'
-import Filter from '../../components/Filter/Filter.jsx'
 import './ViewAssignmentsDesigner.css'
-import { useState } from 'react';
+
+// Componente presentacional independiente para la vista Designer (sin funcionalidad ni toggle)
+const DesignerFilter = () => {
+    return (
+        <div className="designer-filter" role="region" aria-label="Filtro diseñador">
+            <div className="designer-filter-left">
+                <strong className="designer-filter-title">Filtro</strong>
+            </div>
+            <ul className="designer-filter-list">
+                <li><input id="df-all" type="checkbox" /><label htmlFor="df-all">Todos</label></li>
+                <li><input id="df-inprocess" type="checkbox" /><label htmlFor="df-inprocess">En proceso</label></li>
+                <li><input id="df-approved" type="checkbox" /><label htmlFor="df-approved">Aprobadas</label></li>
+                <li><input id="df-rejected" type="checkbox" /><label htmlFor="df-rejected">Rechazadas</label></li>
+                <li><input id="df-cancelled" type="checkbox" /><label htmlFor="df-cancelled">Canceladas</label></li>
+            </ul>
+            <div className="designer-filter-actions">
+                <button className="df-btn df-btn-clear" type="button">Limpiar</button>
+                <button className="df-btn df-btn-apply" type="button">Aplicar</button>
+            </div>
+        </div>
+    );
+}
 
 function ViewAssignmentsDesigner() {
-    const [filterMenu, setFilterMenu] = useState(false);
-
-    const handleFilterClick = () => {
-        setFilterMenu(!filterMenu);
-    };
+    // El filtro siempre está visible en esta vista (sin state)
 
     return(
         <>
             <div className='container-ViewCampaignsMarketing'>
 
                 <div className='header-ViewAssignmentsDesigner'>
-                    <Filter onClick={handleFilterClick}/>
-                    <div className='FilterMenu' style={{display: filterMenu ? 'flex' : 'none'}}>
-                        <li>
-                            <input type="checkbox" className="checkbox"/><label value="Todos">Todos</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" className="checkbox"/><label value="En proceso">En proceso</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" className="checkbox"/><label value="Aprobadas">Aprobadas</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" className="checkbox"/><label value="Rechazadas">Rechazadas</label>
-                        </li>
-                        <li>
-                            <input type="checkbox" className="checkbox"/><label value="Canceladas">Canceladas</label>
-                        </li>
-                    </div>
+                    {/* Filtro independiente (presentacional) para vista Designer */}
+                    <DesignerFilter />
                 </div>
-                    
+                
                 <div className="cardsViewCampaignsMarketing">
                     <h3>Asignaciones</h3>
                     <div className="cards-proceso">
@@ -46,6 +46,7 @@ function ViewAssignmentsDesigner() {
                         <Cards />
                         <Cards />
                         <Cards />
+                        <Cards />
                     </div>
                     <h3>Campañas rechazadas</h3>
                     <div className='cards-rechazadas'>
@@ -53,9 +54,11 @@ function ViewAssignmentsDesigner() {
                         <Cards />
                         <Cards />
                         <Cards />
+                        <Cards />
                     </div>
                     <h3>Campañas canceladas</h3>
                     <div className='cards-canceladas'>
+                        <Cards />
                         <Cards />
                         <Cards />
                         <Cards />
