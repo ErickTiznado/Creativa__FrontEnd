@@ -7,10 +7,13 @@ export const handlesend = async (message) => {
     if (sessionID === null) {
         sessionID = uuidv4();
     }
+
+    const user = JSON.parse(localStorage.getItem('user'));
     try {
         const response = await api.post('/ai/chat', {
             sessionID: sessionID,
             userMessage: message,
+            userId: user.id
         })
 
 

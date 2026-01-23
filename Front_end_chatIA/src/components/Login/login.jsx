@@ -8,7 +8,7 @@ import Logo_CS from '../../assets/img/logo_CS.png';
 
 const Login = () => {
 
-  const {login} = useAuth()
+  const { login } = useAuth()
 
 
   const onSubmit = async (e) => {
@@ -17,6 +17,12 @@ const Login = () => {
     const password = document.getElementById('password').value;
     try {
       const response = await login(email, password);
+
+      if (response?.role === "marketing") {
+        window.location.href = '/';
+      } if (response?.role === "designer") {
+        window.location.href = '/designer';
+      }
     } catch (error) {
       console.log(error);
     }

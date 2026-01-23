@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaRocket, FaSearch, FaTimes } from 'react-icons/fa';
-
+import { getDesigners } from '../../services/designerService';
 
 const Sidebar = ({ className, onToggle, briefData = [] }) => {
   const summaryData = Array.isArray(briefData) ? briefData : [];
-
+  const [designers, setDesigners] = useState([]);
   // Mapeo de labels técnicos a nombres amigables en español
   const labelTranslations = {
     nombre_campaing: 'Nombre de campaña',
@@ -20,7 +20,10 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
   const getTranslatedLabel = (key) => {
     return labelTranslations[key] || key;
   };
-
+  useEffect(() => {
+    setDesigners(getDesigners());
+    console.log(designers);
+  }, []);
   return (
     <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">
@@ -40,7 +43,7 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
           ))
         ) : (
           <div className="empty-message">
-            <p>💬 Conversa con el asistente para completar los datos de tu campaña</p>
+            <p>Conversa con el asistente para completar los datos de tu campaña</p>
           </div>
         )}
       </div>
@@ -51,20 +54,23 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
       </div>
 
       <div className='box-users'>
-        <div className="user-card">
-          <img src="https://i.pravatar.cc/150?img=11" alt="Juan" className="card-avatar" />
-          <div className="user-info">
-            <h4>Juan carlos</h4>
-            <p>Diseñador</p>
-          </div>
-        </div>
-        <div className="user-card">
-          <img src="https://i.pravatar.cc/150?img=11" alt="Juan" className="card-avatar" />
-          <div className="user-info">
-            <h4>Juan carlos</h4>
-            <p>Diseñador</p>
-          </div>
-        </div>
+        {
+          designers.map((d, index) => {
+            return (
+              <>
+                <div className="user-card">
+
+                  <img src="https://i.pravatar.cc/150?img=11" alt="Juan" className="card-avatar" />
+                  <div className="user-info">
+                    <h4></h4>
+                    <p>Diseñador</p>
+                  </div>
+                </div>
+              </>
+            )
+          })
+
+        }
       </div>
 
       <div className="send-action-area">

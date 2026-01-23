@@ -8,13 +8,12 @@ import { useState } from 'react';
 function Chatbox({ onClose }) {
     const [briefData, setBriefData] = useState([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const [designer, setDesigner] = useState([]);
     const handleBriefData = (newData) => {
 
 
         // Convertir objeto plano { key: value } a array de { label, value }
         setBriefData((prevBriefData) => {
-            console.log('📋 briefData anterior:', prevBriefData);
 
             // Crear una copia del array actual
             const updatedData = [...prevBriefData];
@@ -35,7 +34,6 @@ function Chatbox({ onClose }) {
                 }
             });
 
-            console.log('📋 briefData actualizado:', updatedData);
             return updatedData;
         });
     }
