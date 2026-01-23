@@ -14,9 +14,6 @@ export const handlesend = async (message) => {
             userMessage: message
         })
 
-        console.log('🔵 Respuesta completa de axios:', response);
-        console.log('🔵 response.data:', response.data);
-        console.log('🔵 response.data.collectedData:', response.data.collectedData);
 
         return {
             success: true,

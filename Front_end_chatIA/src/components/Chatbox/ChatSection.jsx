@@ -32,6 +32,10 @@ const ChatSection = ({ onToggleSidebar, onBriefData }) => {
         const botMsg = { sender: 'bot', text: response.response }
         setMessage((prevMessage) => [...prevMessage, botMsg]);
 
+        if (response.data && onBriefData) {
+          onBriefData(response.data);
+        }
+
       }
       else {
         const botMsg = { sender: 'bot', text: 'Error al procesar la solicitud' }
