@@ -33,12 +33,13 @@ const authProvider = ({ children }) => {
         try {
             const response = await authLogin(email, password)
             if (response.status === 200) {
-                setUser(response.user)
-                setToken(response.token)
+                console.log(response)
+                setUser(response.data.user)
+                setToken(response.data.token)
                 setIsAuth(true)
                 setLoading(false)
-                localStorage.setItem('token', response.token);
-                localStorage.setItem('user', JSON.stringify(response.user));
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
             }
         } catch (error) {
             const message = error.response?.data?.message || 'Error al iniciar sesión';

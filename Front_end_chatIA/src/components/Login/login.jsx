@@ -8,8 +8,19 @@ import Logo_CS from '../../assets/img/logo_CS.png';
 
 const Login = () => {
 
-  const login = useAuth()
+  const {login} = useAuth()
 
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      const response = await login(email, password);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div className="login-container">
       <div className="login-card">
@@ -21,7 +32,7 @@ const Login = () => {
         </div>
 
         {/* Formulario */}
-        <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+        <form className="login-form" onSubmit={onSubmit}>
 
           {/* Campo Email */}
           <div className="input-group">
@@ -60,7 +71,7 @@ const Login = () => {
             </label>
           </div>
 
-          <button type="submit" className="login-button">
+          <button type="submit" className="login-button" onClick={onSubmit}>
             Iniciar Sesión
           </button>
         </form>
