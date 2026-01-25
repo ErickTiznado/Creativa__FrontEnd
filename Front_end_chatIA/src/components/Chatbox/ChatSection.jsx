@@ -1,60 +1,33 @@
-import { FaPaperPlane, FaPlane, FaBars } from 'react-icons/fa';
+import { FaPaperPlane, FaBars } from 'react-icons/fa';
 import logoChatbox from '../../assets/img/logoChatbox.png';
-import logostarts from '../../assets/img/logostarts.png';
 import MessageBubble from './MessageBubble';
-import { handlesend } from '../../../functions/handlesend.js';
-import { useState } from 'react';
+import { useChatMessages } from '../../hooks/useChatMessages';
+import { useEffect } from 'react';
 
+/**
+ * ChatSection - Main chat interface component.
+ * Uses the useChatMessages hook for all chat logic.
+ * 
+ * @param {Function} onToggleSidebar - Callback to toggle sidebar visibility
+ * @param {Function} onBriefData - Callback when brief data is received
+ * @param {Function} onTypeChange - Callback when chat type changes
+ */
+const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
+  const {
+    messages,
+    isLoading,
+    inputText,
+    type,
+    handleInputChange,
+    sendMessage
+  } = useChatMessages(onBriefData);
 
-
-
-
-
-const ChatSection = ({ onToggleSidebar, onBriefData }) => {
-
-  const [message, setMessage] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [inputText, setInputText] = useState('');
-
-  const handleSendMessage = async () => {
-    if (inputText.trim() === '') return;
-
-    const userMsg = { sender: 'user', text: inputText }
-
-    setMessage((prevMessage) => [...prevMessage, userMsg]);
-
-    setInputText('');
-    setIsLoading(true);
-
-    try {
-      const response = await handlesend(inputText);
-
-      if (response.success === true) {
-        const botMsg = { sender: 'bot', text: response.response }
-        setMessage((prevMessage) => [...prevMessage, botMsg]);
-
-        if (response.data && onBriefData) {
-          onBriefData(response.data);
-        }
-
-      }
-      else {
-        const botMsg = { sender: 'bot', text: 'Error al procesar la solicitud' }
-        setMessage((prevMessage) => [...prevMessage, botMsg]);
-      }
-    } catch (error) {
-      console.error('Error en handleSendMessage:', error);
-      const botMsg = { sender: 'bot', text: 'Error de conexión. Intenta de nuevo.' }
-      setMessage((prevMessage) => [...prevMessage, botMsg]);
-    } finally {
-      setIsLoading(false);
+  // Notify parent when type changes
+  useEffect(() => {
+    if (type && onTypeChange) {
+      onTypeChange(type);
     }
-  }
-
-
-  const handleOnChange = (e) => {
-    setInputText(e.target.value)
-  }
+  }, [type, onTypeChange]);
 
   return (
     <section className="chat-section">
@@ -64,27 +37,38 @@ const ChatSection = ({ onToggleSidebar, onBriefData }) => {
           <span>CHAT</span>
         </div>
         <div className="header-actions">
-          <button className="toggle-btn" onClick={onToggleSidebar}>
+          <button className="toggle-btn" onClick={onToggleSidebar} aria-label="Toggle sidebar">
             <FaBars />
           </button>
         </div>
       </div>
 
       <div className="messages-list">
-        {message.map((msg, index) => (
-          <MessageBubble key={index} sender={msg.sender} text={msg.text} />
+        {messages.map((msg) => (
+          <MessageBubble key={msg.id} sender={msg.sender} text={msg.text} />
         ))}
-        {isLoading === true && <div className='message-row msg-bot'>
-          <div className='bubble'>
-            Escribiendo...
+        {isLoading ? (
+          <div className='message-row msg-bot'>
+            <div className='bubble typing-indicator'>
+              <span>.</span><span>.</span><span>.</span>
+            </div>
           </div>
-        </div>}
+        ) : null}
       </div>
 
-      <div className="chat-input-area">
-        <input type="text" value={inputText} placeholder="Escribe ...." onChange={handleOnChange} />
-        <button className="send-btn" onClick={handleSendMessage}><FaPaperPlane /></button>
-      </div>
+      <form className="chat-input-area" onSubmit={sendMessage}>
+        <input 
+          type="text" 
+          value={inputText} 
+          placeholder="Escribe ...." 
+          onChange={handleInputChange} 
+          disabled={isLoading} 
+          aria-label="Escribe tu mensaje"
+        />
+        <button className="send-btn" type="submit" aria-label="Enviar mensaje">
+          <FaPaperPlane />
+        </button>
+      </form>
     </section>
   );
 };
