@@ -1,9 +1,9 @@
-import Filtro from '../../assets/img/filtro.png';
+import { ListFilter } from 'lucide-react';
 import './Filter.css';
 function Filter({ onClick }) {
     return (
         <div className="FilterContainer" onClick={onClick}>
-            <img src={Filtro} alt="Filtro"/>
+            <ListFilter size={24} />
         </div>
     );
 }

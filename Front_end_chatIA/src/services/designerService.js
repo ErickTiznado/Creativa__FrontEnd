@@ -1,3 +1,4 @@
+import { campaigns } from "../../functions/handlegetCampaigns";
 import { api } from "./api";
 
 export const getDesigners = async () => {
@@ -26,3 +27,27 @@ export const sendCampaign = async (campaign) => {
     throw e;
   }
 };
+
+
+export const getCampaigns = async (designerId) => {
+  console.log(designerId, "designerId")
+  try {
+    const response = await api.get(`/campaigns/designers`, { params: { designerId } })
+    console.log(response.data.data, "response")
+    return response.data.data;
+  } catch (e) {
+    console.error("Error in getCampaigns:", e);
+    throw e;
+  }
+}
+
+export const updateCampaignStatus = async (campaignId, status) => {
+  try {
+    const response = await api.put("/campaigns/updateStateCampaign", { campaignId, status });
+    console.log(response.data, "response")
+    return response;
+  } catch (e) {
+    console.error("Error in updateCampaignStatus:", e);
+    throw e;
+  }
+}

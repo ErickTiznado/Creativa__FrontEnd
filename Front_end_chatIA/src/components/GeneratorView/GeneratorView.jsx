@@ -1,5 +1,5 @@
 import React from 'react';
-import logostars from '../../assets/img/logostarts.png';
+import { Sparkles } from 'lucide-react';
 import './GeneratorView.css';
 
 function GeneratorView({
@@ -19,7 +19,7 @@ function GeneratorView({
         <div className='generator-container'>
             <header className="gen-header">
                 <div className="icon-container">
-                    <img className="sparkles" src={logostars} alt="Stars Logo" />
+                    <Sparkles className="sparkles" size={32} />
                 </div>
                 <div className="header-text">
                     <h1>Hola, {designerName}</h1>

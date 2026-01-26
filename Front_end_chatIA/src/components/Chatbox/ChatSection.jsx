@@ -1,5 +1,4 @@
-import { FaPaperPlane, FaBars } from 'react-icons/fa';
-import logoChatbox from '../../assets/img/logoChatbox.png';
+import { Send, Menu, Sparkles } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import { useChatMessages } from '../../hooks/useChatMessages';
 import { useEffect } from 'react';
@@ -33,12 +32,12 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
     <section className="chat-section">
       <div className="chat-header-indicator">
         <div className='bot-header'>
-          <img className="bot-icon" src={logoChatbox} alt="Chat Logo" />
+          <Sparkles className="bot-icon" size={24} />
           <span>CHAT</span>
         </div>
         <div className="header-actions">
           <button className="toggle-btn" onClick={onToggleSidebar} aria-label="Toggle sidebar">
-            <FaBars />
+            <Menu />
           </button>
         </div>
       </div>
@@ -57,16 +56,16 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
       </div>
 
       <form className="chat-input-area" onSubmit={sendMessage}>
-        <input 
-          type="text" 
-          value={inputText} 
-          placeholder="Escribe ...." 
-          onChange={handleInputChange} 
-          disabled={isLoading} 
+        <input
+          type="text"
+          value={inputText}
+          placeholder="Escribe ...."
+          onChange={handleInputChange}
+          disabled={isLoading}
           aria-label="Escribe tu mensaje"
         />
         <button className="send-btn" type="submit" aria-label="Enviar mensaje">
-          <FaPaperPlane />
+          <Send />
         </button>
       </form>
     </section>

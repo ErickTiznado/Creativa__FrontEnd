@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { FaRocket, FaSearch, FaTimes } from 'react-icons/fa';
+import { Rocket, Search, X } from 'lucide-react';
 import { sendCampaign } from '../../services/designerService';
 import { useDesigners } from '../../hooks/useDesigners';
 import { useUser } from '../../hooks/useUser';
-import { 
-  getTranslatedLabel, 
-  validateCampaignData, 
-  formatBriefData 
+import {
+  getTranslatedLabel,
+  validateCampaignData,
+  formatBriefData
 } from '../../config/campaignConfig';
 
 /**
@@ -17,14 +17,14 @@ const Sidebar = ({ className, onToggle, briefData = [], type }) => {
   const summaryData = Array.isArray(briefData) ? briefData : [];
   const { designers } = useDesigners();
   const user = useUser();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDesigner, setSelectedDesigner] = useState(null);
 
   // Memoized filtered designers list
   const filteredDesigners = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    return designers.filter((designer) => 
+    return designers.filter((designer) =>
       designer.first_name.toLowerCase().includes(term) ||
       designer.last_name.toLowerCase().includes(term)
     );
@@ -43,9 +43,9 @@ const Sidebar = ({ className, onToggle, briefData = [], type }) => {
           briefData: formattedBriefData,
           designer_id: selectedDesigner.id
         };
-        
+
         const response = await sendCampaign(campaign);
-        
+
         if (response?.status === 200 || response?.data) {
           alert("Campaña enviada con éxito!");
         }
@@ -68,9 +68,9 @@ const Sidebar = ({ className, onToggle, briefData = [], type }) => {
   return (
     <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">
-        <FaRocket /> <h3>Resumen de Campaña</h3>
+        <Rocket /> <h3>Resumen de Campaña</h3>
         <button className="close-sidebar-btn" onClick={onToggle}>
-          <FaTimes />
+          <X />
         </button>
       </div>
 
@@ -90,25 +90,25 @@ const Sidebar = ({ className, onToggle, briefData = [], type }) => {
       </div>
 
       <div className="search-bar">
-        <span className="icon"><FaSearch /></span>
-        <input 
-          type="text" 
-          placeholder="Buscar" 
-          value={searchTerm} 
+        <span className="icon"><Search /></span>
+        <input
+          type="text"
+          placeholder="Buscar"
+          value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       <div className='box-users'>
         {filteredDesigners.map((designer) => (
-          <div 
-            className="user-card" 
-            key={designer.id || designer.first_name} 
+          <div
+            className="user-card"
+            key={designer.id || designer.first_name}
             onClick={() => setSelectedDesigner(designer)}
           >
-            <img 
-              src="https://i.pravatar.cc/150?img=11" 
-              alt={designer.first_name} 
+            <img
+              src="https://i.pravatar.cc/150?img=11"
+              alt={designer.first_name}
               className="card-avatar"
             />
             <div className="user-info">

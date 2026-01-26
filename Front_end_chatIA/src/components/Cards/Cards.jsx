@@ -1,6 +1,5 @@
 import './cards.css';
-import Reloj from '../../assets/img/reloj.png';
-import FotoUser from '../../assets/img/user.jpg';
+import { Clock, CircleUser } from 'lucide-react';
 import { useState } from 'react';
 
 
@@ -21,7 +20,7 @@ function Cards(props) {
 
     return (
         <div className="cards-container">
-            <img className='imgCard' src={Reloj} alt="Reloj" />
+            <Clock size={24} className='imgCard' />
             <div className='InfoCard'>
                 <h4>{props.titulo}</h4>
                 <div className="progreso">
@@ -29,7 +28,7 @@ function Cards(props) {
                     {props.estado}
                 </div>
                 <div className="fecha">
-                    <img className='FotoUser' src={FotoUser} alt="Foto" />
+                    <CircleUser size={20} className='FotoUser' />
                     <p>{props.usuario}</p>
                     <p>{props.fecha}</p>
                 </div>

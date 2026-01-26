@@ -1,5 +1,6 @@
 import React from 'react';
 import './RepositoryView.css';
+import { Check } from 'lucide-react';
 
 function RepositoryView({ campaignData, selectedIds, toggleSelection }) {
     return (
@@ -34,7 +35,7 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection }) {
                                     onClick={() => toggleSelection(imgId)}
                                 >
                                     <span>IMG {imgId}</span>
-                                    {isSelected && <div className='cw-check-icon'>✓</div>}
+                                    {isSelected && <div className='cw-check-icon'><Check size={16} /></div>}
                                 </div>
                             );
                         })}

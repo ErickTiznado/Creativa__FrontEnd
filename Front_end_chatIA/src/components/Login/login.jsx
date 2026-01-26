@@ -2,8 +2,7 @@ import React from 'react';
 import './Login.css';
 import { useAuth } from '../../hooks/useAuth';
 /**importar react icons */
-import { FaEnvelope, FaLock, } from 'react-icons/fa';
-import { LiaEyeSolid, LiaEyeSlashSolid } from "react-icons/lia";
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Logo_CS from '../../assets/img/logo_CS.png';
 
 const Login = () => {
@@ -44,7 +43,7 @@ const Login = () => {
           <div className="input-group">
             <label htmlFor="email">Correo electrónico</label>
             <div className="input-wrapper">
-              <span className="input-icon"><FaEnvelope /></span>
+              <span className="input-icon"><Mail size={20} /></span>
               <input
                 type="email"
                 id="email"
@@ -58,12 +57,12 @@ const Login = () => {
           <div className="input-group">
             <label htmlFor="password">Contraseña</label>
             <div className="input-wrapper">
-              <span className="input-icon"><FaLock /></span>
+              <span className="input-icon"><Lock size={20} /></span>
               <input type="password" id="password" placeholder="••••••••" />
               {/* Icono de ojo para mostrar/ocultar contraseña */}
               <div style={{ marginBottom: '20px' }} className='eye-password-toggle'>
-                <span onClick={togglePasswordVisibility} className="input-icon eye-icon"><LiaEyeSolid /></span>
-                <span onClick={togglePasswordVisibility} className="input-icon eye-icon-slash"><LiaEyeSlashSolid /></span>
+                <span onClick={togglePasswordVisibility} className="input-icon eye-icon"><Eye size={20} /></span>
+                <span onClick={togglePasswordVisibility} className="input-icon eye-icon-slash"><EyeOff size={20} /></span>
               </div>
 
             </div>

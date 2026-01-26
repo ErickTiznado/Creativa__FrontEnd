@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import Cards from '../../components/Cards/cards.jsx'
 import Filter from '../../components/Filter/Filter.jsx'
 import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx'
@@ -57,7 +58,7 @@ function ViewCampaignsMarketing() {
                             <div className="filter-menu-inner">
                                 <div className="filter-header">
                                     <strong>Filtrar por estado</strong>
-                                    <button className="filter-close" onClick={handleFilterClick} aria-label="Cerrar filtro">×</button>
+                                    <button className="filter-close" onClick={handleFilterClick} aria-label="Cerrar filtro"><X size={18} /></button>
                                 </div>
 
                                 <ul className="filter-list">
