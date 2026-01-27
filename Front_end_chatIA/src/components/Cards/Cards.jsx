@@ -1,12 +1,11 @@
 import './cards.css';
-import Reloj from '../../assets/img/reloj.png';
-import FotoUser from '../../assets/img/user.jpg';
 import { useState, useRef, useLayoutEffect } from 'react';
+import { Clock, CircleUser } from 'lucide-react';
 
 function Cards(props) {
 	var color = 'var(--color-proceso)';
 	const estado = props.estado;
-	console.log(props)
+	// console.log(props) // Removed console log for cleaner code
 	if (estado === 'Enviado') {
 		color = 'var(--color-proceso)';
 	} else if (estado === 'Cancelado') {
@@ -89,7 +88,7 @@ function Cards(props) {
 
 	return (
 		<div className="cards-container">
-			<img className='imgCard' src={Reloj} alt="Reloj" />
+			<Clock size={24} className='imgCard' />
 			<div className='InfoCard'>
 				<h4 ref={titleRef} style={titleFontSize ? { fontSize: `${titleFontSize}px` } : undefined}>{props.titulo}</h4>
 				<div className="progreso">
@@ -97,7 +96,7 @@ function Cards(props) {
 					{props.estado}
 				</div>
 				<div className="fecha">
-					<img className='FotoUser' src={FotoUser} alt="Foto" />
+					<CircleUser size={20} className='FotoUser' />
 					<p>{props.usuario}</p>
 					<p>{props.fecha}</p>
 				</div>
