@@ -12,8 +12,10 @@ function ButtonAdd() {
 
     return (
         <button className="ButtonAddContainer" onClick={handleClick}>
-            <Plus size={20} />
-            Nueva Campaña
+            <div className="ButtonAddIcon">
+                <Plus size={20} />
+            </div>
+            <p>Nueva Campaña</p>
         </button>
     );
 }

@@ -3,7 +3,7 @@ import Cards from '../../components/Cards/cards.jsx'
 import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx'
 import { handleGetCampaigns } from "../../../functions/handlegetCampaigns.js"
 import './ViewCampaignsMarketing.css';
-
+import { FolderClosed } from 'lucide-react';
 const SECTIONS_CONFIG = [
     { id: 'draft', label: 'En proceso', title: 'Campañas en proceso' },
     { id: 'approved', label: 'Aprobadas', title: 'Campañas aprobadas' },
@@ -102,7 +102,7 @@ function ViewCampaignsMarketing() {
                                 </div>
                             ) : (
                                 <div className="empty-state-container">
-                                    <span className="empty-state-icon">📂</span>
+                                    <span className="empty-state-icon"><FolderClosed /></span>
                                     <p className="empty-state-text">No hay campañas en esta sección</p>
                                 </div>
                             )}

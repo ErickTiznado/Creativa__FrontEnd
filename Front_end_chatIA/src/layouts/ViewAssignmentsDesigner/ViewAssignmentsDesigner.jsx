@@ -137,17 +137,7 @@ function ViewAssignmentsDesigner() {
                     {getFilteredSections().map((section, index) => {
                         const sectionCampaigns = campaigns.filter(c => c.status === section.id);
 
-                        // If filtering by specific status, show empty state if no items.
-                        // If showing "All", strictly hide empty sections to reduce noise? 
-                        // Let's decide: If "All", show title but maybe compact empty message?
-                        // Actually, standard behavior: if All, only show sections that have items OR show all with empty state.
-                        // Let's go with: Show all sections if All.
 
-
-                        // Check if we should render empty sections. For Drag and Drop, we MUST render them so they can be drop targets.
-                        // if (activeFilter === 'all' && sectionCampaigns.length === 0) {
-                        //    return null; 
-                        // }
 
 
                         return (

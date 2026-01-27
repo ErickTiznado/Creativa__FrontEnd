@@ -8,8 +8,7 @@ body {
 
 .header-ViewCampaignsMarketing {
     display: flex;
-    flex-direction: column;
-    /* Stack Add Button and Tabs on mobile, row on desktop if needed */
+    flex-direction: row;
     align-items: flex-start;
     gap: 16px;
     margin: 20px 4% 10px 4%;

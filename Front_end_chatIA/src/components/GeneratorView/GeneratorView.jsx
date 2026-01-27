@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import logostars from '../../assets/img/logostarts.png';
+import { useState, useRef, useEffect } from 'react';
 import { enhancePrompt } from '../../services/api';
 import { Sparkles } from 'lucide-react';
 import './GeneratorView.css';
