@@ -39,4 +39,18 @@ api.interceptors.response.use((config) => {
         return Promise.reject(error);
     }
 
-})
+});
+
+export const enhancePrompt = async (brief) => {
+    try {
+        const response = await api.post('/generator/build-prompt', {
+            brief: brief,
+            style: "cinematic",
+            dimensions: "1024x1024"
+        });
+        return response.data.data.prompt;
+    } catch (error) {
+        console.error("Error mejorando el prompt:", error);
+        throw error;
+    }
+};
