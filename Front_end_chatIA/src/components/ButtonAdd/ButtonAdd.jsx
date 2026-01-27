@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import add from '../../assets/img/add.svg';
+import { Plus } from 'lucide-react';
 import './ButtonAdd.css';
 
 function ButtonAdd() {
@@ -12,7 +12,7 @@ function ButtonAdd() {
 
     return (
         <button className="ButtonAddContainer" onClick={handleClick}>
-            <img src={add} alt="add" />
+            <Plus size={20} />
             Nueva Campaña
         </button>
     );

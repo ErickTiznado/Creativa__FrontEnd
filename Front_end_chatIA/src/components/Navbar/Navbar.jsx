@@ -1,5 +1,5 @@
 import Logo_CS from '../../assets/img/logo_CS.png';
-import campana from '../../assets/img/campana.svg';
+import { Bell } from 'lucide-react';
 import ImageUser from '../ImageUser/ImageUser';
 import './Navbar.css';
 
@@ -8,10 +8,10 @@ function Navbar({ role = "Marketing" }) {
         <>
             <div className='Navbar'>
                 <a href="/">
-                     <img className='Logo'  src={Logo_CS} alt="Logo" />
+                    <img className='Logo' src={Logo_CS} alt="Logo" />
                 </a>
                 <div className='Notification'>
-                    <img className='campana' src={campana} alt="campana" />
+                    <Bell size={24} className='campana' />
                     <p className='textNotification'>{role}</p>
                 </div>
                 <ImageUser />

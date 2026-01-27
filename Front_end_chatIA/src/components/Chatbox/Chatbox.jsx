@@ -8,14 +8,17 @@ import { useState } from 'react';
 function Chatbox({ onClose }) {
     const [briefData, setBriefData] = useState([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [type, setType] = useState('');
+
+
+
 
     const handleBriefData = (newData) => {
-
+        console.log('Esta es la data', newData);
 
         // Convertir objeto plano { key: value } a array de { label, value }
         setBriefData((prevBriefData) => {
-            console.log('📋 briefData anterior:', prevBriefData);
-
+            
             // Crear una copia del array actual
             const updatedData = [...prevBriefData];
 
@@ -35,7 +38,6 @@ function Chatbox({ onClose }) {
                 }
             });
 
-            console.log('📋 briefData actualizado:', updatedData);
             return updatedData;
         });
     }
@@ -50,11 +52,12 @@ function Chatbox({ onClose }) {
                 <button className="close-btn" onClick={onClose}>×</button>
                 <div className="app-container">
                     <main className="main-layout">
-                        <ChatSection onBriefData={handleBriefData} onToggleSidebar={toggleSidebar} />
+                        <ChatSection onBriefData={handleBriefData} onToggleSidebar={toggleSidebar} onTypeChange={setType}/>
                         <Sidebar
                             briefData={briefData}
                             className={isSidebarOpen ? 'open' : ''}
                             onToggle={toggleSidebar}
+                            type={type}
                         />
                     </main>
                 </div>

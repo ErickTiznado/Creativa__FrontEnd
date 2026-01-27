@@ -1,3 +1,4 @@
+import { CircleUser } from 'lucide-react';
 import React from 'react';
 import logoChatbox from '../../assets/img/logoChatbox.png';
 
@@ -9,7 +10,7 @@ const MessageBubble = ({ sender, text }) => {
       <div className="bubble">
         {text}
       </div>
-      {!isBot && <div className="avatar user-avatar"><img src="https://i.pravatar.cc/150?img=11" alt="user" /></div>}
+      {!isBot && <div className="avatar user-avatar"><CircleUser size={30} /></div>}
     </div>
   );
 };

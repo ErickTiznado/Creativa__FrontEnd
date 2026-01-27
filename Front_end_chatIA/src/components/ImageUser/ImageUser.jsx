@@ -1,10 +1,10 @@
 import './imageUser.css'
-import user from '../../assets/img/user.jpg'
+import { CircleUser } from 'lucide-react';
 function ImageUser({ props }) {
     return (
         <div className="imgUser">
             {/* <img src={props.src} alt={props.alt || 'User Image'} className={props.className || 'image-user'} style={props.style || {}} /> */}
-            <img className='Userimg' src={user} alt="User" />
+            <CircleUser size={40} className='Userimg' />
         </div>
     );
 }

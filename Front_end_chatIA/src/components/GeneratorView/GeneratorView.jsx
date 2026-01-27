@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import logostars from '../../assets/img/logostarts.png';
 import { enhancePrompt } from '../../services/api';
+import { Sparkles } from 'lucide-react';
 import './GeneratorView.css';
 
 function GeneratorView({
@@ -24,7 +25,7 @@ function GeneratorView({
     useEffect(() => {
         if (textareaRef.current) {
             textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight} px`;
         }
     }, [prompt]);
 
@@ -47,7 +48,7 @@ function GeneratorView({
         <div className='generator-container'>
             <header className="gen-header">
                 <div className="icon-container">
-                    <img className="sparkles" src={logostars} alt="Stars Logo" />
+                    <Sparkles className="sparkles" size={32} />
                 </div>
                 <div className="header-text">
                     <h1>Hola, {designerName}</h1>
@@ -69,7 +70,7 @@ function GeneratorView({
 
                     {/* BOTÓN DE VARITA MÁGICA */}
                     <button
-                        className={`magic-wand-btn ${isEnhancing ? 'loading' : ''}`}
+                        className={`magic - wand - btn ${isEnhancing ? 'loading' : ''} `}
                         onClick={handleEnhanceClick}
                         disabled={isEnhancing || !prompt}
                         title="Mejorar prompt con IA"
@@ -166,7 +167,7 @@ function GeneratorView({
                         <span>Agregar</span> <span>+</span>
                     </button>
                 </div>
-                <div className={`gallery-content ${generatedImages.length === 0 ? 'empty' : ''}`}>
+                <div className={`gallery - content ${ generatedImages.length === 0 ? 'empty' : '' } `}>
                     {generatedImages.length === 0 ? (
                         <p>No hay imágenes guardadas</p>
                     ) : (

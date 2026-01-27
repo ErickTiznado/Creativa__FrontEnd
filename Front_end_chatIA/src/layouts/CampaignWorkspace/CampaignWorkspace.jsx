@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './CampaignWorkspace.css';
 import './ImgGenerated.css';
 
-import userImg from '../../assets/img/user.jpg';
-import imgSaved from '../../assets/img/Saved.png';
-import saveIcon from '../../assets/img/save.svg';
-import editIcon from '../../assets/img/editar.svg';
+import { CircleUser, Bookmark, Save, Pencil, Menu, Check } from 'lucide-react';
 
 // Importar los nuevos componentes
 import RepositoryView from '../../components/RepositoryView/RepositoryView';
@@ -14,7 +11,7 @@ import GeneratorView from '../../components/GeneratorView/GeneratorView';
 const CampaignWorkspace = () => {
     // --- ESTADOS ---
     const [activeTab, setActiveTab] = useState('Repositorio');
-    
+
     // Estado Repositorio
     const [selectedIds, setSelectedIds] = useState([1, 2]);
 
@@ -23,7 +20,7 @@ const CampaignWorkspace = () => {
     const [useReference, setUseReference] = useState(true);
     const [aspectRatio, setAspectRatio] = useState("1:1 cuadrado");
     const [quantity, setQuantity] = useState(2);
-    const [generatedImages, setGeneratedImages] = useState([]); 
+    const [generatedImages, setGeneratedImages] = useState([]);
 
     // Estado Edición
     const [activeEdit, setActiveEdit] = useState('Solicitud');
@@ -143,7 +140,7 @@ const CampaignWorkspace = () => {
                         />
                     </div>
                     <div className="controls-row-edit">
-                         <div className='box-options'>
+                        <div className='box-options'>
                             <div className="control-group-edit">
                                 <label className="label-edit">Relacion de aspecto</label>
                                 <select
@@ -177,7 +174,7 @@ const CampaignWorkspace = () => {
             {/* Sidebar: agregada clase dinámica open/closed */}
             <aside className={`cw-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className='cw-profile'>
-                    <img src={userImg} alt="Designer" className='cw-avatar' />
+                    <CircleUser className='cw-avatar' size={80} strokeWidth={1.5} />
                     <h3 className='cw-user-name'>{campaignData.designer}</h3>
                 </div>
 
@@ -206,7 +203,7 @@ const CampaignWorkspace = () => {
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                             aria-label="Toggle sidebar"
                         >
-                            ☰
+                            <Menu />
                         </button>
 
                         <h1 className='cw-title'>{campaignData.title}</h1>
@@ -215,7 +212,7 @@ const CampaignWorkspace = () => {
                 </header>
 
                 {activeTab === 'Repositorio' && (
-                    <RepositoryView 
+                    <RepositoryView
                         campaignData={campaignData}
                         selectedIds={selectedIds}
                         toggleSelection={toggleSelection}
@@ -223,7 +220,7 @@ const CampaignWorkspace = () => {
                 )}
 
                 {activeTab === 'Generador' && (
-                    <GeneratorView 
+                    <GeneratorView
                         designerName={campaignData.designer}
                         prompt={prompt}
                         setPrompt={setPrompt}
@@ -241,7 +238,7 @@ const CampaignWorkspace = () => {
                 {activeTab === 'ImgGenerada' && (
                     <div className='cw-workspace'>
                         <section className='cw-workspace-edit'>
-                            <div className="generator-panel-img" style={{ display: selectedImg.length === 0 ? 'grid' : 'flex'}}>
+                            <div className="generator-panel-img" style={{ display: selectedImg.length === 0 ? 'grid' : 'flex' }}>
                                 {generatedImages.length === 0 ? (
                                     <p>No hay imágenes guardadas</p>
                                 ) : (
@@ -257,15 +254,15 @@ const CampaignWorkspace = () => {
                                                             onClick={() => toggleSelectionImg(index)}
                                                             style={{ cursor: 'pointer' }}
                                                         >
-                                                            {selectedImg.includes(index) ? '✓' : ''}
+                                                            {selectedImg.includes(index) ? <Check size={16} /> : ''}
                                                         </div>
                                                     )}
                                                     {activeEdit === "Solicitud" && (
                                                         <div className="img-generator-saved" onClick={() => toggleSaveImg(index)}>
-                                                            <img src={imgSaved} alt="saved" />
+                                                            <Bookmark className='imgSaved-save' size={20} />
                                                         </div>
                                                     )}
-                                                    <img style={{width: selectedImg.includes(index)? '300px' : '200px', height: selectedImg.includes(index) ? '300px' : '200px' }} src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                                    <img style={{ width: selectedImg.includes(index) ? '300px' : '200px', height: selectedImg.includes(index) ? '300px' : '200px' }} src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
                                                 </div>
                                             </div>
                                         );
@@ -301,8 +298,8 @@ const CampaignWorkspace = () => {
                                                 <div className='imgSaved-description'>
                                                     <p className="imgSaved-description-text">Lorem ipsum dolor sit amet consectetur...</p></div>
                                                 <div className='imgSaved-options'>
-                                                    <button className='imgSaved-Edit-img'><img className='imgSaved-edit' src={editIcon} alt="Editar" /></button>
-                                                    <button className='imgSaved-Save-img'><img className='imgSaved-save' src={saveIcon} alt="Guardar" /></button>
+                                                    <button className='imgSaved-Edit-img'><Pencil className='imgSaved-edit' size={16} /></button>
+                                                    <button className='imgSaved-Save-img'><Save className='imgSaved-save' size={16} /></button>
                                                 </div>
                                             </div>
                                         </div>

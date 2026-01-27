@@ -8,157 +8,153 @@ body {
 
 .header-ViewCampaignsMarketing {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-    /* margin: 20px 20px 20px 20px; */
-    margin: 20px 4% 20px 4%;
+    flex-direction: column;
+    /* Stack Add Button and Tabs on mobile, row on desktop if needed */
+    align-items: flex-start;
+    gap: 16px;
+    margin: 20px 4% 10px 4%;
 }
 
-h3 {
-    margin-top: 20px;
-    font-family: var(--font-Itim);
-    font-weight: 400;
-    margin: 20px 4% 20px 4%;
-    font-size: 24px;
-    border: rgb(red, green, blue);
-}
+/* Add Button Container (if needed specific positioning) */
+/* .header-ViewCampaignsMarketing > :first-child {
+    align-self: flex-start;
+} */
 
-h4 {
-    font-family: var(--font-Itim);
-    font-weight: 400;
-}
-
-.FilterMenu {
-    border-radius: 10px;
-    background-color: var(--color-navbar);
-    box-shadow: 0px 4px 20px 0px rgba(0.6, 0.6, 0.6, 0.6);
-    padding: 10px;
-    width: 550px;
+/* Filter Tabs Container */
+.filter-tabs {
     display: flex;
-    /* flex-direction: column; */
-    align-items: start;
-    /* position: absolute;
-    top: 125px; */
-    right: 70%;
-    z-index: 1;
+    gap: 12px;
+    background: var(--color-navbar);
+    padding: 6px;
+    border-radius: 12px;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 100%;
 }
 
-.FilterMenu li {
-    display: flex;
-    flex-direction: row;
-    padding-left: 10px;
-    gap: 10px;
-}
-.header-ViewCampaignsMarketing .FilterMenu li input {
-    margin-top: 2px;
-    padding: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    background-color: var(--color-dark-blue);
+/* Individual Tab Button */
+.filter-tab {
+    background: transparent;
+    border: none;
     color: var(--color-white);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: var(--font-Itim);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    opacity: 0.7;
 }
 
-.cards-proceso {
-    margin: 20px 4% 20px 4%;
+.filter-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 1;
+}
+
+.filter-tab.active {
+    background: var(--color-proceso);
+    color: #000;
+    font-weight: 700;
+    opacity: 1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Section Titles */
+h3 {
+    margin-top: 30px;
+    font-family: var(--font-Itim);
+    font-weight: 400;
+    margin-left: 4%;
+    margin-right: 4%;
+    font-size: 24px;
+    opacity: 0.9;
+}
+
+/* Unified Grid Layout */
+.cards-grid {
+    margin: 20px 4% 40px 4%;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 20px;
+    grid-template-rows: auto;
+    gap: 16px;
+    animation: fadeIn 0.4s ease-out;
 }
 
-.cards-aprobadas {
-    margin: 20px 4% 20px 4%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 20px;
+/* Empty State */
+.empty-state-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    margin: 20px 4%;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
 }
 
-.cards-rechazadas {
-    margin: 20px 4% 20px 4%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 20px;
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
 }
 
-.cards-canceladas {
-    margin: 20px 4% 20px 4%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 20px;
-}
-
-/* Responsive */
-@media (max-width: 1118px) {
-
-    .cards-proceso,
-    .cards-aprobadas,
-    .cards-rechazadas,
-    .cards-canceladas {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .header-ViewCampaignsMarketing {
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .FilterMenu {
-        top: 180px;
-        left: 4%;
-    }
-}
-
-@media (max-width: 768px) {
-
-    .cards-proceso,
-    .cards-aprobadas,
-    .cards-rechazadas,
-    .cards-canceladas {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .header-ViewCampaignsMarketing {
-        align-items: flex-start;
-        gap: 10px;
-    }
-}
-
-
-/* @media (max-width: 480px) { */
-@media (max-width: 570px) {
-
-    .cards-proceso,
-    .cards-aprobadas,
-    .cards-rechazadas,
-    .cards-canceladas {
-        grid-template-columns: repeat(1, 1fr);
-        justify-items: center;
-        margin-left: 2%;
-        margin-right: 2%;
-    }
-
-    h3 {
-        margin-left: 2%;
-        font-size: 20px;
-    }
-
-    .header-ViewCampaignsMarketing {
-        margin: 20px 2% 20px 2%;
-    }
+.empty-state-text {
+    font-size: 1.1rem;
 }
 
 .section-divider {
     height: 1px;
-    background: rgba(255, 255, 255, 0.15);
-    margin: 10px 0;
-    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 10px 4%;
+    width: 92%;
     border: none;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-tabs {
+        width: 100%;
+        padding: 4px;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 500px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .header-ViewCampaignsMarketing {
+        margin: 15px 4%;
+    }
 }
