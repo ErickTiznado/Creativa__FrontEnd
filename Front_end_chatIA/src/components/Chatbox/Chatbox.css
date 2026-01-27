@@ -582,7 +582,7 @@
 .chat-input-area {
   background: rgba(26, 39, 68, 0.6);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(185, 28, 28, 0.3);
+  border: 1px solid rgba(165, 88, 28, 0.6);
   /* Subtle red border */
   transition:
     border-color 0.3s ease,
@@ -598,6 +598,9 @@
   transition:
     transform 0.2s ease,
     background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .send-btn:hover {

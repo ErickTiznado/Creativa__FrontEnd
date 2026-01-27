@@ -23,7 +23,7 @@ function GeneratorView({
 
     useEffect(() => {
         if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = '250px';
             textareaRef.current.style.height = `${textareaRef.current.scrollHeight} px`;
         }
     }, [prompt]);
