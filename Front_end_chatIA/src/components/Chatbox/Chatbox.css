@@ -258,13 +258,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
   color: white;
   background-color: #192c4a;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.sidebar-header h3 {
+
+
+.sidebar-h3 {
   font-size: 17px;
+  margin: 16px;
 }
 
 .close-sidebar-btn {
@@ -510,7 +512,8 @@
   animation: blink 1.4s infinite both;
   height: 6px;
   width: 6px;
-  background-color: #a8b2d1; /* var(--text-gray) */
+  background-color: #a8b2d1;
+  /* var(--text-gray) */
   border-radius: 50%;
   display: inline-block;
 }
@@ -528,10 +531,12 @@
     opacity: 0.2;
     transform: scale(0.8);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.2) translateY(-2px);
   }
+
   100% {
     opacity: 0.2;
     transform: scale(0.8);
@@ -548,28 +553,37 @@
   flex-direction: column;
   padding: 10px;
   position: relative;
-  border-radius: 16px; /* More rounded */
-  background: linear-gradient(145deg, #192c4a, #13223a); /* Subtle gradient */
+  border-radius: 16px;
+  /* More rounded */
+  background: linear-gradient(145deg, #192c4a, #13223a);
+  /* Subtle gradient */
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.3),
-    /* Deeper shadow */ inset 0 1px 1px rgba(255, 255, 255, 0.05); /* Top highlight */
+    /* Deeper shadow */
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  /* Top highlight */
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .chat-header-indicator {
-  background: rgba(25, 44, 74, 0.8); /* Semi-transparent */
-  backdrop-filter: blur(10px); /* Glassmorphism */
+  background: rgba(25, 44, 74, 0.8);
+  /* Semi-transparent */
+  backdrop-filter: blur(10px);
+  /* Glassmorphism */
   margin-bottom: 20px;
   font-weight: bold;
-  padding: 15px; /* More padding */
+  padding: 15px;
+  /* More padding */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px 12px 0 0; /* Rounded top matches container */
+  border-radius: 12px 12px 0 0;
+  /* Rounded top matches container */
 }
 
 .chat-input-area {
   background: rgba(26, 39, 68, 0.6);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(185, 28, 28, 0.3); /* Subtle red border */
+  border: 1px solid rgba(185, 28, 28, 0.3);
+  /* Subtle red border */
   transition:
     border-color 0.3s ease,
     box-shadow 0.3s ease;

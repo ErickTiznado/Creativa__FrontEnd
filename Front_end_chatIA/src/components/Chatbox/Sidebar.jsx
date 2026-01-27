@@ -68,7 +68,7 @@ const Sidebar = ({ className, onToggle, briefData = [], type }) => {
   return (
     <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">
-        <Rocket /> <h3>Resumen de Campaña</h3>
+        <Rocket /> <h3 className='sidebar-h3'>Resumen de Campaña</h3>
         <button className="close-sidebar-btn" onClick={onToggle}>
           <X />
         </button>

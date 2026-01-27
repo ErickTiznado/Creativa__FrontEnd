@@ -51,3 +51,16 @@ export const updateCampaignStatus = async (campaignId, status) => {
     throw e;
   }
 }
+
+
+export const getCampaignById = async (campaignId) => {
+
+  const user = localStorage.getItem("user");
+  const userId = JSON.parse(user).id;
+  try {
+
+  } catch (e) {
+    console.error("Error in getCampaignById:", e);
+    throw e;
+  }
+}

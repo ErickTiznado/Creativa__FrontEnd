@@ -1,135 +1,125 @@
-import { X } from 'lucide-react';
-import Cards from '../../components/Cards/cards.jsx'
-import Filter from '../../components/Filter/Filter.jsx'
-import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx'
-import './ViewCampaignsMarketing.css';
 import { useState, useEffect } from 'react';
+import Cards from '../../components/Cards/cards.jsx'
+import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx'
 import { handleGetCampaigns } from "../../../functions/handlegetCampaigns.js"
+import './ViewCampaignsMarketing.css';
 
+const SECTIONS_CONFIG = [
+    { id: 'draft', label: 'En proceso', title: 'Campañas en proceso' },
+    { id: 'approved', label: 'Aprobadas', title: 'Campañas aprobadas' },
+    { id: 'rejected', label: 'Rechazadas', title: 'Campañas rechazadas' },
+    { id: 'cancelled', label: 'Canceladas', title: 'Campañas canceladas' }
+];
 
-
+const STATUS_LABELS = {
+    draft: "En Proceso",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+    cancelled: "Cancelado"
+};
 
 function ViewCampaignsMarketing() {
     const [campaigns, setCampaigns] = useState([])
-    const [filterMenu, setFilterMenu] = useState(false);
-    const handleFilterClick = () => {
-        setFilterMenu(!filterMenu);
-    };
+    const [loading, setLoading] = useState(true);
+    const [activeFilter, setActiveFilter] = useState('all');
 
     useEffect(() => {
         const getCampaigns = async () => {
             try {
+                setLoading(true);
                 const result = await handleGetCampaigns()
                 if (result.success) {
-                    console.log(result.data)
-                    setCampaigns(result.data)
+                    setCampaigns(result.data || [])
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
+            } finally {
+                setLoading(false);
             }
         }
         getCampaigns()
     }, [])
 
-    const staus = {
-        draft: "En Proceso",
-        approved: "Aprobado",
-        rejected: "Rechazado",
-        cancelled: "Cancelado"
-    }
-    const draft = campaigns.filter(c => c.status === "draft")
-    const approved = campaigns.filter(c => c.status === "approved")
-    const rejected = campaigns.filter(c => c.status === "rejected")
-    const cancelled = campaigns.filter(c => c.status === "cancelled")
+    const getFilteredSections = () => {
+        if (activeFilter === 'all') {
+            return SECTIONS_CONFIG;
+        }
+        return SECTIONS_CONFIG.filter(section => section.id === activeFilter);
+    };
 
+    if (loading) return <div>Cargando...</div>;
 
     return (
-        <>
-            <div className='container-ViewCampaignsMarketing'>
-                <div className='header-ViewCampaignsMarketing'>
-                    <ButtonAdd />
+        <div className='container-ViewCampaignsMarketing'>
+            <div className='header-ViewCampaignsMarketing'>
+                <ButtonAdd />
 
-                    {/* Wrapper del filtro para posicionamiento */}
-                    <div className="filter-wrapper">
-                        <Filter onClick={handleFilterClick} />
-
-                        {/* Menú de filtro mejorado */}
-                        <div className={`filter-menu ${filterMenu ? 'open' : ''}`} role="menu" aria-hidden={!filterMenu}>
-                            <div className="filter-menu-inner">
-                                <div className="filter-header">
-                                    <strong>Filtrar por estado</strong>
-                                    <button className="filter-close" onClick={handleFilterClick} aria-label="Cerrar filtro"><X size={18} /></button>
-                                </div>
-
-                                <ul className="filter-list">
-                                    <li>
-                                        <input id="f-in-process" type="checkbox" className="checkbox" />
-                                        <label htmlFor="f-in-process">En proceso</label>
-                                    </li>
-                                    <li>
-                                        <input id="f-approved" type="checkbox" className="checkbox" />
-                                        <label htmlFor="f-approved">Aprobadas</label>
-                                    </li>
-                                    <li>
-                                        <input id="f-rejected" type="checkbox" className="checkbox" />
-                                        <label htmlFor="f-rejected">Rechazadas</label>
-                                    </li>
-                                    <li>
-                                        <input id="f-cancelled" type="checkbox" className="checkbox" />
-                                        <label htmlFor="f-cancelled">Canceladas</label>
-                                    </li>
-                                </ul>
-
-                                <div className="filter-actions">
-                                    <button className="btn-clear" onClick={() => { /* limpiar checks (implementar si se desea) */ }}>Limpiar</button>
-                                    <button className="btn-apply" onClick={() => setFilterMenu(false)}>Aplicar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div className="section-divider"></div>
-                <div className='cards-ViewCampaignsMarketing'>
-                    <h3>Campañas en proceso</h3>
-                    <div className='cards-proceso'>
-                        {console.log(`En proceso: ${draft}`)}
-                        {
-                            draft.map((c, index) => {
-                                return <Cards key={index} titulo={c.brief_data.nombre_campaing} estado={staus[`${c.status}`]} fecha={c.brief_data.fechaPublicacion} />
-                            })
-                        }
-                    </div>
-                    <div className="section-divider"></div>
-                    <h3>Campañas aprobadas</h3>
-                    <div className='cards-aprobadas'>
-                        {
-                            approved.map((c, index) => {
-                                return <Cards key={index} titulo={c.brief_data.nombre_campaing} estado={staus[`${c.status}`]} fecha={c.brief_data.fechaPublicacion} />
-                            })
-                        }
-                    </div>
-                    <div className="section-divider"></div>
-                    <h3>Campañas rechazadas</h3>
-                    <div className='cards-rechazadas'>
-                        {
-                            rejected.map((c, index) => {
-                                return <Cards key={index} titulo={c.brief_data.nombre_campaing} estado={staus[`${c.status}`]} fecha={c.brief_data.fechaPublicacion} />
-                            })
-                        }
-                    </div>
-                    <div className="section-divider"></div>
-                    <h3>Campañas canceladas</h3>
-                    <div className='cards-canceladas'>
-                        {
-                            cancelled.map((c, index) => {
-                                return <Cards key={index} titulo={c.brief_data.nombre_campaing} estado={staus[`${c.status}`]} fecha={c.brief_data.fechaPublicacion} />
-                            })
-                        }
-                    </div>
+                <div role="tablist" className="filter-tabs">
+                    <button
+                        role="tab"
+                        aria-selected={activeFilter === 'all'}
+                        className={`filter-tab ${activeFilter === 'all' ? 'active' : ''}`}
+                        onClick={() => setActiveFilter('all')}
+                    >
+                        Todos
+                    </button>
+                    {SECTIONS_CONFIG.map(section => (
+                        <button
+                            key={section.id}
+                            role="tab"
+                            aria-selected={activeFilter === section.id}
+                            className={`filter-tab ${activeFilter === section.id ? 'active' : ''}`}
+                            onClick={() => setActiveFilter(section.id)}
+                        >
+                            {section.label}
+                        </button>
+                    ))}
                 </div>
             </div>
-        </>
+
+            <div className='cards-ViewCampaignsMarketing'>
+                {getFilteredSections().map((section, index) => {
+                    const sectionCampaigns = campaigns.filter(c => c.status === section.id);
+
+                    // Skip empty sections in 'all' view to keep it clean
+                    if (activeFilter === 'all' && sectionCampaigns.length === 0) {
+                        return null;
+                    }
+
+                    return (
+                        <div key={section.id} className="section-container">
+                            <h3>{section.title}</h3>
+                            {sectionCampaigns.length > 0 ? (
+                                <div className='cards-grid'>
+                                    {sectionCampaigns.map((c, i) => (
+                                        <Cards
+                                            key={c.id || i}
+                                            titulo={c.brief_data?.nombre_campaing || "Sin título"}
+                                            estado={STATUS_LABELS[c.status]}
+                                            fecha={c.brief_data?.fechaPublicacion || "Fecha no disponible"}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="empty-state-container">
+                                    <span className="empty-state-icon">📂</span>
+                                    <p className="empty-state-text">No hay campañas en esta sección</p>
+                                </div>
+                            )}
+                            {activeFilter === 'all' && index < SECTIONS_CONFIG.length - 1 && <div className="section-divider"></div>}
+                        </div>
+                    );
+                })}
+
+                {/* Global Empty State */}
+                {activeFilter === 'all' && campaigns.length === 0 && (
+                    <div className="empty-state-container">
+                        <span className="empty-state-icon">📭</span>
+                        <p className="empty-state-text">No hay campañas disponibles.</p>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
 
