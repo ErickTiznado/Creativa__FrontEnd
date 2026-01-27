@@ -58,7 +58,9 @@ export const getCampaignById = async (campaignId) => {
   const user = localStorage.getItem("user");
   const userId = JSON.parse(user).id;
   try {
-
+    const response = await api.get('/campaigns/campaignById', { params: { campaignId, designerId: userId } })
+    console.log(response.data.data, "response")
+    return response.data.data
   } catch (e) {
     console.error("Error in getCampaignById:", e);
     throw e;

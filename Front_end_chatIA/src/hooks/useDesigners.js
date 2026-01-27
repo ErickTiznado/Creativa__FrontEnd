@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { getCampaigns, getDesigners } from "../services/designerService";
+import { useState, useEffect, use } from "react";
+import { getCampaigns, getDesigners, getCampaignById } from "../services/designerService";
 
 /**
  * Custom hook for fetching and managing the designers list.
@@ -73,4 +73,20 @@ export const useUpdateCampaignStatus = () => {
   };
 
   return { updateCampaignStatus };
+}
+
+
+export const useCampaignsById = () => {
+  const fetchCampaignsById = async (id) => {
+    try {
+      const response = await getCampaignById(id);
+      const data = response;
+      console.log(data, "response");
+      return data;
+    } catch (e) {
+      console.error("Error fetching campaigns by id:", e);
+      throw e;
+    }
+  }
+  return { fetchCampaignsById };
 }

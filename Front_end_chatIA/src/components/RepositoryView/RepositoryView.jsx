@@ -2,7 +2,7 @@ import React from 'react';
 import './RepositoryView.css';
 import { Check } from 'lucide-react';
 
-function RepositoryView({ campaignData, selectedIds, toggleSelection }) {
+function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [], loading = false }) {
     return (
         <div className='repository-container'>
             <section className='cw-top-section'>
@@ -26,24 +26,31 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection }) {
                     </div>
 
                     <div className='cw-image-grid'>
-                        {campaignData.repoImages.map((imgId) => {
-                            const isSelected = selectedIds.includes(imgId);
-                            return (
-                                <div
-                                    key={imgId}
-                                    className={`cw-img-card ${isSelected ? 'selected' : ''}`}
-                                    onClick={() => toggleSelection(imgId)}
-                                >
-                                    <span>IMG {imgId}</span>
-                                    {isSelected && <div className='cw-check-icon'><Check size={16} /></div>}
-                                </div>
-                            );
-                        })}
+                        {loading ? (
+                            <div className="cw-loading">Cargando recursos...</div>
+                        ) : assets.length > 0 ? (
+                            assets.map((asset) => {
+                                const isSelected = selectedIds.includes(asset.id);
+                                return (
+                                    <div
+                                        key={asset.id}
+                                        className={`cw-img-card ${isSelected ? 'selected' : ''}`}
+                                        onClick={() => toggleSelection(asset.id)}
+                                        style={{ overflow: 'hidden', padding: 0 }}
+                                    >
+                                        <img
+                                            src={asset.img_url?.thumbnail || asset.img_url?.url}
+                                            alt="Thumbnail"
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                                        />
+                                        {isSelected && <div className='cw-check-icon'><Check size={16} /></div>}
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="cw-empty">No hay imágenes en este repositorio.</div>
+                        )}
                     </div>
-
-                    {/* <button className='cw-btn-action'>
-                        Usar estas imágenes ({selectedIds.length})
-                    </button> */}
                 </div>
 
                 {/* Panel Derecho: Detalles (Brief) */}
@@ -83,11 +90,22 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection }) {
                     {selectedIds.length === 0 ? (
                         <p style={{ color: 'var(--color-notification)' }}>No has seleccionado imágenes aún.</p>
                     ) : (
-                        selectedIds.map((id) => (
-                            <div key={id} className='cw-selected-thumb'>
-                                IMG {id}
-                            </div>
-                        ))
+                        selectedIds.map((id) => {
+                            const asset = assets.find(a => a.id === id);
+                            return (
+                                <div key={id} className='cw-selected-thumb' style={{ overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {asset ? (
+                                        <img
+                                            src={asset.img_url?.thumbnail || asset.img_url?.url}
+                                            alt="Selected"
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        <span style={{ fontSize: '0.8rem' }}>IMG</span>
+                                    )}
+                                </div>
+                            );
+                        })
                     )}
                 </div>
             </section>

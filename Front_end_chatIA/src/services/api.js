@@ -22,23 +22,15 @@ api.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-api.interceptors.response.use((config) => {
-    if (config.status >= 200 && config.status <= 299) {
-        return config;
+api.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
+    if (error.response && error.response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
     }
-
-    if (config.error) {
-        const status = config.status
-        if (config.status === 401) {
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-            window.location.href = '/login'
-        }
-    }
-    else {
-        return Promise.reject(error);
-    }
-
+    return Promise.reject(error);
 });
 
 export const enhancePrompt = async (brief) => {

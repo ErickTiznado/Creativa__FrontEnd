@@ -87,7 +87,7 @@ function Cards(props) {
 	}, [props.titulo]); // re-evalúa al cambiar el título
 
 	return (
-		<div className="cards-container">
+		<div className="cards-container" onClick={props.onClick} style={{ cursor: props.onClick ? 'pointer' : 'default' }}>
 			<Clock size={24} className='imgCard' />
 			<div className='InfoCard'>
 				<h4 ref={titleRef} style={titleFontSize ? { fontSize: `${titleFontSize}px` } : undefined}>{props.titulo}</h4>

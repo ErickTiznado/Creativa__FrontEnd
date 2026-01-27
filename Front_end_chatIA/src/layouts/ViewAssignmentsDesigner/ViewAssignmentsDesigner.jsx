@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cards from '../../components/Cards/cards.jsx'
 import './ViewAssignmentsDesigner.css'
-import { useCampaigns, useUpdateCampaignStatus } from '../../hooks/useDesigners.js';
+import { useCampaigns, useUpdateCampaignStatus, useCampaignsById } from '../../hooks/useDesigners.js';
 import { FolderClosed, Inbox } from 'lucide-react';
-import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core';
+import { DndContext, useDraggable, useDroppable, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
 import { updateCampaignStatus } from '../../services/designerService.js';
-
+import { useCampaignsContext } from '../../context/CampaignContext';
 // Configuration for sections
 const SECTIONS_CONFIG = [
     { id: 'draft', label: 'En proceso', title: 'Campañas en proceso' },
@@ -20,6 +21,8 @@ const STATUS_LABELS = {
     rejected: "Rechazado",
     cancelled: "Cancelado"
 };
+
+
 
 
 const DraggableCard = ({ id, children }) => {
@@ -61,6 +64,16 @@ const DroppableSection = ({ id, children, className }) => {
 function ViewAssignmentsDesigner() {
     const { campaigns, loading, setCampaigns } = useCampaigns();
     const [activeFilter, setActiveFilter] = useState('all');
+    const navigate = useNavigate();
+    const { setSelectedCamp } = useCampaignsContext();
+    const { fetchCampaignsById } = useCampaignsById();
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            }
+        })
+    );
 
     if (loading) return <div>Cargando...</div>;
 
@@ -70,6 +83,17 @@ function ViewAssignmentsDesigner() {
         }
         return SECTIONS_CONFIG.filter(section => section.id === activeFilter);
     };
+
+    const handleCampaignbyId = async (id) => {
+        try {
+            const data = await fetchCampaignsById(id);
+            setSelectedCamp(data);
+            navigate('/designer/workspace');
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
 
     const handleDragEnd = (event) => {
         const { active, over } = event;
@@ -106,6 +130,8 @@ function ViewAssignmentsDesigner() {
         }
     };
 
+
+
     return (
         <div className='container-ViewCampaignsMarketing'>
             <div className='header-ViewAssignmentsDesigner'>
@@ -133,7 +159,7 @@ function ViewAssignmentsDesigner() {
             </div>
 
             <div className="cardsViewCampaignsMarketing">
-                <DndContext onDragEnd={handleDragEnd}>
+                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                     {getFilteredSections().map((section, index) => {
                         const sectionCampaigns = campaigns.filter(c => c.status === section.id);
 
@@ -151,6 +177,7 @@ function ViewAssignmentsDesigner() {
                                                     titulo={c.brief_data?.nombre_campaing || "Sin título"}
                                                     estado={STATUS_LABELS[c.status]}
                                                     fecha={c.brief_data?.fechaPublicacion || "Fecha no disponible"}
+                                                    onClick={() => handleCampaignbyId(c.id)}
                                                 />
                                             </DraggableCard>
                                         ))

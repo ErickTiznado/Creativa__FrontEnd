@@ -1,102 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './CampaignWorkspace.css';
 import './ImgGenerated.css';
-
 import { CircleUser, Bookmark, Save, Pencil, Menu, Check } from 'lucide-react';
+import { useCampaignWorkspace } from '../../hooks/useCampaignWorkspace';
 
 // Importar los nuevos componentes
 import RepositoryView from '../../components/RepositoryView/RepositoryView';
 import GeneratorView from '../../components/GeneratorView/GeneratorView';
 
 const CampaignWorkspace = () => {
-    // --- ESTADOS ---
-    const [activeTab, setActiveTab] = useState('Repositorio');
+    const {
+        // Data
+        campaignData,
 
-    // Estado Repositorio
-    const [selectedIds, setSelectedIds] = useState([1, 2]);
+        // UI State
+        activeTab, setActiveTab,
+        isSidebarOpen, setIsSidebarOpen,
 
-    // Estado Generador
-    const [prompt, setPrompt] = useState("Jóvenes universitarios, en oficina moderna, participando en Reunión...");
-    const [useReference, setUseReference] = useState(true);
-    const [aspectRatio, setAspectRatio] = useState("1:1 cuadrado");
-    const [quantity, setQuantity] = useState(2);
-    const [generatedImages, setGeneratedImages] = useState([]);
+        // Repository State
+        assets, loadingAssets, selectedIds, toggleSelection,
 
-    // Estado Edición
-    const [activeEdit, setActiveEdit] = useState('Solicitud');
-    const [selectedImg, setSelectedImg] = useState([]);
-    const [textEdit, setTextEdit] = useState("");
-    const [selectedSaveImg, setSelectedSaveImg] = useState([]);
+        // Generator State
+        prompt, setPrompt,
+        useReference, setUseReference,
+        aspectRatio, setAspectRatio,
+        quantity, setQuantity,
+        generatedImages, handleGenerate,
 
-    // NEW: control sidebar abierto/cerrado (responsive)
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+        // Edit State
+        activeEdit, setActiveEdit,
+        selectedImg, toggleSelectionImg,
+        textEdit, setTextEdit,
+        selectedSaveImg, toggleSaveImg,
+        handleGenerateEdit
+    } = useCampaignWorkspace();
 
-    // Mock Data
-    const campaignData = {
-        designer: "Juan Carlos",
-        title: "Campaña de reclutamiento de pasantes",
-        status: "En proceso",
-        details: {
-            objective: "Contactar estudiantes de diseño para pasantías de verano.",
-            channel: "Instagram, LinkedIn",
-            public: "Universitarios 18-24 años",
-            date: "12 de Octubre, 2023",
-            description: "Se requiere un estilo visual dinámico y juvenil."
-        },
-        tags: ["Reclutamiento", "Oficina", "Jóvenes", "Tecnología", "Verano", "Equipo"],
-        repoImages: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    };
-
-    useEffect(() => {
-        // Cerrar sidebar por defecto en pantallas pequeñas
-        const handleResize = () => {
-            if (window.innerWidth <= 950) {
-                setIsSidebarOpen(false);
-            } else {
-                setIsSidebarOpen(true);
-            }
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    // --- FUNCIONES ---
-    const toggleSelection = (id) => {
-        if (selectedIds.includes(id)) {
-            setSelectedIds(selectedIds.filter(itemId => itemId !== id));
-        } else {
-            setSelectedIds([...selectedIds, id]);
-        }
-    };
-
-    const toggleSelectionImg = (index) => {
-        if (selectedImg.includes(index)) {
-            setSelectedImg([]);
-        } else {
-            setSelectedImg([index]);
-        }
-    };
-
-    const toggleSaveImg = (index) => {
-        if (selectedSaveImg.includes(index)) {
-            setSelectedSaveImg(selectedSaveImg.filter(itemId => itemId !== index));
-        } else {
-            setSelectedSaveImg([...selectedSaveImg, index]);
-        }
-    };
-
-    const handleGenerate = () => {
-        const newImages = Array.from({ length: quantity }, (_, i) => `Generated IMG ${generatedImages.length + i + 1}`);
-        setGeneratedImages([...generatedImages, ...newImages]);
-        setActiveTab('ImgGenerada');
-    };
-
-    const handleGenerateEdit = () => {
-        // Lógica futura para editar 
-    };
-
-    const showEdit = () => {
+    // Helper para renderizar los controles de edición (UI only)
+    const renderEditControls = () => {
         if (activeEdit === 'Solicitud') {
             return (
                 <>
@@ -216,6 +156,8 @@ const CampaignWorkspace = () => {
                         campaignData={campaignData}
                         selectedIds={selectedIds}
                         toggleSelection={toggleSelection}
+                        assets={assets}
+                        loading={loadingAssets}
                     />
                 )}
 
@@ -274,7 +216,7 @@ const CampaignWorkspace = () => {
                                     <button className="Edit-prompt" onClick={() => setActiveEdit('Solicitud')} style={{ backgroundColor: activeEdit === 'Solicitud' ? 'rgba(255, 255, 255, 0.05)' : 'var(--bg-panel)' }}>Editar solicitud</button>
                                     <button className="Edit-img" onClick={() => setActiveEdit('Imagen')} style={{ backgroundColor: activeEdit === 'Imagen' ? 'rgba(255, 255, 255, 0.05)' : 'var(--bg-panel)' }}>Editar imagen</button>
                                 </div>
-                                {showEdit()}
+                                {renderEditControls()}
                             </div>
                         </section>
 
@@ -309,8 +251,6 @@ const CampaignWorkspace = () => {
                         </section>
                     </div>
                 )}
-
-                {/* {activeTab === 'Observaciones' && <div className='cw-placeholder-view-generated'>Notas y Observaciones</div>} */}
             </main>
         </div>
     );
