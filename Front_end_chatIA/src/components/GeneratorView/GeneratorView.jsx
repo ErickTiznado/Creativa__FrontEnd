@@ -1,7 +1,38 @@
 import { useState, useRef, useEffect } from 'react';
 import { enhancePrompt } from '../../services/api';
-import { Sparkles } from 'lucide-react';
+import { refineAsset } from '../../services/generatorService';
+import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark } from 'lucide-react';
 import './GeneratorView.css';
+
+// Reference Images Strip Component
+function ReferenceImagesStrip({ images, onDeselect }) {
+    if (!images || images.length === 0) return null;
+
+    return (
+        <div className="reference-strip">
+            <div className="reference-strip-header">
+                <span className="reference-count">{images.length} {images.length === 1 ? 'referencia' : 'referencias'}</span>
+            </div>
+            <div className="reference-grid">
+                {images.map((img) => (
+                    <div key={img.id} className="reference-item">
+                        <img
+                            src={typeof img.img_url === 'string' ? img.img_url : img.img_url?.url}
+                            alt="Referencia"
+                        />
+                        <button
+                            className="remove-ref-btn"
+                            onClick={() => onDeselect(img.id)}
+                            title="Deseleccionar"
+                        >
+                            <X size={12} />
+                        </button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
 
 function GeneratorView({
     designerName,
@@ -14,112 +45,174 @@ function GeneratorView({
     quantity,
     setQuantity,
     handleGenerate,
-    generatedImages
+    generatedImages,
+    referenceImages = [],
+    onDeselectReference,
+    savedAssets = [],
+    onToggleSaveAsset
 }) {
-    // Estado local para controlar la carga de la mejora
+    // ===== STATE MANAGEMENT =====
+    const [mode, setMode] = useState('create'); // 'create' | 'edit'
+    const [editingImage, setEditingImage] = useState(null);
+    const [editHistory, setEditHistory] = useState([]); // History of iterations for current editing image
     const [isEnhancing, setIsEnhancing] = useState(false);
+    const [isRefining, setIsRefining] = useState(false);
 
-    const textareaRef = useRef(null);
+    // Mock data for testing
+    const [localImages, setLocalImages] = useState([]);
 
     useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.style.height = '250px';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight} px`;
+        if (!generatedImages || generatedImages.length === 0) {
+            setLocalImages([
+                "https://images.unsplash.com/photo-1721332155633-159524f0e952?w=500&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1721332155433-3a4b5446d539?w=500&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1719937206168-f4c02f29b5de?w=500&auto=format&fit=crop&q=60"
+            ]);
+        } else {
+            setLocalImages(generatedImages);
         }
-    }, [prompt]);
+    }, [generatedImages]);
 
-    // Función para manejar el clic en la varita
+    const displayImages = localImages;
+    const textareaRef = useRef(null);
+
+    // ===== MODE HANDLERS =====
+    const enterEditMode = (image) => {
+        setMode('edit');
+        setEditingImage(image);
+        setEditHistory([image]); // Initialize edit history with original image
+        setPrompt('');
+    };
+
+    const exitEditMode = () => {
+        setMode('create');
+        setEditingImage(null);
+        setPrompt('');
+    };
+
+    // ===== ACTION HANDLERS =====
     const handleEnhanceClick = async () => {
         if (!prompt || prompt.trim().length === 0) return;
-
         setIsEnhancing(true);
         try {
-            const enhacedText = await enhancePrompt(prompt);
-            setPrompt(enhacedText);
+            const enhancedText = await enhancePrompt(prompt);
+            setPrompt(enhancedText);
         } catch (error) {
-            alert("No se pudo mejorar el prompt en este momento.");
+            console.error(error);
         } finally {
             setIsEnhancing(false);
         }
     };
 
+    const handlePrimaryAction = async () => {
+        if (mode === 'create') {
+            await handleGenerate();
+        } else {
+            if (!editingImage || !prompt) return;
+            setIsRefining(true);
+            try {
+                console.log('Refining image with prompt:', prompt);
+                // Simulate adding new iteration to edit history
+                const newIteration = `${editingImage}_edited_${editHistory.length}`;
+                setEditHistory([...editHistory, newIteration]);
+                setEditingImage(newIteration); // Update canvas to show new iteration
+                setPrompt(''); // Clear prompt for next edit
+            } catch (e) {
+                console.error("Refine error", e);
+            } finally {
+                setIsRefining(false);
+            }
+        }
+    };
+
+    // ===== DERIVED STATE =====
+    const isEditMode = mode === 'edit';
+    const canvasImage = isEditMode ? editingImage : (displayImages.length > 0 ? displayImages[displayImages.length - 1] : null);
+    const showParameters = mode === 'create';
+    const showReferenceControls = mode === 'create';
+
     return (
         <div className='generator-container'>
-            <header className="gen-header">
-                <div className="icon-container">
-                    <Sparkles className="sparkles" size={32} />
-                </div>
-                <div className="header-text">
-                    <h1>Hola, {designerName}</h1>
-                    <p>¡Empecemos!</p>
-                </div>
-            </header>
+            {/* LEFT: CONTROLS */}
+            <aside className="controls-panel">
 
-            <section className="generator-panel">
-                <div className="prompt-container" style={{ position: 'relative' }}>
+                {/* Mode Indicator */}
+                {isEditMode && (
+                    <div className="mode-indicator">
+                        <span className="mode-badge">
+                            <Edit3 size={16} className="mode-icon" />
+                            Modo Edición
+                        </span>
+                        <button
+                            className="exit-mode-btn"
+                            onClick={exitEditMode}
+                            title="Salir del modo edición"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+                )}
+
+                {/* Prompt Input */}
+                <div className="prompt-group">
+                    <label>
+                        {isEditMode ? 'Instrucciones de Edición' : 'Prompt de Generación'}
+                    </label>
                     <textarea
                         ref={textareaRef}
                         className="prompt-input"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="Describe lo que quieres generar..."
-                        disabled={isEnhancing} // Deshabilitar mientras carga
-                        rows={1}
+                        placeholder={isEditMode
+                            ? "Describe los cambios (ej. 'Añade gafas de sol', 'Cambia el fondo a playa')..."
+                            : "Describe lo que quieres generar..."}
                     />
-
-                    {/* BOTÓN DE VARITA MÁGICA */}
-                    <button
-                        className={`magic - wand - btn ${isEnhancing ? 'loading' : ''} `}
-                        onClick={handleEnhanceClick}
-                        disabled={isEnhancing || !prompt}
-                        title="Mejorar prompt con IA"
-                        style={{
-                            position: 'absolute',
-                            bottom: '15px',
-                            right: '15px',
-                            background: 'rgba(255, 255, 255, 0.1)',
-                            border: '1px solid rgba(255, 255, 255, 0.2)',
-                            borderRadius: '8px',
-                            padding: '8px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.3s ease',
-                            color: 'white'
-                        }}
-                    >
-                        {isEnhancing ? (
-                            <span style={{ fontSize: '14px' }}>✨...</span>
-                        ) : (
-                            // Icono SVG de Varita Mágica
-                            <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M15 4V2" />
-                                <path d="M15 16V14" />
-                                <path d="M8 9h2" />
-                                <path d="M20 9h2" />
-                                <path d="M17.8 11.8L19 13" />
-                                <path d="M15 9h0" />
-                                <path d="M17.8 6.2L19 5" />
-                                <path d="M3 21l9-9" />
-                                <path d="M12.2 6.2L11 5" />
-                            </svg>
-                        )}
-                    </button>
+                    <div className="prompt-toolbar">
+                        <button
+                            className="magic-wand-btn"
+                            onClick={handleEnhanceClick}
+                            disabled={isEnhancing || !prompt}
+                            title="Mejorar con IA"
+                        >
+                            {isEnhancing ? <Sparkles size={16} className="animate-spin" /> : <Wand2 size={16} />}
+                        </button>
+                    </div>
                 </div>
-                <div className="controls-row">
-                    <div className='box-options'>
-                        <div className="control-group toggle-group">
-                            <label>Imagen de referencia</label>
+
+                {/* Parameters - Only in CREATE mode */}
+                {showParameters && (
+                    <div className="parameters-grid">
+                        <div className="control-group">
+                            <label>Formato</label>
+                            <select
+                                className="custom-select"
+                                value={aspectRatio}
+                                onChange={(e) => setAspectRatio(e.target.value)}
+                            >
+                                <option value="1:1">Cuadrado (1:1)</option>
+                                <option value="16:9">Paisaje (16:9)</option>
+                                <option value="9:16">Historia (9:16)</option>
+                            </select>
+                        </div>
+                        <div className="control-group">
+                            <label>Cantidad</label>
+                            <input
+                                type="number"
+                                value={quantity}
+                                onChange={(e) => setQuantity(Number(e.target.value))}
+                                className="qty-input"
+                                min="1"
+                                max="4"
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Reference Toggle - Only in CREATE mode */}
+                {showReferenceControls && (
+                    <div className="control-group">
+                        <label>Usar Referencia</label>
+                        <div className="switch-container">
                             <label className="switch">
                                 <input
                                     type="checkbox"
@@ -128,56 +221,151 @@ function GeneratorView({
                                 />
                                 <span className="slider round"></span>
                             </label>
+                            <span className="switch-label">
+                                {useReference ? 'Activado' : 'Desactivado'}
+                            </span>
                         </div>
-                        <div className="control-group">
-                            <label>Relación de aspecto</label>
-                            <select
-                                className="custom-select"
-                                value={aspectRatio}
-                                onChange={(e) => setAspectRatio(e.target.value)}
-                            >
-                                <option>1:1 cuadrado</option>
-                                <option>16:9 panorámico</option>
-                                <option>9:16 vertical</option>
-                            </select>
-                        </div>
-                        <div className="control-group small-input">
-                            <label>Cantidad:</label>
-                            <input
-                                type="number"
-                                value={quantity}
-                                onChange={(e) => setQuantity(Number(e.target.value))}
-                                className="qty-input"
-                                min="1"
-                                max="10"
-                            />
-                        </div>
-                    </div>
-                    <button className="generate-btn" onClick={handleGenerate}>
-                        Generar
-                    </button>
-                </div>
-            </section>
 
-            {/* <section className="gallery-section">
-                <div className="gallery-header">
-                    <h3>Galería</h3>
-                    <button className="add-image-icon">
-                        <span>Agregar</span> <span>+</span>
-                    </button>
-                </div>
-                <div className={`gallery - content ${ generatedImages.length === 0 ? 'empty' : '' } `}>
-                    {generatedImages.length === 0 ? (
-                        <p>No hay imágenes guardadas</p>
-                    ) : (
-                        generatedImages.map((img, index) => (
-                            <div key={index} className="generated-image">
-                                {img}
+                        {/* Reference Images Strip */}
+                        {useReference && (
+                            <div className="reference-section">
+                                {referenceImages.length > 0 ? (
+                                    <ReferenceImagesStrip
+                                        images={referenceImages}
+                                        onDeselect={onDeselectReference}
+                                    />
+                                ) : (
+                                    <p className="warning-text">
+                                        Selecciona imágenes del Repositorio
+                                    </p>
+                                )}
                             </div>
-                        ))
+                        )}
+                    </div>
+                )}
+
+                {/* Primary Action Button */}
+                <button
+                    className={`generate-btn ${isEditMode ? 'edit-mode' : ''}`}
+                    onClick={handlePrimaryAction}
+                    disabled={!prompt || (isEditMode && isRefining)}
+                >
+                    {isRefining ? 'Aplicando cambios...' : isEditMode ? 'Aplicar Cambios' : 'Generar Imágenes'}
+                </button>
+            </aside>
+
+            {/* RIGHT: CANVAS */}
+            <main className="canvas-area">
+                <div className="canvas-header">
+                    <h2>
+                        {isEditMode ? 'Editando Imagen' : canvasImage ? 'Vista Previa' : 'Canvas'}
+                    </h2>
+                    {canvasImage && (
+                        <div className="canvas-actions">
+                            <button
+                                className={`canvas-action-btn ${savedAssets.includes(canvasImage) ? 'saved' : ''}`}
+                                onClick={() => onToggleSaveAsset(canvasImage)}
+                                title={savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar como asset'}
+                            >
+                                <Bookmark size={18} fill={savedAssets.includes(canvasImage) ? 'currentColor' : 'none'} />
+                            </button>
+                            <button className="canvas-action-btn" title="Descargar">
+                                <Download size={18} />
+                            </button>
+                        </div>
                     )}
                 </div>
-            </section> */}
+
+                <div className="canvas-preview">
+                    {canvasImage ? (
+                        <div className="preview-container">
+                            {typeof canvasImage === 'string' ? (
+                                <img src={canvasImage} alt="Preview" className="preview-image" />
+                            ) : (
+                                canvasImage
+                            )}
+                        </div>
+                    ) : (
+                        <div className="empty-canvas">
+                            <ImageIcon size={48} className="empty-icon" />
+                            <p>Genera una imagen o selecciona una del historial para editar</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* History Strip - Changes based on mode */}
+                <div className="history-strip">
+                    <h3>{isEditMode ? 'Iteraciones de Edición' : 'Historial'}</h3>
+                    <div className="history-grid">
+                        {(isEditMode ? editHistory : displayImages).length === 0 ? (
+                            <span className="empty-history">Sin historial</span>
+                        ) : (
+                            (isEditMode ? editHistory : displayImages).map((img, index) => (
+                                <div
+                                    key={index}
+                                    className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
+                                    onClick={() => isEditMode ? setEditingImage(img) : enterEditMode(img)}
+                                    title={isEditMode ? 'Ver iteración' : 'Click para editar'}
+                                >
+                                    {typeof img === 'string' ? (
+                                        <img src={img} alt={isEditMode ? `Iteración ${index + 1}` : `Generación ${index + 1}`} />
+                                    ) : (
+                                        img
+                                    )}
+                                    {savedAssets.includes(img) && (
+                                        <div className="saved-badge">
+                                            <Bookmark size={12} fill="currentColor" />
+                                        </div>
+                                    )}
+                                    <div className="history-overlay">
+                                        <button
+                                            className="history-save-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onToggleSaveAsset(img);
+                                            }}
+                                            title={savedAssets.includes(img) ? 'Guardado' : 'Guardar'}
+                                        >
+                                            <Bookmark size={14} fill={savedAssets.includes(img) ? 'currentColor' : 'none'} />
+                                        </button>
+                                        {!isEditMode && (
+                                            <div className="history-edit-indicator">
+                                                <Edit3 size={16} />
+                                                <span>Editar</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* Saved Assets Section */}
+                {savedAssets.length > 0 && (
+                    <div className="saved-assets-strip">
+                        <h3>Assets Guardados ({savedAssets.length})</h3>
+                        <div className="saved-assets-grid">
+                            {savedAssets.map((img, index) => (
+                                <div key={index} className="saved-asset-item">
+                                    {typeof img === 'string' ? (
+                                        <img src={img} alt={`Asset ${index + 1}`} />
+                                    ) : (
+                                        img
+                                    )}
+                                    <button
+                                        className="remove-asset-btn"
+                                        onClick={() => onToggleSaveAsset(img)}
+                                        title="Quitar de guardados"
+                                    >
+                                        <X size={12} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </main>
         </div>
     );
 }

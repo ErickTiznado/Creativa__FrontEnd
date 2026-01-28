@@ -137,7 +137,7 @@ export const useCampaignWorkspace = () => {
     const handleGenerate = () => {
         const newImages = Array.from({ length: quantity }, (_, i) => `Generated IMG ${generatedImages.length + i + 1}`);
         setGeneratedImages([...generatedImages, ...newImages]);
-        setActiveTab('ImgGenerada');
+        // Stay in Generador tab - images will appear in GeneratorView canvas
     };
 
     const handleGenerateEdit = () => {
@@ -148,6 +148,7 @@ export const useCampaignWorkspace = () => {
     return {
         // Data
         campaignData,
+        campaign, // Campaign object with ID
 
         // UI State
         activeTab,

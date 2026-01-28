@@ -7,11 +7,13 @@ import { useCampaignWorkspace } from '../../hooks/useCampaignWorkspace';
 // Importar los nuevos componentes
 import RepositoryView from '../../components/RepositoryView/RepositoryView';
 import GeneratorView from '../../components/GeneratorView/GeneratorView';
+import SavedAssetsView from '../../components/SavedAssetsView/SavedAssetsView';
 
 const CampaignWorkspace = () => {
     const {
         // Data
         campaignData,
+        campaign, // Add campaign object for ID extraction
 
         // UI State
         activeTab, setActiveTab,
@@ -34,6 +36,17 @@ const CampaignWorkspace = () => {
         selectedSaveImg, toggleSaveImg,
         handleGenerateEdit
     } = useCampaignWorkspace();
+
+    // Saved assets state (lifted from GeneratorView)
+    const [savedAssets, setSavedAssets] = React.useState([]);
+
+    const toggleSaveAsset = (image) => {
+        if (savedAssets.includes(image)) {
+            setSavedAssets(savedAssets.filter(img => img !== image));
+        } else {
+            setSavedAssets([...savedAssets, image]);
+        }
+    };
 
     // Helper para renderizar los controles de edición (UI only)
     const renderEditControls = () => {
@@ -131,6 +144,12 @@ const CampaignWorkspace = () => {
                     >
                         Generador Img
                     </button>
+                    <button
+                        className={`cw-nav-item ${activeTab === 'Assets' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('Assets')}
+                    >
+                        Assets
+                    </button>
                 </nav>
             </aside>
 
@@ -174,6 +193,19 @@ const CampaignWorkspace = () => {
                         setQuantity={setQuantity}
                         handleGenerate={handleGenerate}
                         generatedImages={generatedImages}
+                        referenceImages={assets.filter(asset => selectedIds.includes(asset.id))}
+                        onDeselectReference={toggleSelection}
+                        savedAssets={savedAssets}
+                        onToggleSaveAsset={toggleSaveAsset}
+                    />
+                )}
+
+                {/* Assets Tab */}
+                {activeTab === 'Assets' && (
+                    <SavedAssetsView
+                        savedAssets={savedAssets}
+                        onRemoveAsset={toggleSaveAsset}
+                        campaignId={campaign?.id}
                     />
                 )}
 

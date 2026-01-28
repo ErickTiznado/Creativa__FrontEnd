@@ -1,5 +1,5 @@
 import { useState, useEffect, use } from "react";
-import { getCampaigns, getDesigners, getCampaignById } from "../services/designerService";
+import { getCampaigns, getDesigners, getCampaignById, updateCampaignStatus } from "../services/designerService";
 
 /**
  * Custom hook for fetching and managing the designers list.
@@ -61,7 +61,7 @@ export const useCampaigns = () => {
 
 
 export const useUpdateCampaignStatus = () => {
-  const updateCampaignStatus = async (campaignId, status) => {
+  const updateStatus = async (campaignId, status) => {
     try {
       const response = await updateCampaignStatus(campaignId, status);
       console.log(response.data, "response");
@@ -72,7 +72,7 @@ export const useUpdateCampaignStatus = () => {
     }
   };
 
-  return { updateCampaignStatus };
+  return { updateCampaignStatus: updateStatus };
 }
 
 
