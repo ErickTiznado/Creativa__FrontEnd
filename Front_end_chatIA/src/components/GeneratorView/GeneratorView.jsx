@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { enhancePrompt } from '../../services/api';
-import { refineAsset } from '../../services/generatorService';
+import { enhancePrompt, refineAsset } from '../../services/generatorService';
 import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark } from 'lucide-react';
 import './GeneratorView.css';
 
@@ -49,7 +48,9 @@ function GeneratorView({
     referenceImages = [],
     onDeselectReference,
     savedAssets = [],
-    onToggleSaveAsset
+    onToggleSaveAsset,
+    isGenerating = false,
+    generationError = null
 }) {
     // ===== STATE MANAGEMENT =====
     const [mode, setMode] = useState('create'); // 'create' | 'edit'
@@ -58,19 +59,11 @@ function GeneratorView({
     const [isEnhancing, setIsEnhancing] = useState(false);
     const [isRefining, setIsRefining] = useState(false);
 
-    // Mock data for testing
+    // Display images from props
     const [localImages, setLocalImages] = useState([]);
 
     useEffect(() => {
-        if (!generatedImages || generatedImages.length === 0) {
-            setLocalImages([
-                "https://images.unsplash.com/photo-1721332155633-159524f0e952?w=500&auto=format&fit=crop&q=60",
-                "https://images.unsplash.com/photo-1721332155433-3a4b5446d539?w=500&auto=format&fit=crop&q=60",
-                "https://images.unsplash.com/photo-1719937206168-f4c02f29b5de?w=500&auto=format&fit=crop&q=60"
-            ]);
-        } else {
-            setLocalImages(generatedImages);
-        }
+        setLocalImages(generatedImages);
     }, [generatedImages]);
 
     const displayImages = localImages;
@@ -244,14 +237,22 @@ function GeneratorView({
                     </div>
                 )}
 
+
                 {/* Primary Action Button */}
                 <button
                     className={`generate-btn ${isEditMode ? 'edit-mode' : ''}`}
                     onClick={handlePrimaryAction}
-                    disabled={!prompt || (isEditMode && isRefining)}
+                    disabled={!prompt || (isEditMode && isRefining) || isGenerating}
                 >
-                    {isRefining ? 'Aplicando cambios...' : isEditMode ? 'Aplicar Cambios' : 'Generar Imágenes'}
+                    {isGenerating ? 'Generando...' : isRefining ? 'Aplicando cambios...' : isEditMode ? 'Aplicar Cambios' : 'Generar Imágenes'}
                 </button>
+                
+                {/* Error Message */}
+                {generationError && (
+                    <div style={{ color: '#ff6b6b', padding: '10px', textAlign: 'center', fontSize: '14px' }}>
+                        {generationError}
+                    </div>
+                )}
             </aside>
 
             {/* RIGHT: CANVAS */}

@@ -28,6 +28,7 @@ const CampaignWorkspace = () => {
         aspectRatio, setAspectRatio,
         quantity, setQuantity,
         generatedImages, handleGenerate,
+        isGenerating, generationError,
 
         // Edit State
         activeEdit, setActiveEdit,
@@ -69,9 +70,9 @@ const CampaignWorkspace = () => {
                                     value={aspectRatio}
                                     onChange={(e) => setAspectRatio(e.target.value)}
                                 >
-                                    <option>1:1 cuadrado</option>
-                                    <option>16:9 panoramico</option>
-                                    <option>9:16 vertical</option>
+                                    <option value="1:1">1:1 cuadrado</option>
+                                    <option value="16:9">16:9 panoramico</option>
+                                    <option value="9:16">9:16 vertical</option>
                                 </select>
                             </div>
                         </div>
@@ -101,9 +102,9 @@ const CampaignWorkspace = () => {
                                     value={aspectRatio}
                                     onChange={(e) => setAspectRatio(e.target.value)}
                                 >
-                                    <option>1:1 cuadrado</option>
-                                    <option>16:9 panoramico</option>
-                                    <option>9:16 vertical</option>
+                                    <option value="1:1">1:1 cuadrado</option>
+                                    <option value="16:9">16:9 panoramico</option>
+                                    <option value="9:16">9:16 vertical</option>
                                 </select>
                             </div>
                         </div>
@@ -180,6 +181,7 @@ const CampaignWorkspace = () => {
                     />
                 )}
 
+
                 {activeTab === 'Generador' && (
                     <GeneratorView
                         designerName={campaignData.designer}
@@ -197,6 +199,8 @@ const CampaignWorkspace = () => {
                         onDeselectReference={toggleSelection}
                         savedAssets={savedAssets}
                         onToggleSaveAsset={toggleSaveAsset}
+                        isGenerating={isGenerating}
+                        generationError={generationError}
                     />
                 )}
 
