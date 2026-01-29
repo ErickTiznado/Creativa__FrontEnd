@@ -10,8 +10,8 @@
 
 /* ===== LEFT PANEL: CONTROLS ===== */
 .controls-panel {
-  width: 360px;
-  min-width: 320px;
+  width: 400px;
+  min-width: 420px;
   background-color: var(--color-navbar);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
@@ -19,6 +19,7 @@
   padding: 20px;
   gap: 16px;
   overflow-y: auto;
+  border-radius: 10px 0 0 10px;
 }
 
 .controls-header {
@@ -89,7 +90,7 @@
 
 .prompt-input {
   width: 100%;
-  min-height: 100px;
+  min-height: 200px;
   max-height: 200px;
   padding: 12px;
   background-color: rgba(255, 255, 255, 0.05);
@@ -97,7 +98,7 @@
   border-radius: 6px;
   color: var(--color-white);
   font-size: 0.9rem;
-  resize: vertical;
+  resize: none;
   transition:
     border-color 0.2s,
     background-color 0.2s;
@@ -186,6 +187,11 @@
     background-color 0.2s;
   font-family: var(--font-Itim);
 }
+.custom-select option{
+  background-color: var(--color-dark-blue);
+  color: var(--color-white);
+  font-family: var(--font-Itim);
+}
 
 .custom-select:focus,
 .qty-input:focus {
@@ -257,6 +263,23 @@ input:checked + .slider:before {
   font-size: 0.9rem;
   opacity: 0.6;
   color: var(--color-white);
+}
+
+/* Botón agregar imagen junto al switch */
+.add-image-btn {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--color-white);
+  padding: 8px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-Itim);
+}
+.add-image-btn:hover {
+  background-color: rgba(255,255,255,0.08);
 }
 
 /* ===== REFERENCE IMAGES STRIP ===== */
@@ -405,6 +428,7 @@ input:checked + .slider:before {
   justify-content: space-between;
   padding: 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--color-navbar);
 }
 
 .canvas-header h2 {

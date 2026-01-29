@@ -90,6 +90,11 @@
     overflow-y: auto;
     padding-right: 5px;
     max-height: 300px;
+    /* Evitar solapamientos en pantallas pequeñas: asegurar filas automáticas y alineamiento
+       usar minmax para que cada fila pueda crecer según el contenido y no colapsar */
+    grid-auto-rows: minmax(100px, auto);
+    align-items: start;
+    align-content: start;
 }
 
 /* Scrollbar */
@@ -113,6 +118,8 @@
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.2s;
+    box-sizing: border-box;
+    min-height: 0; /* evitar que las celdas del grid crezcan y se solapen */
 }
 
 .cw-img-card:hover {
@@ -213,4 +220,90 @@
     align-items: center;
     justify-content: center;
     border: 1px dashed var(--color-notification);
+}
+
+/* Modal preview para imagenes (activado por long-press) */
+.rv-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 20px;
+}
+
+.rv-modal-content {
+    background: var(--color-navbar);
+    border-radius: 12px;
+    max-width: 95%;
+    max-height: 90%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.rv-modal-content img {
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+    object-fit: contain;
+}
+
+.rv-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--color-white);
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+/* Small touch affordance: prevent text selection while pressing */
+.cw-img-card, .cw-img-card img {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Ajustes adicionales en pantallas muy estrechas para forzar filas limpias */
+@media (max-width: 900px) {
+    .cw-image-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-auto-rows: minmax(100px, auto);
+        gap: 10px;
+        /* Mantener la misma altura fija para el contenedor en responsive y usar scroll interno */
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .cw-img-card {
+        aspect-ratio: 1; /* mantener proporción cuadrada */
+    }
+}
+
+/* En pantallas muy pequeñas: mover el panel derecho encima del repositorio */
+@media (max-width: 700px) {
+    .cw-top-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: auto; /* permitir que los paneles se acomoden verticalmente */
+    }
+
+    .cw-top-section .cw-panel {
+        width: 100%;
+        padding: 18px; /* reducir padding en mobile para ahorrar espacio */
+    }
+
+    /* El segundo panel (detalles) se coloca arriba mediante order */
+    .cw-top-section .cw-panel:last-child {
+        order: -1;
+    }
 }

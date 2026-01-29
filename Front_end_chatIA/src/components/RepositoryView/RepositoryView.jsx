@@ -3,7 +3,42 @@ import './RepositoryView.css';
 import { Check } from 'lucide-react';
 
 function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [], loading = false }) {
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [modalImage, setModalImage] = React.useState(null);
+    const timerRef = React.useRef(null);
+
+    const startLongPress = (imgUrl) => {
+        // iniciar temporizador de 500ms
+        clearLongPress();
+        timerRef.current = setTimeout(() => {
+            setModalImage(imgUrl);
+            setModalOpen(true);
+            timerRef.current = null;
+        }, 500);
+    };
+
+    const clearLongPress = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setModalImage(null);
+    };
+    // Bloquear scroll del body mientras el modal está abierto
+    React.useEffect(() => {
+        if (modalOpen) {
+            const prev = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            return () => { document.body.style.overflow = prev; };
+        }
+        return undefined;
+    }, [modalOpen]);
     return (
+        <>
         <div className='repository-container'>
             <section className='cw-top-section'>
                 {/* Panel Izquierdo: Buscador y Grid */}
@@ -37,6 +72,12 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                         className={`cw-img-card ${isSelected ? 'selected' : ''}`}
                                         onClick={() => toggleSelection(asset.id)}
                                         style={{ overflow: 'hidden', padding: 0 }}
+                                        onMouseDown={() => startLongPress(asset.img_url?.url || asset.img_url?.thumbnail)}
+                                        onMouseUp={clearLongPress}
+                                        onMouseLeave={clearLongPress}
+                                        onTouchStart={() => startLongPress(asset.img_url?.url || asset.img_url?.thumbnail)}
+                                        onTouchEnd={clearLongPress}
+                                        onTouchMove={clearLongPress}
                                     >
                                         <img
                                             src={asset.img_url?.thumbnail || asset.img_url?.url}
@@ -110,6 +151,15 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                 </div>
             </section>
         </div>
+        {modalOpen && (
+            <div className="rv-modal-overlay" onClick={handleCloseModal}>
+                <div className="rv-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="rv-modal-close" onClick={handleCloseModal} aria-label="Cerrar">×</button>
+                    <img src={modalImage} alt="Preview" />
+                </div>
+            </div>
+        )}
+        </>
     );
 }
 
