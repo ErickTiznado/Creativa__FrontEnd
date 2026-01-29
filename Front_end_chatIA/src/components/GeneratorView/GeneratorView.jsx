@@ -228,7 +228,7 @@ function GeneratorView({
                         </button>
                     </div>
                 </div>
-
+                 {/* hola prueba */}
                 {/* Parameters - Only in CREATE mode */}
                 {showParameters && (
                     <div className="parameters-grid">
