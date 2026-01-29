@@ -65,6 +65,25 @@ function GeneratorView({
 
     // Fullscreen modal state
     const [fullscreenImage, setFullscreenImage] = useState(null);
+    // File input ref for "Agregar imagen" button
+    const fileInputRef = useRef(null);
+
+    const handleAddImageClick = () => {
+        if (fileInputRef.current) fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            // Añadir la imagen cargada al estado local (preview)
+            setLocalImages(prev => [...prev, reader.result]);
+        };
+        reader.readAsDataURL(file);
+        // limpiar el input para permitir volver a seleccionar el mismo archivo
+        e.target.value = '';
+    };
 
     useEffect(() => {
         setLocalImages(generatedImages);
@@ -223,7 +242,7 @@ function GeneratorView({
                         </button>
                     </div>
                 </div>
-
+                 {/* hola prueba */}
                 {/* Parameters - Only in CREATE mode */}
                 {showParameters && (
                     <div className="parameters-grid">
@@ -256,19 +275,31 @@ function GeneratorView({
                 {/* Reference Toggle - Only in CREATE mode */}
                 {showReferenceControls && (
                     <div className="control-group">
-                        <label>Usar Referencia</label>
-                        <div className="switch-container">
-                            <label className="switch">
-                                <input
-                                    type="checkbox"
-                                    checked={useReference}
-                                    onChange={(e) => setUseReference(e.target.checked)}
-                                />
-                                <span className="slider round"></span>
-                            </label>
-                            <span className="switch-label">
-                                {useReference ? 'Activado' : 'Desactivado'}
-                            </span>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12}}>
+                            <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                                <label>Usar Referencia</label>
+                                <div className="switch-container">
+                                    <label className="switch">
+                                        <input
+                                            type="checkbox"
+                                            checked={useReference}
+                                            onChange={(e) => setUseReference(e.target.checked)}
+                                        />
+                                        <span className="slider round"></span>
+                                    </label>
+                                    <span className="switch-label">
+                                        {useReference ? 'Activado' : 'Desactivado'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="button" className="add-image-btn" onClick={handleAddImageClick} title="Agregar imagen">
+                                    <ImageIcon size={14} />
+                                    <span style={{marginLeft:8}}>Agregar</span>
+                                </button>
+                                <input ref={fileInputRef} type="file" accept="image/*" style={{display: 'none'}} onChange={handleFileChange} />
+                            </div>
                         </div>
 
                         {/* Reference Images Strip */}
