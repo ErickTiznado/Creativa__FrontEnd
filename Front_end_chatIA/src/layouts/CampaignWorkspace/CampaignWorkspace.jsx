@@ -35,7 +35,8 @@ const CampaignWorkspace = () => {
         selectedImg, toggleSelectionImg,
         textEdit, setTextEdit,
         selectedSaveImg, toggleSaveImg,
-        handleGenerateEdit
+        handleGenerateEdit,
+        getRefinements
     } = useCampaignWorkspace();
 
     // Saved assets state (lifted from GeneratorView)
@@ -201,6 +202,7 @@ const CampaignWorkspace = () => {
                         onToggleSaveAsset={toggleSaveAsset}
                         isGenerating={isGenerating}
                         generationError={generationError}
+                        getRefinements={getRefinements}
                     />
                 )}
 
@@ -240,7 +242,18 @@ const CampaignWorkspace = () => {
                                                             <Bookmark className='imgSaved-save' size={20} />
                                                         </div>
                                                     )}
-                                                    <img style={{ width: selectedImg.includes(index) ? '300px' : '200px', height: selectedImg.includes(index) ? '300px' : '200px' }} src="https://8d073164.delivery.rocketcdn.me/wp-content/uploads/2025/03/computadora-103.jpg" alt="" />
+                                                    <img
+                                                        style={{
+                                                            width: selectedImg.includes(index) ? '300px' : '200px',
+                                                            height: selectedImg.includes(index) ? '300px' : '200px',
+                                                            // Highlight refinements/variations with a different border
+                                                            border: img.parent_asset_id ? '2px solid #a855f7' : 'none',
+                                                            borderRadius: img.parent_asset_id ? '8px' : '0'
+                                                        }}
+                                                        // Fallback logic for URL structure (string vs object)
+                                                        src={typeof img.img_url === 'string' ? img.img_url : img.img_url?.url}
+                                                        alt={img.prompt_used || "Generación"}
+                                                    />
                                                 </div>
                                             </div>
                                         );

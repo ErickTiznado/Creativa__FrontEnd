@@ -50,7 +50,8 @@ function GeneratorView({
     savedAssets = [],
     onToggleSaveAsset,
     isGenerating = false,
-    generationError = null
+    generationError = null,
+    getRefinements = () => [] // Default empty function
 }) {
     // ===== STATE MANAGEMENT =====
     const [mode, setMode] = useState('create'); // 'create' | 'edit'
@@ -61,7 +62,7 @@ function GeneratorView({
 
     // Display images from props
     const [localImages, setLocalImages] = useState([]);
-    
+
     // Fullscreen modal state
     const [fullscreenImage, setFullscreenImage] = useState(null);
 
@@ -87,7 +88,20 @@ function GeneratorView({
     const enterEditMode = (image) => {
         setMode('edit');
         setEditingImage(image);
-        setEditHistory([image]); // Initialize edit history with original image
+
+        // Populate history with Parent + Children (Refinements)
+        const refinements = getRefinements(image.id);
+        if (refinements && refinements.length > 0) {
+            // Combine parent with its refinements
+            setEditHistory([image, ...refinements]);
+            // Set the latest refinement as the active editing image? 
+            // Usually user wants to continue from the latest version, or start from original?
+            // Let's keep original selected but show history.
+            // Or maybe select the last one? Let's stick to the selected one for now.
+        } else {
+            setEditHistory([image]);
+        }
+
         setPrompt('');
     };
 
@@ -121,23 +135,23 @@ function GeneratorView({
             try {
                 console.log('🔍 DEBUG - editingImage object:', editingImage);
                 console.log('Refining image with prompt:', prompt);
-                
+
                 // Get asset ID from editingImage object
                 const assetId = typeof editingImage === 'object' ? editingImage.id : null;
-                
+
                 console.log('🔍 DEBUG - Extracted assetId:', assetId);
-                
+
                 if (!assetId) {
                     throw new Error('No se pudo obtener el ID del asset para refinar. El asset debe estar guardado primero.');
                 }
-                
+
                 // Call refineAsset backend API for inpainting
                 // refineAsset expects: (assetIds: array, refinementPrompt: string)
                 const result = await refineAsset([assetId], prompt);
-                
+
                 // Get the refined image data from response
                 const refinedAsset = result.data || result;
-                
+
                 if (refinedAsset) {
                     // Add to edit history
                     setEditHistory([...editHistory, refinedAsset]);
@@ -284,7 +298,7 @@ function GeneratorView({
                 >
                     {isGenerating ? 'Generando...' : isRefining ? 'Aplicando cambios...' : isEditMode ? 'Aplicar Cambios' : 'Generar Imágenes'}
                 </button>
-                
+
                 {/* Error Message */}
                 {generationError && (
                     <div style={{ color: '#ff6b6b', padding: '10px', textAlign: 'center', fontSize: '14px' }}>
@@ -317,8 +331,8 @@ function GeneratorView({
 
                 <div className="canvas-preview">
                     {canvasImage ? (
-                        <div 
-                            className="preview-container" 
+                        <div
+                            className="preview-container"
                             onClick={() => getImageUrl(canvasImage) && setFullscreenImage(getImageUrl(canvasImage))}
                             style={{ cursor: getImageUrl(canvasImage) ? 'pointer' : 'default' }}
                             title="Click para ver en pantalla completa"
@@ -350,43 +364,43 @@ function GeneratorView({
                             (isEditMode ? editHistory : displayImages).map((img, index) => {
                                 const imgUrl = getImageUrl(img);
                                 return (
-                                <div
-                                    key={index}
-                                    className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
-                                    onClick={() => isEditMode ? setEditingImage(img) : enterEditMode(img)}
-                                    title={isEditMode ? 'Ver iteración' : 'Click para editar'}
-                                >
-                                    {imgUrl ? (
-                                        <img src={imgUrl} alt={isEditMode ? `Iteración ${index + 1}` : `Generación ${index + 1}`} />
-                                    ) : (
-                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333' }}>
-                                            <ImageIcon size={24} style={{ opacity: 0.3 }} />
-                                        </div>
-                                    )}
-                                    {savedAssets.includes(img) && (
-                                        <div className="saved-badge">
-                                            <Bookmark size={12} fill="currentColor" />
-                                        </div>
-                                    )}
-                                    <div className="history-overlay">
-                                        <button
-                                            className="history-save-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onToggleSaveAsset(img);
-                                            }}
-                                            title={savedAssets.includes(img) ? 'Guardado' : 'Guardar'}
-                                        >
-                                            <Bookmark size={14} fill={savedAssets.includes(img) ? 'currentColor' : 'none'} />
-                                        </button>
-                                        {!isEditMode && (
-                                            <div className="history-edit-indicator">
-                                                <Edit3 size={16} />
-                                                <span>Editar</span>
+                                    <div
+                                        key={index}
+                                        className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
+                                        onClick={() => isEditMode ? setEditingImage(img) : enterEditMode(img)}
+                                        title={isEditMode ? 'Ver iteración' : 'Click para editar'}
+                                    >
+                                        {imgUrl ? (
+                                            <img src={imgUrl} alt={isEditMode ? `Iteración ${index + 1}` : `Generación ${index + 1}`} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333' }}>
+                                                <ImageIcon size={24} style={{ opacity: 0.3 }} />
                                             </div>
                                         )}
+                                        {savedAssets.includes(img) && (
+                                            <div className="saved-badge">
+                                                <Bookmark size={12} fill="currentColor" />
+                                            </div>
+                                        )}
+                                        <div className="history-overlay">
+                                            <button
+                                                className="history-save-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onToggleSaveAsset(img);
+                                                }}
+                                                title={savedAssets.includes(img) ? 'Guardado' : 'Guardar'}
+                                            >
+                                                <Bookmark size={14} fill={savedAssets.includes(img) ? 'currentColor' : 'none'} />
+                                            </button>
+                                            {!isEditMode && (
+                                                <div className="history-edit-indicator">
+                                                    <Edit3 size={16} />
+                                                    <span>Editar</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
                                 );
                             })
                         )}
@@ -401,22 +415,22 @@ function GeneratorView({
                             {savedAssets.map((img, index) => {
                                 const imgUrl = getImageUrl(img);
                                 return (
-                                <div key={index} className="saved-asset-item">
-                                    {imgUrl ? (
-                                        <img src={imgUrl} alt={`Asset ${index + 1}`} />
-                                    ) : (
-                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333' }}>
-                                            <ImageIcon size={24} style={{ opacity: 0.3 }} />
-                                        </div>
-                                    )}
-                                    <button
-                                        className="remove-asset-btn"
-                                        onClick={() => onToggleSaveAsset(img)}
-                                        title="Quitar de guardados"
-                                    >
-                                        <X size={12} />
-                                    </button>
-                                </div>
+                                    <div key={index} className="saved-asset-item">
+                                        {imgUrl ? (
+                                            <img src={imgUrl} alt={`Asset ${index + 1}`} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333' }}>
+                                                <ImageIcon size={24} style={{ opacity: 0.3 }} />
+                                            </div>
+                                        )}
+                                        <button
+                                            className="remove-asset-btn"
+                                            onClick={() => onToggleSaveAsset(img)}
+                                            title="Quitar de guardados"
+                                        >
+                                            <X size={12} />
+                                        </button>
+                                    </div>
                                 );
                             })}
                         </div>
@@ -426,20 +440,20 @@ function GeneratorView({
 
             {/* Fullscreen Image Modal */}
             {fullscreenImage && (
-                <div 
-                    className="fullscreen-modal" 
+                <div
+                    className="fullscreen-modal"
                     onClick={() => setFullscreenImage(null)}
                 >
-                    <button 
+                    <button
                         className="close-modal-btn"
                         onClick={() => setFullscreenImage(null)}
                         title="Cerrar (ESC)"
                     >
                         <X size={24} />
                     </button>
-                    <img 
-                        src={fullscreenImage} 
-                        alt="Vista completa" 
+                    <img
+                        src={fullscreenImage}
+                        alt="Vista completa"
                         className="fullscreen-image"
                         onClick={(e) => e.stopPropagation()}
                     />

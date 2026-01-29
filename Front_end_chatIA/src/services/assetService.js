@@ -140,3 +140,21 @@ export const downloadAndSaveAssets = async (assets, campaignId, zipName = 'saved
         throw error;
     }
 };
+
+/**
+ * Get all assets from the database
+ * @returns {Promise<Array>} Array of assets
+ */
+export const getAllAssets = async () => {
+    try {
+        const response = await api.get('/assets');
+        // Check if response has data property (standard axios) and if it has success/data structure
+        if (response.data && response.data.success) {
+            return response.data.data;
+        }
+        return response.data || [];
+    } catch (error) {
+        console.error('Error fetching all assets:', error);
+        throw error;
+    }
+};

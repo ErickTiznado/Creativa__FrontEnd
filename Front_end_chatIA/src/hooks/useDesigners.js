@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getCampaigns, getDesigners, getCampaignById, updateCampaignStatus } from "../services/designerService";
 
 /**
@@ -77,7 +77,7 @@ export const useUpdateCampaignStatus = () => {
 
 
 export const useCampaignsById = () => {
-  const fetchCampaignsById = async (id) => {
+  const fetchCampaignsById = useCallback(async (id) => {
     try {
       const response = await getCampaignById(id);
       const data = response;
@@ -87,6 +87,7 @@ export const useCampaignsById = () => {
       console.error("Error fetching campaigns by id:", e);
       throw e;
     }
-  }
+  }, []); // Empty dependency array as getCampaignById is imported
+
   return { fetchCampaignsById };
 }

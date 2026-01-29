@@ -80,7 +80,7 @@ function ViewAssignmentsDesigner() {
         try {
             const data = await fetchCampaignsById(id);
             setSelectedCamp(data);
-            navigate('/designer/workspace');
+            navigate(`/designer/workspace/${id}`);
         } catch (e) {
             console.log(e);
         }

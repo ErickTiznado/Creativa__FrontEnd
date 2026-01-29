@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useCampaignsContext } from "../context/CampaignContext";
 import { generateImages, buildPrompt } from "../services/generatorService";
+import { getAllAssets } from "../services/assetService";
+import { useCampaignsById } from "./useDesigners";
 
 export const useCampaignWorkspace = () => {
-  const { selectedCamp } = useCampaignsContext();
+  const { campaignId } = useParams();
+  const { selectedCamp, setSelectedCamp } = useCampaignsContext();
+  const { fetchCampaignsById } = useCampaignsById();
 
   // --- NORMALIZACIÓN DE DATOS ---
   // Aseguramos que 'campaign' sea siempre un objeto o null
@@ -38,19 +43,19 @@ export const useCampaignWorkspace = () => {
   // Construimos el objeto de datos final mezclando el real con el fallback
   const campaignData = campaign
     ? {
-        designer: "Juan Carlos", // Placeholder, podría venir del contexto de usuario
-        title: brief?.nombre_campaing || "Sin título",
-        status: campaign.status === "draft" ? "En Proceso" : campaign.status,
-        details: {
-          objective: brief?.Objective || "No especificado",
-          channel: brief?.publishing_channel || "No especificado",
-          public: "General",
-          date: brief?.fechaPublicacion || "No especificada",
-          description: brief?.Description || "Sin descripción",
-        },
-        tags: brief?.ContentType ? [brief.ContentType] : ["General"],
-        repoImages: [], // Ya no usamos esto para renderizar, sino 'assets'
-      }
+      designer: "Juan Carlos", // Placeholder, podría venir del contexto de usuario
+      title: brief?.nombre_campaing || "Sin título",
+      status: campaign.status === "draft" ? "En Proceso" : campaign.status,
+      details: {
+        objective: brief?.Objective || "No especificado",
+        channel: brief?.publishing_channel || "No especificado",
+        public: "General",
+        date: brief?.fechaPublicacion || "No especificada",
+        description: brief?.Description || "Sin descripción",
+      },
+      tags: brief?.ContentType ? [brief.ContentType] : ["General"],
+      repoImages: [], // Ya no usamos esto para renderizar, sino 'assets'
+    }
     : defaultCampaignData;
 
   // --- ESTADOS DE UI ---
@@ -95,29 +100,66 @@ export const useCampaignWorkspace = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 2. Fetch Assets
+  // 2. Recovery: Fetch campaign if not in context but we have campaignId in URL
   useEffect(() => {
-    const fetchAssets = async () => {
-      if (!campaign?.id) return;
+    const recoverCampaign = async () => {
+      // Always re-fetch if we have an ID to ensure fresh data (including assets)
+      if (campaignId) {
+        try {
+          console.log('Fetching campaign data from URL parameter:', campaignId);
+          const data = await fetchCampaignsById(campaignId);
+          setSelectedCamp(data);
+        } catch (error) {
+          console.error('Error recovering campaign:', error);
+        }
+      }
+    };
 
+    recoverCampaign();
+  }, [campaignId, fetchCampaignsById, setSelectedCamp]);
+
+  // 3. Sync Generated Images with Campaign Data
+  // When campaign updates, sync generated images from the campaign object
+  // 3. Sync Generated Images with Campaign Data
+  // When campaign updates, sync generated images from the campaign object
+  useEffect(() => {
+    if (campaign && campaign.assets) {
+      console.log('Syncing generated images from campaign object:', campaign.assets.length);
+
+      // Filter logic: Only show Parent images (those without parent_asset_id)
+      // The refinements (children) will be accessed separately when editing
+      const parentImages = campaign.assets.filter(asset => !asset.parent_asset_id);
+
+      // Update generated images for the generator history
+      setGeneratedImages(parentImages);
+    }
+  }, [campaign]);
+
+  // 4. Load All Assets for Repository
+  useEffect(() => {
+    const loadRepoAssets = async () => {
       try {
         setLoadingAssets(true);
-        const response = await axios.get("http://localhost:3000/assets");
-        if (response.data && response.data.success) {
-          // Cargar TODAS las imágenes (sin filtrar por campaña)
-          setAssets(response.data.data);
-        }
+        // Load ALL assets for the repository view, as requested
+        const allAssets = await getAllAssets();
+        setAssets(allAssets || []);
       } catch (error) {
-        console.error("Error fetching assets:", error);
+        console.error("Error loading repository assets:", error);
       } finally {
         setLoadingAssets(false);
       }
     };
 
-    if (campaign) {
-      fetchAssets();
-    }
-  }, [campaign]);
+    loadRepoAssets();
+  }, []);
+
+  // --- HELPERS ---
+
+  // Get all refinement images (children) for a given parent asset ID
+  const getRefinements = (parentId) => {
+    if (!campaign || !campaign.assets) return [];
+    return campaign.assets.filter(asset => asset.parent_asset_id === parentId);
+  };
 
   // --- HANDLERS ---
 
@@ -167,12 +209,12 @@ export const useCampaignWorkspace = () => {
       // Get reference image URLs if useReference is enabled
       const referenceImages = useReference
         ? assets
-            .filter((asset) => selectedIds.includes(asset.id))
-            .map((asset) =>
-              typeof asset.img_url === "string"
-                ? asset.img_url
-                : asset.img_url?.url,
-            )
+          .filter((asset) => selectedIds.includes(asset.id))
+          .map((asset) =>
+            typeof asset.img_url === "string"
+              ? asset.img_url
+              : asset.img_url?.url,
+          )
         : [];
 
       // Call the backend to generate images
@@ -253,5 +295,6 @@ export const useCampaignWorkspace = () => {
     selectedSaveImg,
     toggleSaveImg,
     handleGenerateEdit,
+    getRefinements, // Helper to get children images
   };
 };

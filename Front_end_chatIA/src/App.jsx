@@ -43,7 +43,7 @@ function App() {
                     <ViewAssignmentsDesigner />
                   </>
                 } />
-                <Route path="/designer/workspace" element={
+                <Route path="/designer/workspace/:campaignId" element={
                   <>
                     <Navbar role='Diseñador' />
                     <CampaignWorkspace />
