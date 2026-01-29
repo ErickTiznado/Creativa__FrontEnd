@@ -61,6 +61,9 @@ function GeneratorView({
 
     // Display images from props
     const [localImages, setLocalImages] = useState([]);
+    
+    // Fullscreen modal state
+    const [fullscreenImage, setFullscreenImage] = useState(null);
 
     useEffect(() => {
         setLocalImages(generatedImages);
@@ -68,6 +71,17 @@ function GeneratorView({
 
     const displayImages = localImages;
     const textareaRef = useRef(null);
+
+    // Helper function to extract URL from asset object or string
+    const getImageUrl = (img) => {
+        if (typeof img === 'string') return img;
+        if (img?.img_url) {
+            if (typeof img.img_url === 'string') return img.img_url;
+            if (img.img_url.url) return img.img_url.url;
+            if (img.img_url.thumbnail) return img.img_url.thumbnail;
+        }
+        return null;
+    };
 
     // ===== MODE HANDLERS =====
     const enterEditMode = (image) => {
@@ -101,17 +115,41 @@ function GeneratorView({
         if (mode === 'create') {
             await handleGenerate();
         } else {
+            // Edit/Inpainting mode
             if (!editingImage || !prompt) return;
             setIsRefining(true);
             try {
+                console.log('🔍 DEBUG - editingImage object:', editingImage);
                 console.log('Refining image with prompt:', prompt);
-                // Simulate adding new iteration to edit history
-                const newIteration = `${editingImage}_edited_${editHistory.length}`;
-                setEditHistory([...editHistory, newIteration]);
-                setEditingImage(newIteration); // Update canvas to show new iteration
-                setPrompt(''); // Clear prompt for next edit
+                
+                // Get asset ID from editingImage object
+                const assetId = typeof editingImage === 'object' ? editingImage.id : null;
+                
+                console.log('🔍 DEBUG - Extracted assetId:', assetId);
+                
+                if (!assetId) {
+                    throw new Error('No se pudo obtener el ID del asset para refinar. El asset debe estar guardado primero.');
+                }
+                
+                // Call refineAsset backend API for inpainting
+                // refineAsset expects: (assetIds: array, refinementPrompt: string)
+                const result = await refineAsset([assetId], prompt);
+                
+                // Get the refined image data from response
+                const refinedAsset = result.data || result;
+                
+                if (refinedAsset) {
+                    // Add to edit history
+                    setEditHistory([...editHistory, refinedAsset]);
+                    setEditingImage(refinedAsset); // Update canvas to show new iteration
+                    setPrompt(''); // Clear prompt for next edit
+                } else {
+                    console.error('No refined asset in response:', result);
+                    alert('No se recibió imagen refinada del servidor');
+                }
             } catch (e) {
-                console.error("Refine error", e);
+                console.error("Refine error:", e);
+                alert('Error al refinar la imagen: ' + (e.message || 'Error desconocido'));
             } finally {
                 setIsRefining(false);
             }
@@ -279,11 +317,19 @@ function GeneratorView({
 
                 <div className="canvas-preview">
                     {canvasImage ? (
-                        <div className="preview-container">
-                            {typeof canvasImage === 'string' ? (
-                                <img src={canvasImage} alt="Preview" className="preview-image" />
+                        <div 
+                            className="preview-container" 
+                            onClick={() => getImageUrl(canvasImage) && setFullscreenImage(getImageUrl(canvasImage))}
+                            style={{ cursor: getImageUrl(canvasImage) ? 'pointer' : 'default' }}
+                            title="Click para ver en pantalla completa"
+                        >
+                            {getImageUrl(canvasImage) ? (
+                                <img src={getImageUrl(canvasImage)} alt="Preview" className="preview-image" />
                             ) : (
-                                canvasImage
+                                <div className="empty-canvas">
+                                    <ImageIcon size={48} className="empty-icon" />
+                                    <p>Error al cargar la imagen</p>
+                                </div>
                             )}
                         </div>
                     ) : (
@@ -301,17 +347,21 @@ function GeneratorView({
                         {(isEditMode ? editHistory : displayImages).length === 0 ? (
                             <span className="empty-history">Sin historial</span>
                         ) : (
-                            (isEditMode ? editHistory : displayImages).map((img, index) => (
+                            (isEditMode ? editHistory : displayImages).map((img, index) => {
+                                const imgUrl = getImageUrl(img);
+                                return (
                                 <div
                                     key={index}
                                     className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
                                     onClick={() => isEditMode ? setEditingImage(img) : enterEditMode(img)}
                                     title={isEditMode ? 'Ver iteración' : 'Click para editar'}
                                 >
-                                    {typeof img === 'string' ? (
-                                        <img src={img} alt={isEditMode ? `Iteración ${index + 1}` : `Generación ${index + 1}`} />
+                                    {imgUrl ? (
+                                        <img src={imgUrl} alt={isEditMode ? `Iteración ${index + 1}` : `Generación ${index + 1}`} />
                                     ) : (
-                                        img
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333' }}>
+                                            <ImageIcon size={24} style={{ opacity: 0.3 }} />
+                                        </div>
                                     )}
                                     {savedAssets.includes(img) && (
                                         <div className="saved-badge">
@@ -337,7 +387,8 @@ function GeneratorView({
                                         )}
                                     </div>
                                 </div>
-                            ))
+                                );
+                            })
                         )}
                     </div>
                 </div>
@@ -347,12 +398,16 @@ function GeneratorView({
                     <div className="saved-assets-strip">
                         <h3>Assets Guardados ({savedAssets.length})</h3>
                         <div className="saved-assets-grid">
-                            {savedAssets.map((img, index) => (
+                            {savedAssets.map((img, index) => {
+                                const imgUrl = getImageUrl(img);
+                                return (
                                 <div key={index} className="saved-asset-item">
-                                    {typeof img === 'string' ? (
-                                        <img src={img} alt={`Asset ${index + 1}`} />
+                                    {imgUrl ? (
+                                        <img src={imgUrl} alt={`Asset ${index + 1}`} />
                                     ) : (
-                                        img
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333' }}>
+                                            <ImageIcon size={24} style={{ opacity: 0.3 }} />
+                                        </div>
                                     )}
                                     <button
                                         className="remove-asset-btn"
@@ -362,11 +417,34 @@ function GeneratorView({
                                         <X size={12} />
                                     </button>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 )}
             </main>
+
+            {/* Fullscreen Image Modal */}
+            {fullscreenImage && (
+                <div 
+                    className="fullscreen-modal" 
+                    onClick={() => setFullscreenImage(null)}
+                >
+                    <button 
+                        className="close-modal-btn"
+                        onClick={() => setFullscreenImage(null)}
+                        title="Cerrar (ESC)"
+                    >
+                        <X size={24} />
+                    </button>
+                    <img 
+                        src={fullscreenImage} 
+                        alt="Vista completa" 
+                        className="fullscreen-image"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            )}
         </div>
     );
 }

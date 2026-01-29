@@ -186,11 +186,14 @@ export const useCampaignWorkspace = () => {
       });
 
       // Extract image URLs from the result
-      // Backend returns: { success: true, data: { assets: [...] } }
-      const newImages = result.data?.assets || result.assets || [];
+      // Backend returns: { success: true, data: { assets: [{ id, img_url, ... }] } }
+      const assetObjects = result.data?.assets || result.assets || [];
 
-      if (newImages.length > 0) {
-        setGeneratedImages([...generatedImages, ...newImages]);
+      // Store complete asset objects (not just URLs) for inpainting
+      // Each asset has: { id, img_url, prompt_used, campaign_assets, ... }
+      if (assetObjects.length > 0) {
+        console.log("✅ Received assets:", assetObjects);
+        setGeneratedImages([...generatedImages, ...assetObjects]);
       } else {
         setGenerationError("No se generaron imágenes. Intenta de nuevo.");
       }
