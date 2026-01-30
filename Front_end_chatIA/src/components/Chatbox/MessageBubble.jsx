@@ -1,6 +1,6 @@
 import { CircleUser } from 'lucide-react';
 import React from 'react';
-import logoChatbox from '../../assets/img/logoChatbox.png';
+
 
 const MessageBubble = ({ sender, text }) => {
   const isBot = sender === 'bot';

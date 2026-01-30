@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Rocket, Search, X } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Rocket, Search, X, AlertTriangle, AlertCircle } from 'lucide-react';
 import { sendCampaign } from '../../services/designerService';
 import { useDesigners } from '../../hooks/useDesigners';
 import { useUser } from '../../hooks/useUser';
@@ -13,8 +14,8 @@ import {
  * Sidebar - Campaign summary and designer selection component.
  * Uses custom hooks for data fetching and config for constants.
  */
-const Sidebar = ({ className, onToggle, briefData = [], type }) => {
-  const summaryData = Array.isArray(briefData) ? briefData : [];
+const Sidebar = ({ className, onToggle, briefData = [] }) => {
+  const summaryData = useMemo(() => Array.isArray(briefData) ? briefData : [], [briefData]);
   const { designers } = useDesigners();
   const user = useUser();
 
@@ -47,20 +48,39 @@ const Sidebar = ({ className, onToggle, briefData = [], type }) => {
         const response = await sendCampaign(campaign);
 
         if (response?.status === 200 || response?.data) {
-          alert("Campaña enviada con éxito!");
+          toast.success("Campaña enviada con éxito!", {
+            icon: <Rocket size={28} color="var(--color-success)" />
+          });
         }
       } catch (e) {
         console.error("Error sending campaign:", e);
-        alert("Error al enviar la campaña: " + (e.response?.data?.message || e.message));
+        toast.error("Error al enviar la campaña: " + (e.response?.data?.message || e.message), {
+            icon: <AlertTriangle size={28} color="var(--color-error)" />
+        });
       }
     } else {
       if (!user) {
-        alert("Error: No se encontró información del usuario. Por favor inicie sesión nuevamente.");
+        toast.error("Error: No se encontró información del usuario. Por favor inicie sesión nuevamente.");
       } else if (!selectedDesigner) {
-        alert("Por favor seleccione un diseñador.");
+        toast('Por favor seleccione un diseñador.', {
+            icon: <AlertCircle size={28} color="var(--color-warning)" />,
+            style: {
+                border: '1px solid var(--color-warning)',
+                color: 'var(--color-text-primary)',
+                background: 'var(--color-bg-panel)'
+            }
+        });
       } else if (!isBriefComplete) {
         const missingNames = missingFields.map(getTranslatedLabel).join(', ');
-        alert(`No se puede enviar la campaña porque faltan datos obligatorios:\n\nFaltan: ${missingNames}\n\nPor favor completa la conversación con el asistente.`);
+        toast(`Faltan datos obligatorios: ${missingNames}. Por favor completa la conversación.`, {
+            duration: 5000,
+            icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>,
+            style: {
+                border: '1px solid var(--color-error)',
+                color: 'var(--color-text-primary)',
+                background: 'var(--color-bg-panel)'
+            }
+        });
       }
     }
   }, [summaryData, selectedDesigner, user]);

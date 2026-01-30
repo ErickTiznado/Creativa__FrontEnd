@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { useCampaignsContext } from "../context/CampaignContext";
-import { generateImages, buildPrompt } from "../services/generatorService";
-import { getAllAssets } from "../services/assetService";
+import { generateImages } from "../services/generatorService";
+import { useCampaignsContext } from "./useCampaignsContext";
+import { getAllAssets, deleteAsset } from "../services/assetService";
 import { useCampaignsById } from "./useDesigners";
 
 export const useCampaignWorkspace = () => {
@@ -43,19 +42,19 @@ export const useCampaignWorkspace = () => {
   // Construimos el objeto de datos final mezclando el real con el fallback
   const campaignData = campaign
     ? {
-      designer: "Juan Carlos", // Placeholder, podría venir del contexto de usuario
-      title: brief?.nombre_campaing || "Sin título",
-      status: campaign.status === "draft" ? "En Proceso" : campaign.status,
-      details: {
-        objective: brief?.Objective || "No especificado",
-        channel: brief?.publishing_channel || "No especificado",
-        public: "General",
-        date: brief?.fechaPublicacion || "No especificada",
-        description: brief?.Description || "Sin descripción",
-      },
-      tags: brief?.ContentType ? [brief.ContentType] : ["General"],
-      repoImages: [], // Ya no usamos esto para renderizar, sino 'assets'
-    }
+        designer: "Juan Carlos", // Placeholder, podría venir del contexto de usuario
+        title: brief?.nombre_campaing || "Sin título",
+        status: campaign.status === "draft" ? "En Proceso" : campaign.status,
+        details: {
+          objective: brief?.Objective || "No especificado",
+          channel: brief?.publishing_channel || "No especificado",
+          public: "General",
+          date: brief?.fechaPublicacion || "No especificada",
+          description: brief?.Description || "Sin descripción",
+        },
+        tags: brief?.ContentType ? [brief.ContentType] : ["General"],
+        repoImages: [], // Ya no usamos esto para renderizar, sino 'assets'
+      }
     : defaultCampaignData;
 
   // --- ESTADOS DE UI ---
@@ -67,10 +66,11 @@ export const useCampaignWorkspace = () => {
   const [assets, setAssets] = useState([]);
   const [loadingAssets, setLoadingAssets] = useState(false);
 
-  // --- ESTADOS GENERADOR ---
+  /* --- ESTADOS GENERADOR --- */
   const [prompt, setPrompt] = useState(
     "Jóvenes universitarios, en oficina moderna, participando en Reunión...",
   );
+  const [style, setStyle] = useState("cinematic"); // Default style
   const [useReference, setUseReference] = useState(true);
   const [aspectRatio, setAspectRatio] = useState("1:1");
   const [quantity, setQuantity] = useState(2);
@@ -106,11 +106,11 @@ export const useCampaignWorkspace = () => {
       // Always re-fetch if we have an ID to ensure fresh data (including assets)
       if (campaignId) {
         try {
-          console.log('Fetching campaign data from URL parameter:', campaignId);
+          console.log("Fetching campaign data from URL parameter:", campaignId);
           const data = await fetchCampaignsById(campaignId);
           setSelectedCamp(data);
         } catch (error) {
-          console.error('Error recovering campaign:', error);
+          console.error("Error recovering campaign:", error);
         }
       }
     };
@@ -120,15 +120,18 @@ export const useCampaignWorkspace = () => {
 
   // 3. Sync Generated Images with Campaign Data
   // When campaign updates, sync generated images from the campaign object
-  // 3. Sync Generated Images with Campaign Data
-  // When campaign updates, sync generated images from the campaign object
   useEffect(() => {
     if (campaign && campaign.assets) {
-      console.log('Syncing generated images from campaign object:', campaign.assets.length);
+      console.log(
+        "Syncing generated images from campaign object:",
+        campaign.assets.length,
+      );
 
       // Filter logic: Only show Parent images (those without parent_asset_id)
       // The refinements (children) will be accessed separately when editing
-      const parentImages = campaign.assets.filter(asset => !asset.parent_asset_id);
+      const parentImages = campaign.assets.filter(
+        (asset) => !asset.parent_asset_id,
+      );
 
       // Update generated images for the generator history
       setGeneratedImages(parentImages);
@@ -158,7 +161,9 @@ export const useCampaignWorkspace = () => {
   // Get all refinement images (children) for a given parent asset ID
   const getRefinements = (parentId) => {
     if (!campaign || !campaign.assets) return [];
-    return campaign.assets.filter(asset => asset.parent_asset_id === parentId);
+    return campaign.assets.filter(
+      (asset) => asset.parent_asset_id === parentId,
+    );
   };
 
   // --- HANDLERS ---
@@ -209,22 +214,23 @@ export const useCampaignWorkspace = () => {
       // Get reference image URLs if useReference is enabled
       const referenceImages = useReference
         ? assets
-          .filter((asset) => selectedIds.includes(asset.id))
-          .map((asset) =>
-            typeof asset.img_url === "string"
-              ? asset.img_url
-              : asset.img_url?.url,
-          )
+            .filter((asset) => selectedIds.includes(asset.id))
+            .map((asset) =>
+              typeof asset.img_url === "string"
+                ? asset.img_url
+                : asset.img_url?.url,
+            )
         : [];
 
       // Call the backend to generate images
       const result = await generateImages({
         prompt: prompt,
+        style: style, // ✅ ADDED: Send style state
         aspectRatio: aspectRatio,
         quantity: quantity,
         useReference: useReference,
         referenceImages: referenceImages,
-        campaignId: campaign.id, // ✅ ADDED: Send campaign ID
+        campaignId: campaign.id,
       });
 
       // Extract image URLs from the result
@@ -254,6 +260,32 @@ export const useCampaignWorkspace = () => {
     console.log("Generando edición/variación...");
   };
 
+  const handleDeleteAsset = async (assetId) => {
+    try {
+      await deleteAsset(assetId);
+
+      // Update assets state
+      setAssets((prevAssets) =>
+        prevAssets.filter((asset) => asset.id !== assetId),
+      );
+
+      // Also update generatedImages if the deleted asset was in there
+      setGeneratedImages((prevImages) =>
+        prevImages.filter((img) => img.id !== assetId),
+      );
+
+      // Remove from selectedIds if it was selected
+      if (selectedIds.includes(assetId)) {
+        setSelectedIds((prevIds) => prevIds.filter((id) => id !== assetId));
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error handling delete asset:", error);
+      throw error;
+    }
+  };
+
   return {
     // Data
     campaignData,
@@ -274,6 +306,8 @@ export const useCampaignWorkspace = () => {
     // Generator State
     prompt,
     setPrompt,
+    style,
+    setStyle,
     useReference,
     setUseReference,
     aspectRatio,
@@ -296,5 +330,6 @@ export const useCampaignWorkspace = () => {
     toggleSaveImg,
     handleGenerateEdit,
     getRefinements, // Helper to get children images
+    handleDeleteAsset,
   };
 };

@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cards from '../../components/Cards/cards.jsx'
+import Cards from '../../components/Cards/Cards.jsx'
 import './ViewAssignmentsDesigner.css'
 import { useCampaigns, useUpdateCampaignStatus, useCampaignsById } from '../../hooks/useDesigners.js';
 import { FolderClosed, Inbox, Search } from 'lucide-react';
 import { DndContext, useDraggable, useDroppable, useSensor, useSensors, PointerSensor, DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core';
-import { updateCampaignStatus } from '../../services/designerService.js';
-import { useCampaignsContext } from '../../context/CampaignContext';
+
+import { useCampaignsContext } from '../../hooks/useCampaignsContext';
 
 // Configuration for sections
 const SECTIONS_CONFIG = [

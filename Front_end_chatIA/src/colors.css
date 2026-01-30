@@ -1,17 +1,52 @@
-@import url('"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"');
-:root{
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* --- Primary Colors --- */
     --color-dark-blue: #0B1E3D;
-    --color-white: #FFFFFF;
     --color-navbar: #192C4A;
-    --color-card: rgba(255, 255, 255, 0.10);
+    --color-bg-dark: #0a192f;
+    --color-bg-panel: #112240;
+    
+    /* --- Accents & Functional --- */
+    --color-primary: #1976D2; /* Azul estándar */
+    --color-secondary: #0D47A1;
+    --color-accent: #64ffda; /* Aqua para detalles */
+    --color-highlight: #ff0000; /* Rojo original conservado para CTAs fuertes */
+    
+    /* --- Text Colors --- */
+    --color-white: #FFFFFF;
+    --color-text-primary: #e6f1ff;
+    --color-text-secondary: #a8b2d1;
+    --color-text-muted: #8892b0;
+
+    /* --- Status Colors --- */
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-error: #dc3545;
+    --color-info: #17a2b8;
+
+    /* --- Surfaces --- */
+    --color-card: rgba(255, 255, 255, 0.05);
+    --color-card-hover: rgba(255, 255, 255, 0.1);
+    --color-border: rgba(255, 255, 255, 0.1);
     --color-notification: rgba(255, 255, 255, 0.25);
+    
+    /* --- Legacy/Specific --- */
     --color-dark-red: #961713;
     --color-proceso: #FFA500;
     --color-aprobado: #28A745;
     --color-rechazado: #FF0000;
     --color-cancelado: #A9A2A2;
 
-}
-:root{
-    --font-Itim: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    /* --- Typography --- */
+    --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-Itim: var(--font-primary); /* Mapping legacy font var to new primary */
+
+    /* --- Spacing --- */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
 }

@@ -307,3 +307,11 @@
         order: -1;
     }
 }
+
+.cw-img-card:hover .cw-delete-btn {
+    opacity: 1 !important;
+}
+
+.cw-delete-btn:hover {
+    background-color: #ef4444 !important;
+}

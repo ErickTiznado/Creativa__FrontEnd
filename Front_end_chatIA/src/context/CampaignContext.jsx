@@ -1,6 +1,5 @@
-import { createContext, useState, useEffect, Children, useContext } from "react";
-
-const CampaignContext = createContext(null);
+import { useState, useEffect } from "react";
+import CampaignContext from "./CampaignContextValue";
 
 const STORAGE_KEY = 'selectedCampaign';
 
@@ -34,13 +33,4 @@ export const CampaignProvider = ({ children }) => {
             {children}
         </CampaignContext.Provider >
     )
-}
-
-
-export const useCampaignsContext = () => {
-    const context = useContext(CampaignContext);
-    if (!context) {
-        throw new Error('useCampaignsContext must be used within a CampaignProvider')
-    }
-    return context
 }

@@ -4,6 +4,8 @@ import { useAuth } from '../../hooks/useAuth';
 /**importar react icons */
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Logo_CS from '../../assets/img/logo_CS.png';
+import FadeIn from '../../components/animations/FadeIn';
+import ScalePress from '../../components/animations/ScalePress';
 
 const Login = () => {
 
@@ -27,7 +29,7 @@ const Login = () => {
     }
   }
   return (
-    <div className="login-container">
+    <FadeIn className="login-container">
       <div className="login-card">
 
         {/* Cabecera del Login */}
@@ -76,16 +78,18 @@ const Login = () => {
             </label>
           </div>
 
-          <button type="submit" className="login-button" onClick={onSubmit}>
-            Iniciar Sesión
-          </button>
+          <ScalePress>
+            <button type="submit" className="login-button">
+              Iniciar Sesión
+            </button>
+          </ScalePress>
         </form>
 
         <div className="login-footer">
           <p>¿Necesitas recuperar tu cuenta? <a href="#">Recuperar ahora</a></p>
         </div>
       </div>
-    </div>
+    </FadeIn>
   );
 };
 

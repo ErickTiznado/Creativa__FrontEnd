@@ -1,6 +1,7 @@
 import { useAuth } from "../../hooks/useAuth"
 import { Navigate, Outlet } from "react-router-dom"
 import AccessDenied from "../AccessDenied/AccessDenied"
+import LoadingSpinner from "../animations/LoadingSpinner"
 
 const RoleRoute = ({ allowedRoles }) => {
     const { user, isAuth, loading } = useAuth()
@@ -9,13 +10,7 @@ const RoleRoute = ({ allowedRoles }) => {
     if (loading) {
         return (
             <div className="private-route-loader">
-                <div className="loader-content">
-                    <div className="loading-dots">
-                        <span className="dot"></span>
-                        <span className="dot"></span>
-                        <span className="dot"></span>
-                    </div>
-                </div>
+                <LoadingSpinner text="Verificando sesión..." color="#ffffff" />
             </div>
         )
     }

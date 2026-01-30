@@ -24,6 +24,7 @@ const CampaignWorkspace = () => {
 
         // Generator State
         prompt, setPrompt,
+        style, setStyle,
         useReference, setUseReference,
         aspectRatio, setAspectRatio,
         quantity, setQuantity,
@@ -36,7 +37,8 @@ const CampaignWorkspace = () => {
         textEdit, setTextEdit,
         selectedSaveImg, toggleSaveImg,
         handleGenerateEdit,
-        getRefinements
+        getRefinements,
+        handleDeleteAsset
     } = useCampaignWorkspace();
 
     // Saved assets state (lifted from GeneratorView)
@@ -179,6 +181,7 @@ const CampaignWorkspace = () => {
                         toggleSelection={toggleSelection}
                         assets={assets}
                         loading={loadingAssets}
+                        onDelete={handleDeleteAsset}
                     />
                 )}
 
@@ -188,6 +191,8 @@ const CampaignWorkspace = () => {
                         designerName={campaignData.designer}
                         prompt={prompt}
                         setPrompt={setPrompt}
+                        style={style}
+                        setStyle={setStyle}
                         useReference={useReference}
                         setUseReference={setUseReference}
                         aspectRatio={aspectRatio}
@@ -203,6 +208,8 @@ const CampaignWorkspace = () => {
                         isGenerating={isGenerating}
                         generationError={generationError}
                         getRefinements={getRefinements}
+                        onDelete={handleDeleteAsset}
+                        campaignId={campaign?.id}
                     />
                 )}
 

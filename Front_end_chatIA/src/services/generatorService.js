@@ -72,6 +72,7 @@ export const generateImages = async (config) => {
   try {
     const payload = {
       prompt: config.prompt,
+      style: config.style || "cinematic", // ✅ ADDED: Include style from config
       campaignId: config.campaignId, // ✅ ADDED: Include campaign ID
       aspectRatio: config.aspectRatio || "1:1",
       sampleCount: config.quantity || 1, // Backend expects 'sampleCount'
@@ -172,12 +173,17 @@ export const saveAssets = async (saveData) => {
  *   "Make the colors more vibrant and add sunset lighting"
  * );
  */
-export const refineAsset = async (assetIds, refinementPrompt) => {
+export const refineAsset = async (assetIds, refinementPrompt, options = {}) => {
   try {
-    const response = await api.post("/generator/refine-asset", {
+    const payload = {
       assetIds,
       refinementPrompt,
-    });
+      style: options.style,
+      aspectRatio: options.aspectRatio,
+      campaignId: options.campaignId,
+    };
+
+    const response = await api.post("/generator/refine-asset", payload);
 
     return response.data;
   } catch (error) {

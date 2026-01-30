@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { getCampaigns, getDesigners, getCampaignById, updateCampaignStatus } from "../services/designerService";
+import {
+  getCampaigns,
+  getDesigners,
+  getCampaignById,
+  updateCampaignStatus,
+} from "../services/designerService";
 
 /**
  * Custom hook for fetching and managing the designers list.
@@ -31,7 +36,6 @@ export const useDesigners = () => {
   return { designers, loading, error };
 };
 
-
 export const useCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,23 +46,21 @@ export const useCampaigns = () => {
       try {
         setLoading(true);
         const designerId = localStorage.getItem("user");
-        const id = JSON.parse(designerId)
+        const id = JSON.parse(designerId);
         const data = await getCampaigns(id.id);
-        console.log(data, "data")
+        console.log(data, "data");
         setCampaigns(data);
-        console.log(campaigns, "campaigns")
       } catch (e) {
         console.log(e);
         setError(e);
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchCampaigns();
   }, []);
   return { campaigns, loading, error, setCampaigns };
-}
-
+};
 
 export const useUpdateCampaignStatus = () => {
   const updateStatus = async (campaignId, status) => {
@@ -73,8 +75,7 @@ export const useUpdateCampaignStatus = () => {
   };
 
   return { updateCampaignStatus: updateStatus };
-}
-
+};
 
 export const useCampaignsById = () => {
   const fetchCampaignsById = useCallback(async (id) => {
@@ -90,4 +91,4 @@ export const useCampaignsById = () => {
   }, []); // Empty dependency array as getCampaignById is imported
 
   return { fetchCampaignsById };
-}
+};

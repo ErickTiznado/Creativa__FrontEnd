@@ -38,7 +38,7 @@ function Cards(props) {
 		const runMeasure = async () => {
 			// esperar fuentes cargadas para mediciones consistentes
 			if (document.fonts && document.fonts.status !== 'loaded') {
-				try { await document.fonts.ready; } catch (e) { /* ignore */ }
+				try { await document.fonts.ready; } catch { /* ignore */ }
 			}
 			// pequeña espera para que el layout finalice (fonts/images)
 			await new Promise(r => setTimeout(r, 30));
@@ -84,7 +84,7 @@ function Cards(props) {
 			cancelled = true;
 			window.removeEventListener('resize', onResize);
 		};
-	}, [props.titulo]); // re-evalúa al cambiar el título
+	}, [props.titulo]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<div className="cards-container" onClick={props.onClick} style={{ cursor: props.onClick ? 'pointer' : 'default' }}>

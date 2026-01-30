@@ -1,10 +1,18 @@
 import React from 'react';
 import './RepositoryView.css';
-import { Check } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
+import LoadingSpinner from '../animations/LoadingSpinner';
+import ConfirmationModal from '../Modals/ConfirmationModal';
 
-function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [], loading = false }) {
+function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [], loading = false, onDelete }) {
     const [modalOpen, setModalOpen] = React.useState(false);
     const [modalImage, setModalImage] = React.useState(null);
+    
+    // Delete Modal State
+    const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
+    const [assetToDelete, setAssetToDelete] = React.useState(null);
+    const [isDeleting, setIsDeleting] = React.useState(false);
+
     const timerRef = React.useRef(null);
 
     const startLongPress = (imgUrl) => {
@@ -27,6 +35,34 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
     const handleCloseModal = () => {
         setModalOpen(false);
         setModalImage(null);
+    };
+
+    const handleDeleteClick = (e, asset) => {
+        e.stopPropagation(); // Prevent selection
+        setAssetToDelete(asset);
+        setDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!assetToDelete || !onDelete) return;
+
+        try {
+            setIsDeleting(true);
+            await onDelete(assetToDelete.id);
+            setDeleteModalOpen(false);
+            setAssetToDelete(null);
+        } catch (error) {
+            console.error("Error deleting asset:", error);
+            // Optionally show error toast here
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleCloseDeleteModal = () => {
+        if (isDeleting) return;
+        setDeleteModalOpen(false);
+        setAssetToDelete(null);
     };
     // Bloquear scroll del body mientras el modal está abierto
     React.useEffect(() => {
@@ -62,7 +98,9 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
 
                     <div className='cw-image-grid'>
                         {loading ? (
-                            <div className="cw-loading">Cargando recursos...</div>
+                            <div className="cw-loading">
+                                <LoadingSpinner text="Cargando recursos..." size={30} />
+                            </div>
                         ) : assets.length > 0 ? (
                             assets.map((asset) => {
                                 const isSelected = selectedIds.includes(asset.id);
@@ -84,6 +122,33 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                             alt="Thumbnail"
                                             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                                         />
+                                        
+                                        {/* Delete Button */}
+                                        <button 
+                                            className="cw-delete-btn"
+                                            onClick={(e) => handleDeleteClick(e, asset)}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '8px',
+                                                right: '8px',
+                                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                padding: '4px',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'white',
+                                                zIndex: 10,
+                                                opacity: 0, // Hidden by default
+                                                transition: 'opacity 0.2s, background-color 0.2s'
+                                            }}
+                                            title="Eliminar imagen"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+
                                         {isSelected && <div className='cw-check-icon'><Check size={16} /></div>}
                                     </div>
                                 );
@@ -159,6 +224,15 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                 </div>
             </div>
         )}
+        
+        <ConfirmationModal
+            isOpen={deleteModalOpen}
+            onClose={handleCloseDeleteModal}
+            onConfirm={handleConfirmDelete}
+            title="¿Eliminar imagen?"
+            message="Esta acción eliminará la imagen y todas sus variaciones de forma permanente. ¿Estás seguro?"
+            isLoading={isDeleting}
+        />
         </>
     );
 }

@@ -4,6 +4,7 @@ import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx'
 import { handleGetCampaigns } from "../../../functions/handlegetCampaigns.js"
 import './ViewCampaignsMarketing.css';
 import { FolderClosed } from 'lucide-react';
+import LoadingSpinner from '../../components/animations/LoadingSpinner.jsx';
 const SECTIONS_CONFIG = [
     { id: 'draft', label: 'En proceso', title: 'Campañas en proceso' },
     { id: 'approved', label: 'Aprobadas', title: 'Campañas aprobadas' },
@@ -47,7 +48,11 @@ function ViewCampaignsMarketing() {
         return SECTIONS_CONFIG.filter(section => section.id === activeFilter);
     };
 
-    if (loading) return <div>Cargando...</div>;
+    if (loading) return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100%' }}>
+            <LoadingSpinner text="Cargando campañas..." />
+        </div>
+    );
 
     return (
         <div className='container-ViewCampaignsMarketing'>

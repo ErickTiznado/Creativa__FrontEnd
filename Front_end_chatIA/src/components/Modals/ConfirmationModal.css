@@ -1,0 +1,119 @@
+.confirmation-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirmation-modal-content {
+    background-color: var(--bg-panel, #1a1a1a);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    position: relative;
+    color: var(--text-primary, #fff);
+}
+
+.confirmation-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary, #999);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    transition: all 0.2s;
+}
+
+.confirmation-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.confirmation-modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.confirmation-modal-icon {
+    background-color: rgba(239, 68, 68, 0.1);
+    padding: 12px;
+    border-radius: 50%;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmation-modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.confirmation-modal-body {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.confirmation-modal-body p {
+    color: var(--text-secondary, #999);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.confirmation-modal-footer {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.confirmation-modal-footer button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-cancel {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary, #fff);
+}
+
+.btn-cancel:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-confirm {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background-color: #dc2626;
+}
+
+.btn-confirm:disabled, .btn-cancel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

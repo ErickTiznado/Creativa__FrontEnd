@@ -1,6 +1,6 @@
-import { api } from './api';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
+import { api } from "./api";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 /**
  * Save or update saved assets in the database
@@ -9,16 +9,16 @@ import { saveAs } from 'file-saver';
  * @returns {Promise} Response from the API
  */
 export const saveAssetsToDatabase = async (campaignId, assetUrls) => {
-    try {
-        const response = await api.post('/assets/save', {
-            campaign_id: campaignId,
-            asset_urls: assetUrls
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error saving assets to database:', error);
-        throw error;
-    }
+  try {
+    const response = await api.post("/assets/save", {
+      campaign_id: campaignId,
+      asset_urls: assetUrls,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error saving assets to database:", error);
+    throw error;
+  }
 };
 
 /**
@@ -28,16 +28,16 @@ export const saveAssetsToDatabase = async (campaignId, assetUrls) => {
  * @returns {Promise} Response from the API
  */
 export const updateAssetsInDatabase = async (campaignId, assetUrls) => {
-    try {
-        const response = await api.put('/assets/update', {
-            campaign_id: campaignId,
-            asset_urls: assetUrls
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error updating assets in database:', error);
-        throw error;
-    }
+  try {
+    const response = await api.put("/assets/update", {
+      campaign_id: campaignId,
+      asset_urls: assetUrls,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating assets in database:", error);
+    throw error;
+  }
 };
 
 /**
@@ -46,13 +46,13 @@ export const updateAssetsInDatabase = async (campaignId, assetUrls) => {
  * @returns {Promise<boolean>} True if assets exist
  */
 export const checkCampaignAssets = async (campaignId) => {
-    try {
-        const response = await api.get(`/assets/check/${campaignId}`);
-        return response.data.exists;
-    } catch (error) {
-        console.error('Error checking campaign assets:', error);
-        return false;
-    }
+  try {
+    const response = await api.get(`/assets/check/${campaignId}`);
+    return response.data.exists;
+  } catch (error) {
+    console.error("Error checking campaign assets:", error);
+    return false;
+  }
 };
 
 /**
@@ -61,40 +61,45 @@ export const checkCampaignAssets = async (campaignId) => {
  * @param {string} zipName - Name for the ZIP file
  * @returns {Promise<Blob>} ZIP file blob
  */
-export const downloadImagesAsZip = async (imageUrls, zipName = 'saved_assets') => {
-    const zip = new JSZip();
-    const folder = zip.folder('assets');
+export const downloadImagesAsZip = async (imageUrls) => {
+  const zip = new JSZip();
+  const folder = zip.folder("assets");
 
-    try {
-        // Convert image references to URLs
-        const urls = imageUrls.map(img => {
-            if (typeof img === 'string') return img;
-            if (img.img_url) return typeof img.img_url === 'string' ? img.img_url : img.img_url.url;
-            return null;
-        }).filter(Boolean);
+  try {
+    // Convert image references to URLs
+    const urls = imageUrls
+      .map((img) => {
+        if (typeof img === "string") return img;
+        if (img.img_url)
+          return typeof img.img_url === "string"
+            ? img.img_url
+            : img.img_url.url;
+        return null;
+      })
+      .filter(Boolean);
 
-        // Download each image and add to ZIP
-        const promises = urls.map(async (url, index) => {
-            try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const extension = url.split('.').pop().split('?')[0] || 'jpg';
-                const fileName = `asset_${index + 1}.${extension}`;
-                folder.file(fileName, blob);
-            } catch (error) {
-                console.error(`Error downloading image ${index + 1}:`, error);
-            }
-        });
+    // Download each image and add to ZIP
+    const promises = urls.map(async (url, index) => {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const extension = url.split(".").pop().split("?")[0] || "jpg";
+        const fileName = `asset_${index + 1}.${extension}`;
+        folder.file(fileName, blob);
+      } catch (error) {
+        console.error(`Error downloading image ${index + 1}:`, error);
+      }
+    });
 
-        await Promise.all(promises);
+    await Promise.all(promises);
 
-        // Generate ZIP
-        const content = await zip.generateAsync({ type: 'blob' });
-        return content;
-    } catch (error) {
-        console.error('Error creating ZIP file:', error);
-        throw error;
-    }
+    // Generate ZIP
+    const content = await zip.generateAsync({ type: "blob" });
+    return content;
+  } catch (error) {
+    console.error("Error creating ZIP file:", error);
+    throw error;
+  }
 };
 
 /**
@@ -104,41 +109,65 @@ export const downloadImagesAsZip = async (imageUrls, zipName = 'saved_assets') =
  * @param {string} zipName - Name for the ZIP file
  * @returns {Promise} Object with zip blob and database response
  */
-export const downloadAndSaveAssets = async (assets, campaignId, zipName = 'saved_assets') => {
-    try {
-        // Extract URLs for database
-        const assetUrls = assets.map(img => {
-            if (typeof img === 'string') return img;
-            if (img.img_url) return typeof img.img_url === 'string' ? img.img_url : img.img_url.url;
-            return null;
-        }).filter(Boolean);
+export const downloadAndSaveAssets = async (
+  assets,
+  campaignId,
+  zipName = "saved_assets",
+) => {
+  try {
+    // Extract URLs for database
+    const assetUrls = assets
+      .map((img) => {
+        if (typeof img === "string") return img;
+        if (img.img_url)
+          return typeof img.img_url === "string"
+            ? img.img_url
+            : img.img_url.url;
+        return null;
+      })
+      .filter(Boolean);
 
-        // Check if campaign already has assets
-        const assetsExist = await checkCampaignAssets(campaignId);
+    // Check if campaign already has assets
+    const assetsExist = await checkCampaignAssets(campaignId);
 
-        // Save or update in database
-        let dbResponse;
-        if (assetsExist) {
-            dbResponse = await updateAssetsInDatabase(campaignId, assetUrls);
-        } else {
-            dbResponse = await saveAssetsToDatabase(campaignId, assetUrls);
-        }
-
-        // Create ZIP file
-        const zipBlob = await downloadImagesAsZip(assets, zipName);
-
-        // Trigger download
-        saveAs(zipBlob, `${zipName}.zip`);
-
-        return {
-            zipBlob,
-            dbResponse,
-            action: assetsExist ? 'updated' : 'created'
-        };
-    } catch (error) {
-        console.error('Error in downloadAndSaveAssets:', error);
-        throw error;
+    // Save or update in database
+    let dbResponse;
+    if (assetsExist) {
+      dbResponse = await updateAssetsInDatabase(campaignId, assetUrls);
+    } else {
+      dbResponse = await saveAssetsToDatabase(campaignId, assetUrls);
     }
+
+    // Create ZIP file
+    const zipBlob = await downloadImagesAsZip(assets, zipName);
+
+    // Trigger download
+    saveAs(zipBlob, `${zipName}.zip`);
+
+    return {
+      zipBlob,
+      dbResponse,
+      action: assetsExist ? "updated" : "created",
+    };
+  } catch (error) {
+    console.error("Error in downloadAndSaveAssets:", error);
+    throw error;
+  }
+};
+
+/**
+ * Delete an asset and its children
+ * @param {string} assetId - ID of the asset to delete
+ * @returns {Promise} Response from the API
+ */
+export const deleteAsset = async (assetId) => {
+  try {
+    const response = await api.delete(`/assets/${assetId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting asset:", error);
+    throw error;
+  }
 };
 
 /**
@@ -146,15 +175,15 @@ export const downloadAndSaveAssets = async (assets, campaignId, zipName = 'saved
  * @returns {Promise<Array>} Array of assets
  */
 export const getAllAssets = async () => {
-    try {
-        const response = await api.get('/assets');
-        // Check if response has data property (standard axios) and if it has success/data structure
-        if (response.data && response.data.success) {
-            return response.data.data;
-        }
-        return response.data || [];
-    } catch (error) {
-        console.error('Error fetching all assets:', error);
-        throw error;
+  try {
+    const response = await api.get("/assets");
+    // Check if response has data property (standard axios) and if it has success/data structure
+    if (response.data && response.data.success) {
+      return response.data.data;
     }
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching all assets:", error);
+    throw error;
+  }
 };
