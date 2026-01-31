@@ -1,13 +1,54 @@
 import { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { enhancePrompt, refineAsset } from '../../services/generatorService';
-import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark, Square, RectangleHorizontal, RectangleVertical, Lightbulb, Upload, ChevronLeft, ChevronRight, Palette, Maximize, Trash2, ChevronDown, ChevronUp, CheckCircle, AlertTriangle } from 'lucide-react';
+import { enhancePrompt, refineAsset, editImage } from '../../services/generatorService';
+import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark, Square, RectangleHorizontal, RectangleVertical, Lightbulb, Upload, ChevronLeft, ChevronRight, Palette, Maximize, Trash2, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Undo, RotateCcw, Settings } from 'lucide-react';
+import InpaintingCanvas from './InpaintingCanvas';
 import LoadingSpinner from '../animations/LoadingSpinner';
 import ScanningPlaceholder from '../animations/ScanningPlaceholder';
 import ConfirmationModal from '../Modals/ConfirmationModal';
 import './GeneratorView.css';
 
-// ... (ReferenceImagesStrip remain the same)
+const ReferenceImagesStrip = ({ images, onDeselect }) => {
+    if (!images || !Array.isArray(images) || images.length === 0) return null;
+
+    return (
+        <div className="reference-strip">
+            <div className="reference-strip-header">
+                <span className="reference-count">{images.length} Referencia{images.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="reference-grid">
+                {images.map((img, index) => {
+                    if (!img) return null;
+                    
+                    // Helper to get URL safety
+                    let url = null;
+                    if (typeof img === 'string') url = img;
+                    else if (img.preview && typeof img.preview === 'string') url = img.preview;
+                    else if (img.img_url) {
+                        if (typeof img.img_url === 'string') url = img.img_url;
+                        else if (img.img_url.url && typeof img.img_url.url === 'string') url = img.img_url.url;
+                        else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') url = img.img_url.thumbnail;
+                    }
+
+                    return (
+                        <div key={img.id || index} className="reference-item">
+                            {url ? <img src={url} alt={`Ref ${index}`} /> : <div className="placeholder-ref" />}
+                            <button 
+                                className="remove-ref-btn"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDeselect(img);
+                                }}
+                            >
+                                <X size={12} />
+                            </button>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
 
 function GeneratorView({
 
@@ -40,6 +81,8 @@ function GeneratorView({
     const [isEnhancing, setIsEnhancing] = useState(false);
     const [isRefining, setIsRefining] = useState(false);
     const [isControlsOpen, setIsControlsOpen] = useState(true);
+    const [brushSize, setBrushSize] = useState(20); // Brush size for inpainting
+    const canvasRef = useRef(null);
 
     // Collapsible Sections State
     const [openSections, setOpenSections] = useState({
@@ -71,6 +114,10 @@ function GeneratorView({
 
     // Fullscreen modal state
     const [fullscreenImage, setFullscreenImage] = useState(null);
+    
+    // Canvas Toolbox state
+    const [isToolboxOpen, setIsToolboxOpen] = useState(false);
+    
     // File input ref for "Agregar imagen" button
     const fileInputRef = useRef(null);
 
@@ -111,13 +158,35 @@ function GeneratorView({
     const getImageUrl = (img) => {
         if (!img) return null;
         if (typeof img === 'string') return img;
-        if (img.preview) return img.preview; // For local references
+        if (img.preview && typeof img.preview === 'string') return img.preview; // For local references
         if (img.img_url) {
             if (typeof img.img_url === 'string') return img.img_url;
-            if (img.img_url.url) return img.img_url.url;
-            if (img.img_url.thumbnail) return img.img_url.thumbnail;
+            if (img.img_url.url && typeof img.img_url.url === 'string') return img.img_url.url;
+            if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') return img.img_url.thumbnail;
         }
         return null;
+    };
+
+    // Helper function to download images from external URLs
+    const downloadImage = async (imageUrl, filename) => {
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up the blob URL
+            URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error('Error downloading image:', error);
+            toast.error('Error al descargar la imagen');
+        }
     };
 
     const handleDrop = (e) => {
@@ -273,19 +342,41 @@ function GeneratorView({
                 if (!assetId) {
                     throw new Error('No se pudo obtener el ID del asset para refinar.');
                 }
-                const result = await refineAsset([assetId], prompt, {
-                    style,
-                    aspectRatio,
-                    campaignId
-                });
+
+                let result;
+                // If we have strokes, use Inpainting (editImage)
+                // We check if canvasRef has strokes. If not, maybe falback to simple refine?
+                // For now, if in edit mode, we assume inpainting if mask is generated.
+                // But the user might just want to use the prompt without mask (pure refine).
+                // Let's check if there are strokes.
+                const hasStrokes = canvasRef.current && canvasRef.current.hasStrokes();
+
+                if (hasStrokes) {
+                    const maskImage = canvasRef.current.getMask();
+                    result = await editImage({
+                        assetId,
+                        prompt,
+                        maskImage
+                    });
+                } else {
+                    // Fallback to standard refinement if no mask drawn
+                    result = await refineAsset([assetId], prompt, {
+                        style,
+                        aspectRatio,
+                        campaignId
+                    });
+                }
+                
                 const refinedAsset = result.data || result;
 
                 if (refinedAsset) {
                     setEditHistory([...editHistory, refinedAsset]);
                     setEditingImage(refinedAsset); 
-                    setEditingImage(refinedAsset); 
                     setPrompt(''); 
-                    toast.success('Imagen refinada con éxito', {
+                    // Clear canvas after successful generation
+                    if (canvasRef.current) canvasRef.current.clear();
+                    
+                    toast.success('Imagen editada con éxito', {
                         icon: <CheckCircle size={20} color="var(--color-success)" />
                     });
                 } else {
@@ -295,7 +386,7 @@ function GeneratorView({
                 }
             } catch (e) {
                 console.error("Refine error:", e);
-                toast.error('Error al refinar: ' + (e.message || 'Error desconocido'), {
+                toast.error('Error al editar: ' + (e.message || 'Error desconocido'), {
                     icon: <AlertTriangle size={20} color="var(--color-error)" />
                 });
             } finally {
@@ -412,6 +503,47 @@ function GeneratorView({
                             </div>
                         </div>
                     </div>
+
+                    {/* EDIT TOOLS - Only in Edit Mode */}
+                    {isEditMode && (
+                        <div className="section-wrapper">
+                            <div className="section-header" onClick={() => toggleSection('editTools')}>
+                                <span className="section-title">Herramientas de Edición</span>
+                                <ChevronDown size={16} />
+                            </div>
+                            <div className="section-content">
+                                <div className="control-group">
+                                    <label>Tamaño del Pincel: {brushSize}px</label>
+                                    <input 
+                                        type="range" 
+                                        min="5" 
+                                        max="100" 
+                                        value={brushSize} 
+                                        onChange={(e) => setBrushSize(parseInt(e.target.value))} 
+                                        style={{width: '100%', cursor: 'pointer'}}
+                                    />
+                                </div>
+                                <div className="control-group" style={{display: 'flex', gap: 10}}>
+                                    <button 
+                                        className="canvas-action-btn"
+                                        onClick={() => canvasRef.current && canvasRef.current.undo()}
+                                        title="Deshacer trazo"
+                                        style={{flex: 1}}
+                                    >
+                                        <Undo size={16} style={{marginRight: 6}}/> Deshacer
+                                    </button>
+                                    <button 
+                                        className="canvas-action-btn"
+                                        onClick={() => canvasRef.current && canvasRef.current.clear()}
+                                        title="Limpiar todo"
+                                        style={{flex: 1}}
+                                    >
+                                        <RotateCcw size={16} style={{marginRight: 6}}/> Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Parameters - Only in CREATE mode */}
                     {showParameters && (
@@ -587,69 +719,90 @@ function GeneratorView({
                     ) : canvasImage ? (
                         <div
                             className="preview-container"
-                            onClick={() => getImageUrl(canvasImage) && setFullscreenImage(getImageUrl(canvasImage))}
-                            style={{ cursor: getImageUrl(canvasImage) ? 'pointer' : 'default' }}
-                            title="Click para ver en pantalla completa"
-                            draggable="true"
+                            draggable={!isEditMode}
                             onDragStart={(e) => {
+                                if (isEditMode) {
+                                    e.preventDefault();
+                                    return;
+                                }
                                 // Allow dragging the current canvas result to reference
                                 e.dataTransfer.setData("application/json", JSON.stringify(canvasImage));
                             }}
                         >
-                            {getImageUrl(canvasImage) ? (
-                                <>
-                                    <img src={getImageUrl(canvasImage)} alt="Preview" className="preview-image" />
-                                    {/* Hover Overlay Actions */}
-                            <div className="canvas-image-overlay" onClick={(e) => e.stopPropagation()}>
-                                <button
-                                    className="overlay-action-btn"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setFullscreenImage(getImageUrl(canvasImage));
-                                    }}
-                                    title="Pantalla Completa"
-                                >
-                                    <Maximize size={18} />
-                                </button>
-                                <button
-                                    className="overlay-action-btn"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        console.log('Descargar'); // Implement actual download logic here if available
-                                    }} 
-                                    title="Descargar imagen"
-                                >
-                                    <Download size={18} />
-                                </button>
-                                <button
-                                    className={`overlay-action-btn ${savedAssets.includes(canvasImage) ? 'secondary' : ''}`}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onToggleSaveAsset(canvasImage);
-                                    }}
-                                    style={savedAssets.includes(canvasImage) ? {backgroundColor: '#fbbf24', color: '#000'} : {}}
-                                    title={savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar en Assets'}
-                                >
-                                    <Bookmark size={18} fill={savedAssets.includes(canvasImage) ? 'currentColor' : 'none'} /> 
-                                    {savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar'}
-                                </button>
-                                <button
-                                    className="overlay-action-btn secondary"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteClick(canvasImage);
-                                    }}
-                                    title="Eliminar"
-                                    style={{ borderColor: 'var(--color-error)', color: 'var(--color-error)' }}
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                                </>
+                            {isEditMode ? (
+                                <InpaintingCanvas 
+                                    ref={canvasRef}
+                                    imageUrl={getImageUrl(canvasImage)}
+                                    brushSize={brushSize}
+                                />
+                            ) : getImageUrl(canvasImage) ? (
+                                <img src={getImageUrl(canvasImage)} alt="Preview" className="preview-image" />
                             ) : (
                                 <div className="empty-canvas">
                                     <ImageIcon size={48} className="empty-icon" />
                                     <p>Error al cargar la imagen</p>
+                                </div>
+                            )}
+
+                            {/* Canvas Toolbox - Upper Right Corner */}
+                            {getImageUrl(canvasImage) && (
+                                <div className="canvas-toolbox">
+                                    <button 
+                                        className={`toolbox-toggle ${isToolboxOpen ? 'active' : ''}`}
+                                        onClick={() => setIsToolboxOpen(!isToolboxOpen)}
+                                        title={isToolboxOpen ? 'Cerrar herramientas' : 'Abrir herramientas'}
+                                    >
+                                        <Settings size={20} />
+                                    </button>
+                                    
+                                    {isToolboxOpen && (
+                                        <div className="toolbox-tools">
+                                            <button 
+                                                className="toolbox-tool-item"
+                                                onClick={() => setFullscreenImage(getImageUrl(canvasImage))}
+                                                title="Pantalla Completa"
+                                                style={{ animationDelay: '0.05s' }}
+                                            >
+                                                <Maximize size={18} />
+                                                <span>Pantalla Completa</span>
+                                            </button>
+                                            
+                                            <button 
+                                                className="toolbox-tool-item"
+                                                onClick={() => {
+                                                    const imgUrl = getImageUrl(canvasImage);
+                                                    if (imgUrl) {
+                                                        downloadImage(imgUrl, `generacion_${Date.now()}.png`);
+                                                    }
+                                                }}
+                                                title="Descargar imagen"
+                                                style={{ animationDelay: '0.1s' }}
+                                            >
+                                                <Download size={18} />
+                                                <span>Descargar</span>
+                                            </button>
+                                            
+                                            <button 
+                                                className={`toolbox-tool-item ${savedAssets.includes(canvasImage) ? 'saved' : ''}`}
+                                                onClick={() => onToggleSaveAsset(canvasImage)}
+                                                title={savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar en Assets'}
+                                                style={{ animationDelay: '0.15s' }}
+                                            >
+                                                <Bookmark size={18} fill={savedAssets.includes(canvasImage) ? 'currentColor' : 'none'} />
+                                                <span>{savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar'}</span>
+                                            </button>
+                                            
+                                            <button 
+                                                className="toolbox-tool-item delete"
+                                                onClick={() => handleDeleteClick(canvasImage)}
+                                                title="Eliminar"
+                                                style={{ animationDelay: '0.2s' }}
+                                            >
+                                                <Trash2 size={18} />
+                                                <span>Eliminar</span>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -702,6 +855,20 @@ function GeneratorView({
                                             </div>
                                         )}
                                         <div className="history-overlay">
+                                            <button 
+                                                className="history-save-btn" 
+                                                onClick={(e) => { 
+                                                    e.stopPropagation();
+                                                    const imgUrl = getImageUrl(img);
+                                                    if (imgUrl) {
+                                                        downloadImage(imgUrl, `historial_${index + 1}_${Date.now()}.png`);
+                                                    }
+                                                }}
+                                                title="Descargar"
+                                                style={{backgroundColor: 'rgba(59, 130, 246, 0.8)', borderColor: 'transparent', marginRight: '4px'}}
+                                            >
+                                                <Download size={14} />
+                                            </button>
                                             <button 
                                                 className="history-save-btn" 
                                                 onClick={(e) => { 

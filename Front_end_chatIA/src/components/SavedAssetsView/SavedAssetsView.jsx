@@ -1,6 +1,7 @@
 import { Bookmark, Download, X, Package } from 'lucide-react';
 import { downloadAndSaveAssets } from '../../services/assetService';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import './SavedAssetsView.css';
 
 function SavedAssetsView({ savedAssets, onRemoveAsset, campaignId }) {
@@ -31,6 +32,28 @@ function SavedAssetsView({ savedAssets, onRemoveAsset, campaignId }) {
             setDownloadError('Error al descargar y guardar assets');
         } finally {
             setIsDownloading(false);
+        }
+    };
+
+    // Helper function to download images from external URLs
+    const downloadImage = async (imageUrl, filename) => {
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up the blob URL
+            URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error('Error downloading image:', error);
+            toast.error('Error al descargar la imagen');
         }
     };
     return (
@@ -75,15 +98,60 @@ function SavedAssetsView({ savedAssets, onRemoveAsset, campaignId }) {
                     {savedAssets.map((img, index) => (
                         <div key={index} className="sav-item">
                             <div className="sav-image-wrapper">
-                                {typeof img === 'string' ? (
-                                    <img src={img} alt={`Asset ${index + 1}`} />
-                                ) : (
-                                    img
-                                )}
+                                {(() => {
+                                    // Extract URL from various asset structures
+                                    let imgUrl = null;
+                                    if (typeof img === 'string') {
+                                        imgUrl = img;
+                                    } else if (img) {
+                                        if (img.preview && typeof img.preview === 'string') {
+                                            imgUrl = img.preview;
+                                        } else if (img.img_url) {
+                                            if (typeof img.img_url === 'string') {
+                                                imgUrl = img.img_url;
+                                            } else if (img.img_url.url && typeof img.img_url.url === 'string') {
+                                                imgUrl = img.img_url.url;
+                                            } else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') {
+                                                imgUrl = img.img_url.thumbnail;
+                                            }
+                                        }
+                                    }
+                                    
+                                    return imgUrl ? (
+                                        <img src={imgUrl} alt={`Asset ${index + 1}`} />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333', color: '#888' }}>
+                                            Sin imagen
+                                        </div>
+                                    );
+                                })()}
                             </div>
                             <div className="sav-actions">
                                 <button
                                     className="sav-action-btn"
+                                    onClick={() => {
+                                        // Extract URL from asset
+                                        let imgUrl = null;
+                                        if (typeof img === 'string') {
+                                            imgUrl = img;
+                                        } else if (img) {
+                                            if (img.preview && typeof img.preview === 'string') {
+                                                imgUrl = img.preview;
+                                            } else if (img.img_url) {
+                                                if (typeof img.img_url === 'string') {
+                                                    imgUrl = img.img_url;
+                                                } else if (img.img_url.url && typeof img.img_url.url === 'string') {
+                                                    imgUrl = img.img_url.url;
+                                                } else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') {
+                                                    imgUrl = img.img_url.thumbnail;
+                                                }
+                                            }
+                                        }
+                                        
+                                        if (imgUrl) {
+                                            downloadImage(imgUrl, `asset_${index + 1}_${Date.now()}.png`);
+                                        }
+                                    }}
                                     title="Descargar"
                                 >
                                     <Download size={16} />

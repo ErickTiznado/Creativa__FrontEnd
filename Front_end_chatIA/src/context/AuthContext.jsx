@@ -14,10 +14,12 @@ export const AuthProvider = ({ children }) => {
           const response = await getAuthProfile();
           if (response.data) {
             setUser(response.data);
+            localStorage.setItem("user", JSON.stringify(response.data));
           }
         } catch (error) {
           console.error("Error verifying user:", error);
           localStorage.removeItem("token");
+          localStorage.removeItem("user");
           setUser(null);
         }
       }
@@ -39,9 +41,10 @@ export const AuthProvider = ({ children }) => {
         // Ideally checking structure, but assuming userData is the user object
         // If userData contains a 'user' property, we should use that
         const finalUser = userData.user || userData;
+        localStorage.setItem("user", JSON.stringify(finalUser));
         setUser(finalUser);
         
-        return response.data;
+        return finalUser;
       }
     } catch (error) {
       console.error("Login error:", error);

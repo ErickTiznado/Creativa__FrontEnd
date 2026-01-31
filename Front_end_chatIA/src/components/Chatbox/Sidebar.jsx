@@ -49,13 +49,13 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
 
         if (response?.status === 200 || response?.data) {
           toast.success("Campaña enviada con éxito!", {
-            icon: <Rocket size={28} color="var(--color-success)" />
+            icon: <div style={{ display: 'flex', minWidth: '28px' }}><Rocket size={28} color="var(--color-success)" /></div>
           });
         }
       } catch (e) {
         console.error("Error sending campaign:", e);
         toast.error("Error al enviar la campaña: " + (e.response?.data?.message || e.message), {
-            icon: <AlertTriangle size={28} color="var(--color-error)" />
+            icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>
         });
       }
     } else {
@@ -63,7 +63,7 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
         toast.error("Error: No se encontró información del usuario. Por favor inicie sesión nuevamente.");
       } else if (!selectedDesigner) {
         toast('Por favor seleccione un diseñador.', {
-            icon: <AlertCircle size={28} color="var(--color-warning)" />,
+            icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertCircle size={28} color="var(--color-warning)" /></div>,
             style: {
                 border: '1px solid var(--color-warning)',
                 color: 'var(--color-text-primary)',

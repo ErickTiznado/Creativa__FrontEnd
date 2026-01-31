@@ -195,15 +195,36 @@ export const refineAsset = async (assetIds, refinementPrompt, options = {}) => {
   }
 };
 
-/**
- * Enhanced prompt builder (legacy compatibility)
- * Wrapper around buildPrompt for backward compatibility
- *
- * @deprecated Use buildPrompt instead
- * @param {string|Object} brief - Brief text or object
- * @returns {Promise<string>} Enhanced prompt
- */
 export const enhancePrompt = async (brief) => {
   console.warn("enhancePrompt is deprecated. Use buildPrompt instead.");
   return buildPrompt(brief);
+};
+
+/**
+ * Edit an image using inpainting
+ * Sends a mask and prompt to edit a specific area of an image
+ *
+ * @param {Object} editData - Edit configuration
+ * @param {string} editData.assetId - ID of the original asset
+ * @param {string} editData.prompt - Description of what to put in the masked area
+ * @param {string} editData.maskImage - Base64 string of the mask (Black/White)
+ * @returns {Promise<Object>} Resulting new asset
+ */
+export const editImage = async (editData) => {
+  try {
+    const payload = {
+      assetId: editData.assetId,
+      prompt: editData.prompt,
+      maskImage: editData.maskImage,
+    };
+
+    const response = await api.post("/generator/edit-image", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error editing image:", error);
+    throw new Error(
+      error.response?.data?.message ||
+        "Failed to edit image. Please try again.",
+    );
+  }
 };
