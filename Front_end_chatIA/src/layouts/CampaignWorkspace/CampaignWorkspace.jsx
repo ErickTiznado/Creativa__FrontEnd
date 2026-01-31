@@ -3,6 +3,7 @@ import './CampaignWorkspace.css';
 import './ImgGenerated.css';
 import { CircleUser, Bookmark, Save, Pencil, Menu, Check } from 'lucide-react';
 import { useCampaignWorkspace } from '../../hooks/useCampaignWorkspace';
+import { useSavedAssets } from '../../hooks/useSavedAssets';
 
 // Importar los nuevos componentes
 import RepositoryView from '../../components/RepositoryView/RepositoryView';
@@ -41,16 +42,8 @@ const CampaignWorkspace = () => {
         handleDeleteAsset
     } = useCampaignWorkspace();
 
-    // Saved assets state (lifted from GeneratorView)
-    const [savedAssets, setSavedAssets] = React.useState([]);
-
-    const toggleSaveAsset = (image) => {
-        if (savedAssets.includes(image)) {
-            setSavedAssets(savedAssets.filter(img => img !== image));
-        } else {
-            setSavedAssets([...savedAssets, image]);
-        }
-    };
+    // Saved assets state with backend persistence
+    const { savedAssets, toggleSaveAsset } = useSavedAssets(campaign?.id);
 
     // Helper para renderizar los controles de edición (UI only)
     const renderEditControls = () => {
@@ -203,7 +196,6 @@ const CampaignWorkspace = () => {
                         generatedImages={generatedImages}
                         referenceImages={assets.filter(asset => selectedIds.includes(asset.id))}
                         onDeselectReference={toggleSelection}
-                        savedAssets={savedAssets}
                         onToggleSaveAsset={toggleSaveAsset}
                         isGenerating={isGenerating}
                         generationError={generationError}
@@ -216,8 +208,6 @@ const CampaignWorkspace = () => {
                 {/* Assets Tab */}
                 {activeTab === 'Assets' && (
                     <SavedAssetsView
-                        savedAssets={savedAssets}
-                        onRemoveAsset={toggleSaveAsset}
                         campaignId={campaign?.id}
                     />
                 )}

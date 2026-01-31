@@ -1,10 +1,14 @@
 import { Bookmark, Download, X, Package } from 'lucide-react';
 import { downloadAndSaveAssets } from '../../services/assetService';
+import { useSavedAssets } from '../../hooks/useSavedAssets';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import './SavedAssetsView.css';
 
-function SavedAssetsView({ savedAssets, onRemoveAsset, campaignId }) {
+function SavedAssetsView({ campaignId }) {
+    // Backend-integrated saved assets
+    const { savedAssets, loading, toggleSaveAsset } = useSavedAssets(campaignId);
+    
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadError, setDownloadError] = useState(null);
 
@@ -86,8 +90,12 @@ function SavedAssetsView({ savedAssets, onRemoveAsset, campaignId }) {
                     {downloadError}
                 </div>
             )}
-
-            {savedAssets.length === 0 ? (
+            
+            {loading ? (
+                <div className="sav-loading">
+                    <p>Cargando assets guardados...</p>
+                </div>
+            ) : savedAssets.length === 0 ? (
                 <div className="sav-empty">
                     <Bookmark size={64} strokeWidth={1} />
                     <p>No hay assets guardados</p>
@@ -158,7 +166,18 @@ function SavedAssetsView({ savedAssets, onRemoveAsset, campaignId }) {
                                 </button>
                                 <button
                                     className="sav-action-btn remove"
-                                    onClick={() => onRemoveAsset(img)}
+                                    onClick={async () => {
+                                        if (!img?.id) {
+                                            toast.error('Error: ID de asset no encontrado');
+                                            return;
+                                        }
+                                        try {
+                                            await toggleSaveAsset(img.id, true);
+                                            toast.success('Removido de guardados');
+                                        } catch (error) {
+                                            toast.error('Error al remover asset');
+                                        }
+                                    }}
                                     title="Quitar de guardados"
                                 >
                                     <X size={16} />

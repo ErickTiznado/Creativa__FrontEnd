@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { enhancePrompt, refineAsset, editImage } from '../../services/generatorService';
 import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark, Square, RectangleHorizontal, RectangleVertical, Lightbulb, Upload, ChevronLeft, ChevronRight, Palette, Maximize, Trash2, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Undo, RotateCcw, Settings } from 'lucide-react';
+import { useSavedAssets } from '../../hooks/useSavedAssets';
 import InpaintingCanvas from './InpaintingCanvas';
 import LoadingSpinner from '../animations/LoadingSpinner';
 import ScanningPlaceholder from '../animations/ScanningPlaceholder';
@@ -60,20 +61,20 @@ function GeneratorView({
     setUseReference,
     aspectRatio,
     setAspectRatio,
-    quantity,
+     quantity,
     setQuantity,
     handleGenerate,
     generatedImages,
     referenceImages = [],
     onDeselectReference,
-    savedAssets = [],
-    onToggleSaveAsset,
     isGenerating = false,
     generationError = null,
     getRefinements = () => [], // Default empty function
     onDelete, // ✅ ADDED
     campaignId // ✅ ADDED for Refinement Context
 }) {
+    // ===== SAVED ASSETS INTEGRATION =====
+    const { savedAssets, toggleSaveAsset } = useSavedAssets(campaignId);
     // ===== STATE MANAGEMENT =====
     const [mode, setMode] = useState('create'); // 'create' | 'edit'
     const [editingImage, setEditingImage] = useState(null);
@@ -783,13 +784,25 @@ function GeneratorView({
                                             </button>
                                             
                                             <button 
-                                                className={`toolbox-tool-item ${savedAssets.includes(canvasImage) ? 'saved' : ''}`}
-                                                onClick={() => onToggleSaveAsset(canvasImage)}
-                                                title={savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar en Assets'}
+                                                className={`toolbox-tool-item ${canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'saved' : ''}`}
+                                                onClick={async () => {
+                                                    if (!canvasImage?.id) {
+                                                        toast.error('Error: ID de asset no encontrado');
+                                                        return;
+                                                    }
+                                                    try {
+                                                        const currentlySaved = canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage.id);
+                                                        await toggleSaveAsset(canvasImage.id, currentlySaved);
+                                                        toast.success(currentlySaved ? 'Removido de guardados' : 'Guardado en Assets!');
+                                                    } catch (error) {
+                                                        toast.error('Error al guardar asset');
+                                                    }
+                                                }}
+                                                title={canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'Guardado' : 'Guardar en Assets'}
                                                 style={{ animationDelay: '0.15s' }}
                                             >
-                                                <Bookmark size={18} fill={savedAssets.includes(canvasImage) ? 'currentColor' : 'none'} />
-                                                <span>{savedAssets.includes(canvasImage) ? 'Guardado' : 'Guardar'}</span>
+                                                <Bookmark size={18} fill={canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'currentColor' : 'none'} />
+                                                <span>{canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'Guardado' : 'Guardar'}</span>
                                             </button>
                                             
                                             <button 

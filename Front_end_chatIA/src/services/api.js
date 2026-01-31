@@ -38,3 +38,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+// Alias for campaign-related API calls (same as api, but more semantic)
+export const campaignAPI = api;
