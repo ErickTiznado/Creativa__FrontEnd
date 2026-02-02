@@ -1,11 +1,8 @@
-/* Layout Principal */
+﻿/* Layout Principal */
 .cw-layout {
     display: flex;
     background-color: var(--color-dark-blue);
-    height: calc(100vh - 80px);
-    /* Exact fit: Viewport - Navbar(80px) */
-    overflow: hidden;
-    /* Prevent window scroll */
+    min-height: calc(100vh - 80px); 
     color: var(--color-white);
     font-family: var(--font-Itim);
     padding: 20px;
@@ -23,7 +20,7 @@
     flex-direction: column;
     align-items: center;
     gap: 25px;
-    flex-shrink: 0;
+    flex-shrink: 0; 
     /* Transiciones para apertura/cierre: cubrir tanto transform (mobile) como width/padding/opacity (desktop) */
     transition: transform 0.3s ease-in-out, width 0.28s ease, padding 0.28s ease, opacity 0.2s ease;
 }
@@ -61,7 +58,7 @@
 .cw-nav-item {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start; 
     gap: 10px;
     background: transparent;
     border: none;
@@ -81,37 +78,30 @@
 }
 
 .cw-nav-item.active {
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.15); 
     color: var(--color-white);
     font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-button,
-input,
-textarea,
-select {
-    font-family: var(--font-Itim) !important;
-    /* Forzamos la fuente del repositorio */
+button, input, textarea, select {
+    font-family: var(--font-Itim) !important; /* Forzamos la fuente del repositorio */
 }
 
-/* --- MAIN CONTENT (Área Derecha) --- */
+/* --- MAIN CONTENT (├ürea Derecha) --- */
 .cw-main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width: 100%;
-    height: 100%;
-    overflow: hidden;
-    /* Ensure children handle scroll */
+    max-width: 100%; 
 }
 
 /* Encabezado */
 .cw-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; 
     margin-bottom: 5px;
 }
 
@@ -128,7 +118,7 @@ select {
 }
 
 .cw-status {
-    background-color: var(--color-proceso);
+    background-color: var(--color-proceso); 
     color: #000;
     padding: 6px 16px;
     border-radius: 20px;
@@ -148,7 +138,7 @@ select {
 /* Fila Superior: Repositorio + Detalles */
 .cw-top-section {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr; 
     gap: 20px;
     min-height: 450px;
 }
@@ -160,14 +150,14 @@ select {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .cw-panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
     padding-bottom: 15px;
     margin-bottom: 5px;
 }
@@ -177,7 +167,7 @@ select {
     font-size: 1.3rem;
 }
 
-/* --- Panel Repositorio Específico --- */
+/* --- Panel Repositorio Espec├¡fico --- */
 .cw-search-container {
     display: flex;
     flex-direction: column;
@@ -186,7 +176,7 @@ select {
 
 .cw-search-bar {
     background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 10px;
     padding: 12px 15px;
     color: var(--color-white);
@@ -202,7 +192,7 @@ select {
 }
 
 .cw-tag {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255,255,255,0.1);
     padding: 5px 12px;
     border-radius: 15px;
     font-size: 0.85rem;
@@ -211,7 +201,7 @@ select {
 }
 
 .cw-tag:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255,255,255,0.2);
 }
 
 .cw-image-grid {
@@ -221,21 +211,20 @@ select {
     margin-top: 10px;
     overflow-y: auto;
     padding-right: 5px;
-    max-height: 300px;
+    max-height: 300px; 
 }
 
 /* Scrollbar personalizada */
 .cw-image-grid::-webkit-scrollbar {
     width: 6px;
 }
-
 .cw-image-grid::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255,255,255,0.2);
     border-radius: 3px;
 }
 
 .cw-img-card {
-    background-color: #2a3b55;
+    background-color: #2a3b55; 
     aspect-ratio: 1;
     border-radius: 10px;
     display: flex;
@@ -254,7 +243,7 @@ select {
 
 /* Estado Seleccionado */
 .cw-img-card.selected {
-    border-color: var(--color-proceso);
+    border-color: var(--color-proceso); 
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -283,7 +272,7 @@ select {
     cursor: pointer;
     font-weight: bold;
     font-size: 1rem;
-    margin-top: auto;
+    margin-top: auto; 
     width: 50%;
     transition: background-color 0.3s ease, filter 0.3s;
     align-self: center;
@@ -320,7 +309,7 @@ select {
     line-height: 1.4;
 }
 
-/* --- Sección Inferior (Seleccionadas) --- */
+/* --- Secci├│n Inferior (Seleccionadas) --- */
 .cw-bottom-section {
     background-color: var(--color-navbar);
     border-radius: 15px;
@@ -340,7 +329,7 @@ select {
 .cw-selected-thumb {
     min-width: 120px;
     height: 100px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255,255,255,0.05);
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -350,8 +339,7 @@ select {
 
 /* Toggle button: siempre visible */
 .cw-toggle-sidebar {
-    display: inline-flex;
-    /* siempre visible */
+    display: inline-flex; /* siempre visible */
     align-items: center;
     justify-content: center;
     background: transparent;
@@ -381,7 +369,7 @@ select {
     pointer-events: auto;
 }
 
-/* Overlay que aparece cuando el sidebar está abierto en mobile */
+/* Overlay que aparece cuando el sidebar est├í abierto en mobile */
 .cw-overlay {
     display: none;
 }
@@ -395,19 +383,16 @@ select {
 }
 
 /* Panel desplegable */
-/* Ajustes: usar right:0 para situarlo junto al botón, y top suficiente para quedar debajo */
+/* Ajustes: usar right:0 para situarlo junto al bot├│n, y top suficiente para quedar debajo */
 .filter-menu {
-    left: 110%;
-    /* removed: left pushes panel demasiado lejos */
+    left: 110%;             /* removed: left pushes panel demasiado lejos */
     display: none;
     position: absolute;
-    top: 1px;
-    /* aparece debajo del trigger (ajusta si tu header difiere) */
-    width: 260px;
-    /* tamaño razonable para contenido */
+    top: 1px;                   /* aparece debajo del trigger (ajusta si tu header difiere) */
+    width: 260px;                /* tama├▒o razonable para contenido */
     background: var(--color-navbar);
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
     padding: 12px;
     gap: 8px;
     flex-direction: column;
@@ -415,7 +400,7 @@ select {
     transform: translateY(-6px);
     opacity: 0;
     transition: opacity 0.18s ease, transform 0.18s ease;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
 .filter-menu.open {
@@ -437,7 +422,7 @@ select {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 4px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
     gap: 20px;
 }
 
@@ -471,7 +456,7 @@ select {
 }
 
 .filter-list li:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255,255,255,0.02);
 }
 
 .filter-actions {
@@ -483,7 +468,7 @@ select {
 
 .btn-clear {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255,255,255,0.06);
     color: var(--color-notification);
     padding: 8px 10px;
     border-radius: 8px;
@@ -506,21 +491,19 @@ select {
 @media (max-width: 900px) {
     .cw-sidebar {
         position: fixed;
-        top: 60px;
-        /* ajusta según header */
+        top: 60px; /* ajusta seg├║n header */
         left: 0;
         width: 240px;
         height: calc(100% - 80px);
         background-color: var(--color-navbar);
         border-radius: 0 12px 12px 0;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         transform: translateX(-110%);
         transition: transform 0.3s ease-in-out;
-        z-index: 1200;
-        /* z-index sólo en responsive (<=900px) */
+        z-index: 1200; /* z-index s├│lo en responsive (<=900px) */
     }
 
-    /* Cuando está abierto */
+    /* Cuando est├í abierto */
     .cw-sidebar.open {
         transform: translateX(0);
     }
@@ -530,12 +513,12 @@ select {
         transform: translateX(-110%);
     }
 
-    /* En mobile el toggle mantiene su visibilidad (esta regla sólo refuerza estilos) */
+    /* En mobile el toggle mantiene su visibilidad (esta regla s├│lo refuerza estilos) */
     .cw-toggle-sidebar {
         display: inline-flex;
     }
 
-    /* Ajustes del layout cuando el sidebar está mobile (no ocupar espacio) */
+    /* Ajustes del layout cuando el sidebar est├í mobile (no ocupar espacio) */
     .cw-layout {
         padding-left: 16px;
         padding-right: 16px;
@@ -546,17 +529,17 @@ select {
         display: block;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0,0,0,0.2);
         z-index: 1100;
     }
 
-    /* Asegurar que el main content se muestre por encima si el sidebar está cerrado */
+    /* Asegurar que el main content se muestre por encima si el sidebar est├í cerrado */
     .cw-main-content {
         z-index: 0;
     }
 }
 
-/* Responsive: en pantallas pequeñas mostrar el panel como tarjeta centrada / full-width */
+/* Responsive: en pantallas peque├▒as mostrar el panel como tarjeta centrada / full-width */
 @media (max-width: 600px) {
     .filter-menu {
         position: fixed;
@@ -569,7 +552,6 @@ select {
         transform: translateY(-8px);
         display: none;
     }
-
     .filter-menu.open {
         display: flex;
         transform: translateY(0);

@@ -20,7 +20,7 @@ const ReferenceImagesStrip = ({ images, onDeselect }) => {
             <div className="reference-grid">
                 {images.map((img, index) => {
                     if (!img) return null;
-                    
+
                     // Helper to get URL safety
                     let url = null;
                     if (typeof img === 'string') url = img;
@@ -34,7 +34,7 @@ const ReferenceImagesStrip = ({ images, onDeselect }) => {
                     return (
                         <div key={img.id || index} className="reference-item">
                             {url ? <img src={url} alt={`Ref ${index}`} /> : <div className="placeholder-ref" />}
-                            <button 
+                            <button
                                 className="remove-ref-btn"
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -61,7 +61,7 @@ function GeneratorView({
     setUseReference,
     aspectRatio,
     setAspectRatio,
-     quantity,
+    quantity,
     setQuantity,
     handleGenerate,
     generatedImages,
@@ -107,7 +107,7 @@ function GeneratorView({
 
     // Local references (dropped or uploaded locally)
     const [localReferences, setLocalReferences] = useState([]);
-    
+
     // Drag & Drop State
     const [isDragging, setIsDragging] = useState(false);
 
@@ -116,10 +116,10 @@ function GeneratorView({
 
     // Fullscreen modal state
     const [fullscreenImage, setFullscreenImage] = useState(null);
-    
+
     // Canvas Toolbox state
     const [isToolboxOpen, setIsToolboxOpen] = useState(false);
-    
+
     // File input ref for "Agregar imagen" button
     const fileInputRef = useRef(null);
 
@@ -175,14 +175,14 @@ function GeneratorView({
             const response = await fetch(imageUrl);
             const blob = await response.blob();
             const blobUrl = URL.createObjectURL(blob);
-            
+
             const link = document.createElement('a');
             link.href = blobUrl;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             // Clean up the blob URL
             URL.revokeObjectURL(blobUrl);
         } catch (error) {
@@ -195,7 +195,7 @@ function GeneratorView({
         e.preventDefault();
         setIsDragging(false);
         const files = e.dataTransfer.files;
-        
+
         // Handle external files
         if (files && files.length > 0) {
             processFile(files[0]);
@@ -227,7 +227,7 @@ function GeneratorView({
             onDeselectReference(refToRemove); // Call parent for repository assets
         }
     };
-    
+
     // START: Concat previous parts if needed, but here is the new Delete Logic
     // START: Concat previous parts if needed, but here is the new Delete Logic
     const handleDeleteClick = (imgToDelete) => {
@@ -243,7 +243,7 @@ function GeneratorView({
 
             // 1. Delete from DB (if it's a real asset with ID and onDelete is provided)
             if (onDelete && (assetToDelete.id || typeof assetToDelete === 'number')) {
-                 await onDelete(assetToDelete.id || assetToDelete);
+                await onDelete(assetToDelete.id || assetToDelete);
             }
 
             // 2. Remove from local state (Visual feedback)
@@ -272,14 +272,14 @@ function GeneratorView({
             setIsDeleting(false);
         }
     };
-    
+
     // Helper to close modal
     const handleCloseDeleteModal = () => {
         if (isDeleting) return;
         setDeleteModalOpen(false);
         setAssetToDelete(null);
     };
-    
+
     // ... (useEffect, displayImages, mode handlers) ...
 
     useEffect(() => {
@@ -301,7 +301,7 @@ function GeneratorView({
         } else {
             setEditHistory([image]);
         }
-        
+
         setPrompt('');
 
         setShowEditOverlay(true);
@@ -373,16 +373,16 @@ function GeneratorView({
                         campaignId
                     });
                 }
-                
+
                 const refinedAsset = result.data || result;
 
                 if (refinedAsset) {
                     setEditHistory([...editHistory, refinedAsset]);
-                    setEditingImage(refinedAsset); 
-                    setPrompt(''); 
+                    setEditingImage(refinedAsset);
+                    setPrompt('');
                     // Clear canvas after successful generation
                     if (canvasRef.current) canvasRef.current.clear();
-                    
+
                     toast.success('Imagen editada con éxito', {
                         icon: <CheckCircle size={20} color="var(--color-success)" />
                     });
@@ -414,7 +414,7 @@ function GeneratorView({
         "Logo minimalista geométrico",
         "Ilustración 3D estilo Pixar de un robot"
     ];
-    
+
     const stylePills = [
         "Cinematic", "Anime", "3D Render", "Oil Painting", "Cyberpunk", "Minimalist"
     ];
@@ -424,7 +424,7 @@ function GeneratorView({
     return (
         <div className={`generator-container ${!isControlsOpen ? 'controls-collapsed' : ''}`}>
             {/* COLLAPSE BUTTON */}
-            <button 
+            <button
                 className="toggle-controls-btn"
                 onClick={() => setIsControlsOpen(!isControlsOpen)}
                 title={isControlsOpen ? "Ocultar controles" : "Mostrar controles"}
@@ -434,7 +434,7 @@ function GeneratorView({
 
             {/* LEFT: CONTROLS */}
             <aside className={`controls-panel ${!isControlsOpen ? 'collapsed' : ''}`}>
-                
+
                 {/* Scrollable Content Area */}
                 <div className="controls-scroll-area">
                     {/* Mode Indicator */}
@@ -462,7 +462,7 @@ function GeneratorView({
                             </span>
                             {openSections.prompt ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </div>
-                        
+
                         <div className={`section-content ${!openSections.prompt ? 'collapsed' : ''}`}>
                             <div className="prompt-group">
                                 <textarea
@@ -476,12 +476,12 @@ function GeneratorView({
                                     rows={4}
                                 />
                                 {/* Prompt Helpers */}
-                                <div className="prompt-helpers" style={{marginTop: 8}}>
+                                <div className="prompt-helpers" style={{ marginTop: 8 }}>
                                     <div className="style-pills">
-                                        <Palette size={14} style={{color: 'var(--color-text-muted)', marginRight: 4}} />
+                                        <Palette size={14} style={{ color: 'var(--color-text-muted)', marginRight: 4 }} />
                                         {stylePills.map(s => (
-                                            <button 
-                                                key={s} 
+                                            <button
+                                                key={s}
                                                 className={`style-pill ${style === s.toLowerCase() ? 'active' : ''}`}
                                                 onClick={() => handleStyleClick(s)}
                                                 type="button"
@@ -497,14 +497,14 @@ function GeneratorView({
                                     </div>
                                 </div>
 
-                                <div className="prompt-toolbar" style={{marginTop: 10, justifyContent: 'flex-end'}}>
+                                <div className="prompt-toolbar" style={{ marginTop: 10, justifyContent: 'flex-end' }}>
                                     <button
                                         className="magic-wand-btn"
                                         onClick={handleEnhanceClick}
                                         disabled={isEnhancing || !prompt}
                                         title="Mejorar Prompt con IA"
                                     >
-                                        
+
                                         {isEnhancing ? <Sparkles size={16} className="animate-spin" /> : <Wand2 size={16} />}
                                     </button>
                                 </div>
@@ -522,31 +522,31 @@ function GeneratorView({
                             <div className="section-content">
                                 <div className="control-group">
                                     <label>Tamaño del Pincel: {brushSize}px</label>
-                                    <input 
-                                        type="range" 
-                                        min="5" 
-                                        max="100" 
-                                        value={brushSize} 
-                                        onChange={(e) => setBrushSize(parseInt(e.target.value))} 
-                                        style={{width: '100%', cursor: 'pointer'}}
+                                    <input
+                                        type="range"
+                                        min="5"
+                                        max="100"
+                                        value={brushSize}
+                                        onChange={(e) => setBrushSize(parseInt(e.target.value))}
+                                        style={{ width: '100%', cursor: 'pointer' }}
                                     />
                                 </div>
-                                <div className="control-group" style={{display: 'flex', gap: 10}}>
-                                    <button 
+                                <div className="control-group" style={{ display: 'flex', gap: 10 }}>
+                                    <button
                                         className="canvas-action-btn"
                                         onClick={() => canvasRef.current && canvasRef.current.undo()}
                                         title="Deshacer trazo"
-                                        style={{flex: 1}}
+                                        style={{ flex: 1 }}
                                     >
-                                        <Undo size={16} style={{marginRight: 6}}/> Deshacer
+                                        <Undo size={16} style={{ marginRight: 6 }} /> Deshacer
                                     </button>
-                                    <button 
+                                    <button
                                         className="canvas-action-btn"
                                         onClick={() => canvasRef.current && canvasRef.current.clear()}
                                         title="Limpiar todo"
-                                        style={{flex: 1}}
+                                        style={{ flex: 1 }}
                                     >
-                                        <RotateCcw size={16} style={{marginRight: 6}}/> Limpiar
+                                        <RotateCcw size={16} style={{ marginRight: 6 }} /> Limpiar
                                     </button>
                                 </div>
                             </div>
@@ -564,12 +564,12 @@ function GeneratorView({
                             <div className={`section-content ${!openSections.params ? 'collapsed' : ''}`}>
                                 <div className="control-group">
                                     <div className="parameters-grid">
-                                        
+
                                         {/* Aspect Ratio Visual Selector */}
-                                        <div className="control-group" style={{gridColumn: 'span 2'}}>
-                                            <label style={{fontSize: '0.8rem', color: 'var(--color-text-muted)'}}>Formato</label>
+                                        <div className="control-group" style={{ gridColumn: 'span 2' }}>
+                                            <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Formato</label>
                                             <div className="aspect-ratio-selector">
-                                                <button 
+                                                <button
                                                     className={`ratio-btn ${aspectRatio === '1:1' ? 'active' : ''}`}
                                                     onClick={() => setAspectRatio('1:1')}
                                                     title="Cuadrado (1:1)"
@@ -577,7 +577,7 @@ function GeneratorView({
                                                     <Square size={20} className="ratio-icon" />
                                                     <span className="ratio-label">1:1</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`ratio-btn ${aspectRatio === '16:9' ? 'active' : ''}`}
                                                     onClick={() => setAspectRatio('16:9')}
                                                     title="Paisaje (16:9)"
@@ -585,7 +585,7 @@ function GeneratorView({
                                                     <RectangleHorizontal size={20} className="ratio-icon" />
                                                     <span className="ratio-label">16:9</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className={`ratio-btn ${aspectRatio === '9:16' ? 'active' : ''}`}
                                                     onClick={() => setAspectRatio('9:16')}
                                                     title="Historia (9:16)"
@@ -626,8 +626,8 @@ function GeneratorView({
 
                             <div className={`section-content ${!openSections.refs ? 'collapsed' : ''}`}>
                                 <div className="control-group">
-                                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12}}>
-                                        <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                             <label>Usar Referencia</label>
                                             <div className="switch-container">
                                                 <label className="switch">
@@ -644,15 +644,15 @@ function GeneratorView({
                                         <div>
                                             <button type="button" className="add-image-btn" onClick={handleAddImageClick} title="Subir referencia">
                                                 <Upload size={14} />
-                                                <span style={{marginLeft:8}}>Subir</span>
+                                                <span style={{ marginLeft: 8 }}>Subir</span>
                                             </button>
-                                            <input ref={fileInputRef} type="file" accept="image/*" style={{display: 'none'}} onChange={handleFileChange} />
+                                            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                                         </div>
                                     </div>
 
                                     {/* Reference Images Strip / Drop Zone */}
                                     {useReference && (
-                                        <div 
+                                        <div
                                             className={`reference-section ${isDragging ? 'dragging' : ''}`}
                                             onDragOver={handleDragOver}
                                             onDragLeave={handleDragLeave}
@@ -660,19 +660,19 @@ function GeneratorView({
                                         >
                                             {combinedReferences.length > 0 ? (
                                                 <div className={`reference-drop-zone ${isDragging ? 'active' : ''}`}>
-                                                     <ReferenceImagesStrip
+                                                    <ReferenceImagesStrip
                                                         images={combinedReferences}
                                                         onDeselect={handleRemoveLocalReference}
                                                     />
-                                                    {isDragging && <div className="reference-drop-text" style={{marginTop: 10}}>Sueltar para añadir referencia</div>}
+                                                    {isDragging && <div className="reference-drop-text" style={{ marginTop: 10 }}>Sueltar para añadir referencia</div>}
                                                 </div>
                                             ) : (
                                                 <div className={`reference-drop-zone ${isDragging ? 'active' : ''}`}>
-                                                    <div style={{opacity: 0.7, marginBottom: 8}}><Upload size={24} /></div>
-                                                    <p className="reference-drop-text" style={{margin:0}}>
+                                                    <div style={{ opacity: 0.7, marginBottom: 8 }}><Upload size={24} /></div>
+                                                    <p className="reference-drop-text" style={{ margin: 0 }}>
                                                         Arrastra imágenes aquí o selecciona 'Subir'
-                                                        <br/>
-                                                        <span style={{fontSize: '0.75rem', opacity: 0.7}}>También puedes seleccionar del repositorio o historial</span>
+                                                        <br />
+                                                        <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>También puedes seleccionar del repositorio o historial</span>
                                                     </p>
                                                 </div>
                                             )}
@@ -692,7 +692,7 @@ function GeneratorView({
                         disabled={!prompt || (isEditMode && isRefining) || isGenerating}
                     >
                         {isGenerating ? (
-                           <>Generando...</>
+                            <>Generando...</>
                         ) : isRefining ? (
                             <>Aplicando...</>
                         ) : isEditMode ? (
@@ -701,7 +701,7 @@ function GeneratorView({
                             <> Generar</>
                         )}
                     </button>
-                     {/* Error Message */}
+                    {/* Error Message */}
                     {generationError && (
                         <div style={{ color: '#ff6b6b', marginTop: '10px', textAlign: 'center', fontSize: '13px' }}>
                             {generationError}
@@ -712,16 +712,12 @@ function GeneratorView({
 
             {/* RIGHT: CANVAS */}
             <main className="canvas-area">
-                
-                <div className="canvas-header">
-                    <h2>
-                        {isEditMode ? 'Editando Imagen' : canvasImage ? 'Vista Previa' : 'Canvas'}
-                    </h2>
-                </div>
+
+
 
                 <div className="canvas-preview">
                     {isGenerating ? (
-                         <div className="preview-container">
+                        <div className="preview-container">
                             <ScanningPlaceholder width="100%" height="100%" text="Generando Imagen..." />
                         </div>
                     ) : canvasImage ? (
@@ -738,7 +734,7 @@ function GeneratorView({
                             }}
                         >
                             {isEditMode ? (
-                                <InpaintingCanvas 
+                                <InpaintingCanvas
                                     ref={canvasRef}
                                     imageUrl={getImageUrl(canvasImage)}
                                     brushSize={brushSize}
@@ -755,17 +751,17 @@ function GeneratorView({
                             {/* Canvas Toolbox - Upper Right Corner */}
                             {getImageUrl(canvasImage) && (
                                 <div className="canvas-toolbox">
-                                    <button 
+                                    <button
                                         className={`toolbox-toggle ${isToolboxOpen ? 'active' : ''}`}
                                         onClick={() => setIsToolboxOpen(!isToolboxOpen)}
                                         title={isToolboxOpen ? 'Cerrar herramientas' : 'Abrir herramientas'}
                                     >
                                         <MoreVertical size={20} />
                                     </button>
-                                    
+
                                     {isToolboxOpen && (
                                         <div className="toolbox-tools">
-                                            <button 
+                                            <button
                                                 className="toolbox-tool-item"
                                                 onClick={() => setFullscreenImage(getImageUrl(canvasImage))}
                                                 title="Pantalla Completa"
@@ -774,8 +770,8 @@ function GeneratorView({
                                                 <Maximize size={18} />
                                                 <span>Pantalla Completa</span>
                                             </button>
-                                            
-                                            <button 
+
+                                            <button
                                                 className="toolbox-tool-item"
                                                 onClick={() => {
                                                     const imgUrl = getImageUrl(canvasImage);
@@ -789,8 +785,8 @@ function GeneratorView({
                                                 <Download size={18} />
                                                 <span>Descargar</span>
                                             </button>
-                                            
-                                            <button 
+
+                                            <button
                                                 className={`toolbox-tool-item ${canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'saved' : ''}`}
                                                 onClick={async () => {
                                                     if (!canvasImage?.id) {
@@ -811,8 +807,8 @@ function GeneratorView({
                                                 <Bookmark size={18} fill={canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'currentColor' : 'none'} />
                                                 <span>{canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'Guardado' : 'Guardar'}</span>
                                             </button>
-                                            
-                                            <button 
+
+                                            <button
                                                 className="toolbox-tool-item delete"
                                                 onClick={() => handleDeleteClick(canvasImage)}
                                                 title="Eliminar"
@@ -857,14 +853,14 @@ function GeneratorView({
                         </div>
                     ) : (
                         <div className="empty-canvas">
-                            <Lightbulb size={48} className="empty-icon" style={{color: '#fbbf24', opacity: 0.8}} />
-                            <p style={{fontWeight: 500, margin: '15px 0 10px'}}>¡Empieza a crear!</p>
-                            <p style={{fontSize: '0.9rem', opacity: 0.7}}>Escribe un prompt o prueba uno de estos:</p>
-                            
+                            <Lightbulb size={48} className="empty-icon" style={{ color: '#fbbf24', opacity: 0.8 }} />
+                            <p style={{ fontWeight: 500, margin: '15px 0 10px' }}>¡Empieza a crear!</p>
+                            <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>Escribe un prompt o prueba uno de estos:</p>
+
                             <div className="inspiration-chips">
                                 {inspirationPrompts.map((p, i) => (
-                                    <button 
-                                        key={i} 
+                                    <button
+                                        key={i}
                                         className="inspiration-chip"
                                         onClick={() => setPrompt(p)}
                                     >
@@ -890,7 +886,7 @@ function GeneratorView({
                                         key={index}
                                         className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
                                         style={{ cursor: 'default' }}
-                                        draggable="true" 
+                                        draggable="true"
                                         onDragStart={(e) => {
                                             e.dataTransfer.setData("application/json", JSON.stringify(img));
                                         }}
@@ -910,7 +906,7 @@ function GeneratorView({
                                                     isEditMode ? setEditingImage(img) : enterEditMode(img);
                                                 }}
                                                 title="Editar"
-                                                style={{backgroundColor: 'rgba(100, 255, 218, 1)', color: '#333', borderColor: 'transparent', marginRight: '4px'}}
+                                                style={{ backgroundColor: 'rgba(100, 255, 218, 1)', color: '#333', borderColor: 'transparent', marginRight: '4px' }}
                                             >
                                                 <Pencil size={14} />
 
@@ -929,14 +925,14 @@ function GeneratorView({
                                             >
                                                 <Download size={14} />
                                             </button> */}
-                                            <button 
-                                                className="history-save-btn" 
-                                                onClick={(e) => { 
-                                                    e.stopPropagation(); 
-                                                    handleDeleteClick(img); 
+                                            <button
+                                                className="history-save-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteClick(img);
                                                 }}
                                                 title="Eliminar"
-                                                style={{backgroundColor: 'rgba(239, 68, 68, 0.8)', borderColor: 'transparent'}}
+                                                style={{ backgroundColor: 'rgba(239, 68, 68, 0.8)', borderColor: 'transparent' }}
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -975,7 +971,7 @@ function GeneratorView({
                     />
                 </div>
             )}
-            
+
             <ConfirmationModal
                 isOpen={deleteModalOpen}
                 onClose={handleCloseDeleteModal}

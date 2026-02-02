@@ -1,0 +1,682 @@
+/* ===== LEFT PANEL: CONTROLS ===== */
+.controls-panel {
+    width: 340px;
+    min-width: 320px;
+    background-color: var(--color-bg-panel);
+    border-right: 1px solid var(--color-border);
+    position: relative;
+    /* Ensure flex column for sticky footer */
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: visible;
+    /* Allow toggle button to hang out if positioned absolute outside? No, 'visible' shows overflow. But width needs to clip content? */
+    /* Actually for the toggle to be visible outside, overflow must be visible or clip path managed. 
+     If we use overflow: visible, the transition of width might look weird with content.
+     Alternative: The toggle button should be a sibling of controls-panel, not a child, OR use overrides.
+     Let's style it so it's technically inside but visual outside? No, checking HTML structure... 
+     HTML: container > button (sibling?) > aside (controls).
+     Wait, in GeneratorView.jsx, button IS a direct child of 'generator-container', sibling to 'aside'.
+     So 'position: absolute' is relative to 'generator-container'.
+  */
+    overflow: hidden;
+    /* Keep hidden for smooth width transition */
+
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.controls-panel.collapsed {
+    width: 0;
+    min-width: 0;
+    border-right: none;
+}
+
+/* Toggle Button */
+
+/* Toggle Button - Subtle Version */
+.toggle-controls-btn {
+    position: absolute;
+    top: 16px;
+    left: 400px;
+    /* Aligns with panel width */
+    z-index: 100;
+    background: transparent;
+    /* No background by default */
+    border: 1px solid transparent;
+    /* No border by default */
+    width: 24px;
+    height: 48px;
+    /* Touch target */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    /* Low contrast */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.5;
+}
+
+.toggle-controls-btn:hover {
+    opacity: 1;
+    color: var(--color-primary);
+    background: rgba(0, 0, 0, 0.2);
+    /* Subtle bg on hover */
+}
+
+.controls-collapsed .toggle-controls-btn {
+    left: 0;
+    right: auto;
+    border: 1px solid var(--color-border);
+    /* Visible when collapsed so user can find it */
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    background-color: var(--color-bg-panel);
+    opacity: 1;
+}
+
+.controls-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    /* Custom Scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+.controls-scroll-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.controls-scroll-area::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 3px;
+}
+
+.controls-footer {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg-panel);
+    z-index: 10;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.controls-header {
+    display: none;
+}
+
+.sparkles-icon {
+    color: var(--color-proceso);
+}
+
+/* ===== MODE INDICATOR ===== */
+.mode-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+.mode-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.mode-icon {
+    color: var(--color-accent);
+}
+
+.exit-mode-btn {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 6px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.exit-mode-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-error);
+    border-color: var(--color-error);
+}
+
+/* ===== PROMPT GROUP ===== */
+.prompt-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.prompt-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.prompt-input {
+    width: 100%;
+    min-height: 120px;
+    max-height: 120px;
+    padding: var(--spacing-md);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    resize: none;
+    transition: border-color 0.2s, background-color 0.2s;
+    line-height: 1.5;
+}
+
+.prompt-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.prompt-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.prompt-toolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.magic-wand-btn {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: var(--spacing-sm) 12px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.magic-wand-btn:hover:not(:disabled) {
+    background-color: rgba(25, 118, 210, 0.1);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.magic-wand-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== STYLE PILLS replaced previous controls-row logic if needed or just appended ===== */
+.prompt-helpers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.style-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.style-pill {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.style-pill:hover {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+/* ===== PARAMETERS ===== */
+.parameters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+/* Adjusted for better spacing in sidebar */
+.control-group {
+    margin-bottom: var(--spacing-sm);
+}
+
+.control-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.custom-select,
+.qty-input {
+    padding: 10px 12px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.custom-select option {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-primary);
+}
+
+.custom-select:focus,
+.qty-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+/* ===== ASPECT RATIO VISUAL SELECTOR ===== */
+.aspect-ratio-selector {
+    display: flex;
+    gap: 12px;
+}
+
+.ratio-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--color-text-secondary);
+}
+
+.ratio-btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-text-muted);
+}
+
+.ratio-btn.active {
+    background-color: rgba(59, 130, 246, 0.1);
+    /* Primary color low opacity */
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    /* box-shadow removed for cleaner look */
+}
+
+.ratio-icon {
+    opacity: 0.7;
+    transition: transform 0.2s;
+}
+
+.ratio-btn.active .ratio-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.ratio-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.qty-input {
+    width: 100%;
+}
+
+/* ===== REFERENCE TOGGLE ===== */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s;
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--color-white);
+    transition: transform 0.3s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--color-primary);
+}
+
+input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+.switch-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    color: var(--color-text-primary);
+}
+
+/* Botón agregar imagen junto al switch */
+.add-image-btn {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: var(--spacing-sm) 12px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.add-image-btn:hover {
+    background-color: var(--color-card-hover);
+    border-color: var(--color-text-muted);
+}
+
+/* ===== REFERENCE IMAGES STRIP ===== */
+/* ===== REFERENCE AREA ===== */
+.reference-section {
+    margin-top: var(--spacing-sm);
+    transition: all 0.2s;
+}
+
+.reference-drop-zone {
+    border: 2px dashed var(--color-border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.2s;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.reference-drop-zone.active {
+    border-color: var(--color-primary);
+    background-color: rgba(59, 130, 246, 0.1);
+    transform: scale(1.02);
+}
+
+.reference-drop-text {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+    pointer-events: none;
+}
+
+.reference-strip {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.reference-strip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+}
+
+.reference-count {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.reference-grid {
+    display: flex;
+    gap: var(--spacing-sm);
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.reference-grid::-webkit-scrollbar {
+    height: 4px;
+}
+
+.reference-grid::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.reference-grid::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 2px;
+}
+
+.reference-item {
+    position: relative;
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.reference-item:hover {
+    border-color: var(--color-accent);
+}
+
+.reference-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-ref-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: none;
+    border-radius: 3px;
+    padding: 2px;
+    color: var(--color-white);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reference-item:hover .remove-ref-btn {
+    opacity: 1;
+}
+
+.remove-ref-btn:hover {
+    background-color: var(--color-error);
+}
+
+.warning-text {
+    font-size: 0.8rem;
+    color: var(--color-warning);
+    margin: 0;
+    padding: 10px;
+    background-color: rgba(255, 193, 7, 0.1);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    text-align: center;
+}
+
+/* ===== PRIMARY ACTION BUTTON ===== */
+.generate-btn {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 12px;
+    /* More rounded */
+    color: var(--color-white);
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    /* box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); Removed neon effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.generate-btn:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    transform: translateY(-2px);
+    /* box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5); Removed neon effect */
+}
+
+.generate-btn:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    transform: translateY(-1px);
+}
+
+.generate-btn:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.generate-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--color-text-muted);
+}
+
+.generate-btn.edit-mode {
+    background-color: var(--color-info);
+}
+
+.generate-btn.edit-mode:hover:not(:disabled) {
+    background-color: #138496;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Large Screens (> 1440px) */
+@media (min-width: 1440px) {
+    .controls-panel {
+        width: 440px;
+    }
+}
+
+/* Tablet (~1024px) */
+@media (max-width: 1024px) {
+    .controls-panel {
+        width: 320px;
+        min-width: 280px;
+    }
+
+    .parameters-grid {
+        grid-template-columns: 1fr;
+        /* Stack parameters on narrower usage */
+    }
+
+    .ratio-label {
+        display: none;
+        /* Hide labels to save space */
+    }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 768px) {
+    .controls-panel {
+        width: 100%;
+        min-width: auto;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+        border-radius: 10px 10px 0 0;
+        padding: var(--spacing-sm);
+    }
+
+    .controls-scroll-area {
+        max-height: 40vh;
+        /* Limit height on mobile so it doesn't take full screen */
+    }
+
+    .toggle-controls-btn {
+        display: none;
+        /* Hide toggle on mobile as it's stacked */
+    }
+
+    .parameters-grid {
+        grid-template-columns: 1fr 1fr;
+        /* Restore 2 cols on mobile since width is 100% */
+    }
+}
