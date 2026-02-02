@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { enhancePrompt, refineAsset, editImage } from '../../services/generatorService';
-import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark, Square, RectangleHorizontal, RectangleVertical, Lightbulb, Upload, ChevronLeft, ChevronRight, Palette, Maximize, Trash2, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Undo, RotateCcw, Settings } from 'lucide-react';
+import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark, Square, RectangleHorizontal, RectangleVertical, Lightbulb, Upload, ChevronLeft, ChevronRight, Palette, Maximize, Trash2, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Undo, RotateCcw, Settings, MoreVertical, Pencil } from 'lucide-react';
 import { useSavedAssets } from '../../hooks/useSavedAssets';
 import InpaintingCanvas from './InpaintingCanvas';
 import LoadingSpinner from '../animations/LoadingSpinner';
@@ -82,6 +82,7 @@ function GeneratorView({
     const [isEnhancing, setIsEnhancing] = useState(false);
     const [isRefining, setIsRefining] = useState(false);
     const [isControlsOpen, setIsControlsOpen] = useState(true);
+    const [showEditOverlay, setShowEditOverlay] = useState(false);
     const [brushSize, setBrushSize] = useState(20); // Brush size for inpainting
     const canvasRef = useRef(null);
 
@@ -302,6 +303,11 @@ function GeneratorView({
         }
         
         setPrompt('');
+
+        setShowEditOverlay(true);
+        setTimeout(() => {
+            setShowEditOverlay(false);
+        }, 1500);
     };
 
     const exitEditMode = () => {
@@ -496,8 +502,9 @@ function GeneratorView({
                                         className="magic-wand-btn"
                                         onClick={handleEnhanceClick}
                                         disabled={isEnhancing || !prompt}
-                                        title="Mejorar con IA"
+                                        title="Mejorar Prompt con IA"
                                     >
+                                        
                                         {isEnhancing ? <Sparkles size={16} className="animate-spin" /> : <Wand2 size={16} />}
                                     </button>
                                 </div>
@@ -590,7 +597,7 @@ function GeneratorView({
                                         </div>
 
                                         {/* Quantity Input */}
-                                        {mode === 'create' && (
+                                        {/* {mode === 'create' && (
                                             <div className="control-group">
                                                 <label style={{fontSize: '0.8rem', color: 'var(--color-text-muted)'}}>Cantidad</label>
                                                 <input
@@ -602,7 +609,7 @@ function GeneratorView({
                                                     max="4"
                                                 />
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>
@@ -753,7 +760,7 @@ function GeneratorView({
                                         onClick={() => setIsToolboxOpen(!isToolboxOpen)}
                                         title={isToolboxOpen ? 'Cerrar herramientas' : 'Abrir herramientas'}
                                     >
-                                        <Settings size={20} />
+                                        <MoreVertical size={20} />
                                     </button>
                                     
                                     {isToolboxOpen && (
@@ -818,6 +825,35 @@ function GeneratorView({
                                     )}
                                 </div>
                             )}
+
+                            {showEditOverlay && (
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                    backdropFilter: 'blur(5px)',
+                                    borderRadius: '20px',
+                                    padding: '40px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    zIndex: 100,
+                                    pointerEvents: 'none',
+                                    animation: 'fadeIn 0.2s ease-out'
+                                }}>
+                                    <Edit3 size={64} color='#b7e796ff' strokeWidth={1.5} style={{ marginBottom: '15px' }} />
+                                    <span style={{
+                                        color: 'white',
+                                        fontSize: '1.5rem',
+                                        fontWeight: '600',
+                                        letterSpacing: '1px'
+                                    }}>
+                                        MODO EDICIÓN ACTIVADO
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="empty-canvas">
@@ -853,8 +889,7 @@ function GeneratorView({
                                     <div
                                         key={index}
                                         className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
-                                        onClick={() => isEditMode ? setEditingImage(img) : enterEditMode(img)}
-                                        title={isEditMode ? 'Ver iteración' : 'Click para editar'}
+                                        style={{ cursor: 'default' }}
                                         draggable="true" 
                                         onDragStart={(e) => {
                                             e.dataTransfer.setData("application/json", JSON.stringify(img));
@@ -868,7 +903,19 @@ function GeneratorView({
                                             </div>
                                         )}
                                         <div className="history-overlay">
-                                            <button 
+                                            <button
+                                                className="history-save-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    isEditMode ? setEditingImage(img) : enterEditMode(img);
+                                                }}
+                                                title="Editar"
+                                                style={{backgroundColor: 'rgba(100, 255, 218, 1)', color: '#333', borderColor: 'transparent', marginRight: '4px'}}
+                                            >
+                                                <Pencil size={14} />
+
+                                            </button>
+                                            {/* <button 
                                                 className="history-save-btn" 
                                                 onClick={(e) => { 
                                                     e.stopPropagation();
@@ -881,7 +928,7 @@ function GeneratorView({
                                                 style={{backgroundColor: 'rgba(59, 130, 246, 0.8)', borderColor: 'transparent', marginRight: '4px'}}
                                             >
                                                 <Download size={14} />
-                                            </button>
+                                            </button> */}
                                             <button 
                                                 className="history-save-btn" 
                                                 onClick={(e) => { 
