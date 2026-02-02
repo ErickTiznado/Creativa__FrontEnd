@@ -82,7 +82,7 @@ function ViewAssignmentsDesigner() {
             setSelectedCamp(data);
             navigate(`/designer/workspace/${id}`);
         } catch (e) {
-            console.log(e);
+
         }
     }
 

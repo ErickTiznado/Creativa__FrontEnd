@@ -8,7 +8,7 @@ import './SavedAssetsView.css';
 function SavedAssetsView({ campaignId }) {
     // Backend-integrated saved assets
     const { savedAssets, loading, toggleSaveAsset } = useSavedAssets(campaignId);
-    
+
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadError, setDownloadError] = useState(null);
 
@@ -29,7 +29,7 @@ function SavedAssetsView({ campaignId }) {
                 `assets_campaign_${campaignId}`
             );
 
-            console.log(`Assets ${result.action} in database:`, result.dbResponse);
+
             // Success feedback could be added here
         } catch (error) {
             console.error('Error downloading and saving assets:', error);
@@ -45,14 +45,14 @@ function SavedAssetsView({ campaignId }) {
             const response = await fetch(imageUrl);
             const blob = await response.blob();
             const blobUrl = URL.createObjectURL(blob);
-            
+
             const link = document.createElement('a');
             link.href = blobUrl;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             // Clean up the blob URL
             URL.revokeObjectURL(blobUrl);
         } catch (error) {
@@ -90,7 +90,7 @@ function SavedAssetsView({ campaignId }) {
                     {downloadError}
                 </div>
             )}
-            
+
             {loading ? (
                 <div className="sav-loading">
                     <p>Cargando assets guardados...</p>
@@ -124,7 +124,7 @@ function SavedAssetsView({ campaignId }) {
                                             }
                                         }
                                     }
-                                    
+
                                     return imgUrl ? (
                                         <img src={imgUrl} alt={`Asset ${index + 1}`} />
                                     ) : (
@@ -155,7 +155,7 @@ function SavedAssetsView({ campaignId }) {
                                                 }
                                             }
                                         }
-                                        
+
                                         if (imgUrl) {
                                             downloadImage(imgUrl, `asset_${index + 1}_${Date.now()}.png`);
                                         }

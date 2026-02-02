@@ -8,6 +8,6 @@ export const handleGetCampaigns = async () => {
     campaigns = response.data;
     return response.data;
   } catch (e) {
-    console.log(e);
+
   }
 };

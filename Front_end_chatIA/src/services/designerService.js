@@ -28,12 +28,12 @@ export const sendCampaign = async (campaign) => {
 };
 
 export const getCampaigns = async (designerId) => {
-  console.log(designerId, "designerId");
+
   try {
     const response = await api.get(`/campaigns/designers`, {
       params: { designerId },
     });
-    console.log(response.data.data, "response");
+
     return response.data.data;
   } catch (e) {
     console.error("Error in getCampaigns:", e);
@@ -47,7 +47,7 @@ export const updateCampaignStatus = async (campaignId, status) => {
       campaignId,
       status,
     });
-    console.log(response.data, "response");
+
     return response;
   } catch (e) {
     console.error("Error in updateCampaignStatus:", e);
@@ -62,7 +62,7 @@ export const getCampaignById = async (campaignId) => {
     const response = await api.get("/campaigns/campaignById", {
       params: { campaignId, designerId: userId },
     });
-    console.log(response.data.data, "response");
+
     return response.data.data;
   } catch (e) {
     console.error("Error in getCampaignById:", e);

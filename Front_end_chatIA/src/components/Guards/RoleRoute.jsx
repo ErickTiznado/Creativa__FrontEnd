@@ -5,7 +5,7 @@ import LoadingSpinner from "../animations/LoadingSpinner"
 
 const RoleRoute = ({ allowedRoles }) => {
     const { user, isAuth, loading } = useAuth()
-    console.log(user)
+
 
     if (loading) {
         return (

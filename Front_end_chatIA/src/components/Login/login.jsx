@@ -25,7 +25,7 @@ const Login = () => {
         window.location.href = '/designer';
       }
     } catch (error) {
-      console.log(error);
+
     }
   }
   return (

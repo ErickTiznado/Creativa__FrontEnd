@@ -15,7 +15,7 @@ export const handlesend = async (message) => {
       userMessage: message,
       userId: user.id,
     });
-    console.log(response.data.type);
+
     return {
       success: true,
       response: response.data.text,
@@ -23,7 +23,7 @@ export const handlesend = async (message) => {
       type: response.data.type,
     };
   } catch (error) {
-    console.log(error);
+
     return {
       success: false,
       error: error,
@@ -49,7 +49,7 @@ export const handlesend = async (message) => {
             data: response.data.collectedData
         }
     } catch (error) {
-        console.log(error)
+
         return {
             success: false,
             error: error
