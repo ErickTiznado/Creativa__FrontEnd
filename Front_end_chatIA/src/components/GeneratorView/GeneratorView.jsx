@@ -504,6 +504,7 @@ function GeneratorView({
                                         disabled={isEnhancing || !prompt}
                                         title="Mejorar Prompt con IA"
                                     >
+                                        
                                         {isEnhancing ? <Sparkles size={16} className="animate-spin" /> : <Wand2 size={16} />}
                                     </button>
                                 </div>
