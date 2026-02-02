@@ -61,8 +61,8 @@ function GeneratorView({
     setUseReference,
     aspectRatio,
     setAspectRatio,
-    quantity,
-    setQuantity,
+    // quantity,
+    // setQuantity,
     handleGenerate,
     generatedImages,
     referenceImages = [],
@@ -113,6 +113,8 @@ function GeneratorView({
 
     // Display images from props
     const [localImages, setLocalImages] = useState([]);
+
+    const [selectedPreviewImage, setSelectedPreviewImage] = useState(null);
 
     // Fullscreen modal state
     const [fullscreenImage, setFullscreenImage] = useState(null);
@@ -284,6 +286,9 @@ function GeneratorView({
 
     useEffect(() => {
         setLocalImages(generatedImages);
+        if (generatedImages && generatedImages.length > 0) {
+            setSelectedPreviewImage(generatedImages[generatedImages.length - 1]);
+        }
     }, [generatedImages]);
 
     const displayImages = localImages;
@@ -404,7 +409,9 @@ function GeneratorView({
 
     // ===== DERIVED STATE =====
     const isEditMode = mode === 'edit';
-    const canvasImage = isEditMode ? editingImage : (displayImages.length > 0 ? displayImages[displayImages.length - 1] : null);
+    const canvasImage = isEditMode
+        ? editingImage
+        : (selectedPreviewImage || (displayImages.length > 0 ? displayImages[displayImages.length - 1] : null));
     const showParameters = mode === 'create' || mode === 'edit';
     const showReferenceControls = mode === 'create';
 
@@ -884,7 +891,10 @@ function GeneratorView({
                                 return (
                                     <div
                                         key={index}
-                                        className={`history-item ${editingImage === img ? 'active-editing' : ''}`}
+                                        className={`history-item ${editingImage === img ? 'active-editing' : ''} ${!isEditMode && (selectedPreviewImage === img || (!selectedPreviewImage && index === displayImages.length - 1)) ? 'active-preview' : ''}`}
+                                        onClick={() => {
+                                            if (!isEditMode) setSelectedPreviewImage(img);
+                                        }}
                                         style={{ cursor: 'default' }}
                                         draggable="true"
                                         onDragStart={(e) => {
