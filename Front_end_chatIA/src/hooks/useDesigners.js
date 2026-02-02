@@ -48,10 +48,10 @@ export const useCampaigns = () => {
         const designerId = localStorage.getItem("user");
         const id = JSON.parse(designerId);
         const data = await getCampaigns(id.id);
-        console.log(data, "data");
+
         setCampaigns(data);
       } catch (e) {
-        console.log(e);
+
         setError(e);
       } finally {
         setLoading(false);
@@ -66,7 +66,7 @@ export const useUpdateCampaignStatus = () => {
   const updateStatus = async (campaignId, status) => {
     try {
       const response = await updateCampaignStatus(campaignId, status);
-      console.log(response.data, "response");
+
       return response;
     } catch (e) {
       console.error("Error updating campaign status:", e);
@@ -82,7 +82,7 @@ export const useCampaignsById = () => {
     try {
       const response = await getCampaignById(id);
       const data = response;
-      console.log(data, "response");
+
       return data;
     } catch (e) {
       console.error("Error fetching campaigns by id:", e);

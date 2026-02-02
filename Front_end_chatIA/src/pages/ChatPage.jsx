@@ -25,7 +25,7 @@ function ChatPage() {
     };
 
     const handleBriefData = (newData) => {
-        console.log('📥 handleBriefData recibió:', newData);
+
 
         // Convertir objeto plano { key: value } a array de { label, value }
         setBriefData((prevBriefData) => {
@@ -43,7 +43,7 @@ function ChatPage() {
                 }
             });
 
-            console.log('📋 briefData actualizado:', updatedData);
+
             return updatedData;
         });
     };

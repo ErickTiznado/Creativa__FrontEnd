@@ -14,11 +14,11 @@ function Chatbox({ onClose }) {
 
 
     const handleBriefData = (newData) => {
-        console.log('Esta es la data', newData);
+
 
         // Convertir objeto plano { key: value } a array de { label, value }
         setBriefData((prevBriefData) => {
-            
+
             // Crear una copia del array actual
             const updatedData = [...prevBriefData];
 
@@ -52,7 +52,7 @@ function Chatbox({ onClose }) {
                 <button className="close-btn" onClick={onClose}>×</button>
                 <div className="app-container">
                     <main className="main-layout">
-                        <ChatSection onBriefData={handleBriefData} onToggleSidebar={toggleSidebar} onTypeChange={setType}/>
+                        <ChatSection onBriefData={handleBriefData} onToggleSidebar={toggleSidebar} onTypeChange={setType} />
                         <Sidebar
                             briefData={briefData}
                             className={isSidebarOpen ? 'open' : ''}

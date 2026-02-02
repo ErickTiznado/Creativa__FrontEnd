@@ -8,7 +8,7 @@ function Navbar({ role = "Marketing" }) {
     const user = userStr ? JSON.parse(userStr) : null;
     const rol = user?.role;
 
-    console.log(rol, 'Rollll')
+
     return (
         <>
             <div className='Navbar'>

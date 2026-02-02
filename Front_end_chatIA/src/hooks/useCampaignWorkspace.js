@@ -42,19 +42,19 @@ export const useCampaignWorkspace = () => {
   // Construimos el objeto de datos final mezclando el real con el fallback
   const campaignData = campaign
     ? {
-        designer: "Juan Carlos", // Placeholder, podría venir del contexto de usuario
-        title: brief?.nombre_campaing || "Sin título",
-        status: campaign.status === "draft" ? "En Proceso" : campaign.status,
-        details: {
-          objective: brief?.Objective || "No especificado",
-          channel: brief?.publishing_channel || "No especificado",
-          public: "General",
-          date: brief?.fechaPublicacion || "No especificada",
-          description: brief?.Description || "Sin descripción",
-        },
-        tags: brief?.ContentType ? [brief.ContentType] : ["General"],
-        repoImages: [], // Ya no usamos esto para renderizar, sino 'assets'
-      }
+      designer: "Juan Carlos", // Placeholder, podría venir del contexto de usuario
+      title: brief?.nombre_campaing || "Sin título",
+      status: campaign.status === "draft" ? "En Proceso" : campaign.status,
+      details: {
+        objective: brief?.Objective || "No especificado",
+        channel: brief?.publishing_channel || "No especificado",
+        public: "General",
+        date: brief?.fechaPublicacion || "No especificada",
+        description: brief?.Description || "Sin descripción",
+      },
+      tags: brief?.ContentType ? [brief.ContentType] : ["General"],
+      repoImages: [], // Ya no usamos esto para renderizar, sino 'assets'
+    }
     : defaultCampaignData;
 
   // --- ESTADOS DE UI ---
@@ -106,7 +106,7 @@ export const useCampaignWorkspace = () => {
       // Always re-fetch if we have an ID to ensure fresh data (including assets)
       if (campaignId) {
         try {
-          console.log("Fetching campaign data from URL parameter:", campaignId);
+
           const data = await fetchCampaignsById(campaignId);
           setSelectedCamp(data);
         } catch (error) {
@@ -122,10 +122,8 @@ export const useCampaignWorkspace = () => {
   // When campaign updates, sync generated images from the campaign object
   useEffect(() => {
     if (campaign && campaign.assets) {
-      console.log(
-        "Syncing generated images from campaign object:",
-        campaign.assets.length,
-      );
+
+
 
       // Filter logic: Only show Parent images (those without parent_asset_id)
       // The refinements (children) will be accessed separately when editing
@@ -214,12 +212,12 @@ export const useCampaignWorkspace = () => {
       // Get reference image URLs if useReference is enabled
       const referenceImages = useReference
         ? assets
-            .filter((asset) => selectedIds.includes(asset.id))
-            .map((asset) =>
-              typeof asset.img_url === "string"
-                ? asset.img_url
-                : asset.img_url?.url,
-            )
+          .filter((asset) => selectedIds.includes(asset.id))
+          .map((asset) =>
+            typeof asset.img_url === "string"
+              ? asset.img_url
+              : asset.img_url?.url,
+          )
         : [];
 
       // Call the backend to generate images
@@ -240,7 +238,7 @@ export const useCampaignWorkspace = () => {
       // Store complete asset objects (not just URLs) for inpainting
       // Each asset has: { id, img_url, prompt_used, campaign_assets, ... }
       if (assetObjects.length > 0) {
-        console.log("✅ Received assets:", assetObjects);
+
         setGeneratedImages([...generatedImages, ...assetObjects]);
       } else {
         setGenerationError("No se generaron imágenes. Intenta de nuevo.");
@@ -257,7 +255,7 @@ export const useCampaignWorkspace = () => {
 
   const handleGenerateEdit = () => {
     // Lógica futura para editar
-    console.log("Generando edición/variación...");
+
   };
 
   const handleDeleteAsset = async (assetId) => {
