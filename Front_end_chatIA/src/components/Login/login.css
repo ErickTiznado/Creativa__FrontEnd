@@ -43,7 +43,6 @@
     color: var(--text-white);
     font-weight: bold;
     font-size: 1.5rem;
-    margin-bottom: 20px;
 }
 .login-logo span { font-weight: 300; opacity: 0.8; }
 
@@ -52,8 +51,7 @@
 }
 
 .login-header .login-logo{
-    width: 200px;
-    margin-bottom: 15px;
+    width: 270px;
 }
 
 .login-header p {
@@ -162,6 +160,10 @@
 
 
 /* Botón de Login */
+.button-container {
+    display: flex;
+    justify-content: center;
+}
 .login-button {
   background-color: var(--accent-red); /* Usando el rojo del diseño anterior */
   color: var(--text-white);
