@@ -226,7 +226,7 @@ function GeneratorView({
         if (refToRemove.isLocal) {
             setLocalReferences(prev => prev.filter(r => r !== refToRemove));
         } else {
-            onDeselectReference(refToRemove); // Call parent for repository assets
+            onDeselectReference(refToRemove.id || refToRemove); // Call parent for repository assets
         }
     };
 
