@@ -18,7 +18,7 @@ import PageTransition from './components/animations/PageTransition.jsx';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
-  
+
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
@@ -35,7 +35,7 @@ const AnimatedRoutes = () => {
           {/* Marketing Routes */}
           <Route element={<RoleRoute allowedRoles={['marketing']} />}>
             <Route path='/' element={
-              <PageTransition>
+              <PageTransition className="main-layout">
                 <Navbar role='Marketing' />
                 <ViewCampaignsMarketing />
               </PageTransition>
@@ -74,34 +74,34 @@ function App() {
     <AuthProvider>
       <CampaignProvider>
         <SessionProvider>
-        <Toaster 
-          position="top-right" 
-          reverseOrder={false}
-          toastOptions={{
-            style: {
-              background: 'var(--color-bg-panel)',
-              color: 'var(--color-text-primary)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '8px',
-              fontSize: '0.9rem',
-            },
-            success: {
-              iconTheme: {
-                primary: 'var(--color-success)',
-                secondary: 'var(--color-white)',
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+              style: {
+                background: 'var(--color-bg-panel)',
+                color: 'var(--color-text-primary)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
               },
-            },
-            error: {
-              iconTheme: {
-                primary: 'var(--color-error)',
-                secondary: 'var(--color-white)',
+              success: {
+                iconTheme: {
+                  primary: 'var(--color-success)',
+                  secondary: 'var(--color-white)',
+                },
               },
-            },
-          }}
-        />
-        <Router>
-          <AnimatedRoutes />
-        </Router>
+              error: {
+                iconTheme: {
+                  primary: 'var(--color-error)',
+                  secondary: 'var(--color-white)',
+                },
+              },
+            }}
+          />
+          <Router>
+            <AnimatedRoutes />
+          </Router>
         </SessionProvider>
       </CampaignProvider>
     </AuthProvider >

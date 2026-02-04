@@ -55,6 +55,7 @@ const deleteDraft = (id) => {
   const drafts = JSON.parse(localStorage.getItem("drafts")) || [];
   const newDrafts = drafts.filter((draft) => draft.id !== id);
   localStorage.setItem("drafts", JSON.stringify(newDrafts));
+  console.log("Draft deleted:", id);
 };
 
 export { saveDraft, getDrafts, deleteDraft };

@@ -1,35 +1,66 @@
-body {
-    font-family: var(--font-Itim);
-    color: var(--color-white);
+/* content-ViewCampaignsMarketing container acts as the main scrollable area */
+/* content-ViewCampaignsMarketing container acts as the main scrollable area */
+/* content-ViewCampaignsMarketing container acts as the main scrollable area */
+.container-ViewCampaignsMarketing {
+    position: absolute;
+    top: 80px;
+    /* Exact height of Navbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    /* No height 100% or flex here, strictly anchored to edges */
+    overflow-y: scroll !important;
+    /* Force scrollbar visibility */
+    padding: 20px 20px 100px 20px;
+    box-sizing: border-box;
     background-color: var(--color-dark-blue);
-    margin: 0%;
-    padding: 0%;
+    display: block;
 }
 
 .header-ViewCampaignsMarketing {
     display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    /* Allow wrapping on small screens */
+    align-items: center;
     gap: 16px;
-    margin: 20px 4% 10px 4%;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+    /* Header shouldn't shrink */
 }
 
-/* Add Button Container (if needed specific positioning) */
-/* .header-ViewCampaignsMarketing > :first-child {
-    align-self: flex-start;
-} */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
 
 /* Filter Tabs Container */
 .filter-tabs {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     background: var(--color-navbar);
     padding: 6px;
     border-radius: 12px;
     overflow-x: auto;
+    /* Scroll horizontally if needed */
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    max-width: 100%;
+    /* Improve scrollbar for horizontal scroll */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    flex-shrink: 0;
+}
+
+.filter-tabs::-webkit-scrollbar {
+    height: 6px;
+}
+
+.filter-tabs::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
 }
 
 /* Individual Tab Button */
@@ -45,6 +76,8 @@ body {
     transition: all 0.2s ease;
     white-space: nowrap;
     opacity: 0.7;
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
 .filter-tab:hover {
@@ -62,23 +95,21 @@ body {
 }
 
 /* Section Titles */
-h3 {
-    margin-top: 30px;
+.section-container h3 {
+    margin-top: 10px;
+    margin-bottom: 20px;
     font-family: var(--font-Itim);
     font-weight: 400;
-    margin-left: 4%;
-    margin-right: 4%;
     font-size: 24px;
     opacity: 0.9;
 }
 
 /* Unified Grid Layout */
 .cards-grid {
-    margin: 20px 4% 40px 4%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: auto;
-    gap: 16px;
+    /* Responsive columns using auto-fill for better adaptability */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
     animation: fadeIn 0.4s ease-out;
 }
 
@@ -91,7 +122,7 @@ h3 {
     padding: 40px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 16px;
-    margin: 20px 4%;
+    margin: 20px 0;
     border: 2px dashed rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
@@ -110,8 +141,8 @@ h3 {
 .section-divider {
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
-    margin: 10px 4%;
-    width: 92%;
+    margin: 32px 0;
+    width: 100%;
     border: none;
 }
 
@@ -128,32 +159,31 @@ h3 {
     }
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-    .cards-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 800px) {
-    .cards-grid {
-        grid-template-columns: repeat(2, 1fr);
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header-ViewCampaignsMarketing {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .filter-tabs {
-        width: 100%;
-        padding: 4px;
-        gap: 8px;
+        justify-content: flex-start;
+        padding-bottom: 12px;
+    }
+
+    .container-ViewCampaignsMarketing {
+        padding: 16px;
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
     .cards-grid {
         grid-template-columns: 1fr;
-        justify-items: center;
+        /* Stack cards on very small screens */
     }
 
-    .header-ViewCampaignsMarketing {
-        margin: 15px 4%;
+    .container-ViewCampaignsMarketing {
+        /* Extra bottom padding for mobile browsers that might hide UI bars */
+        padding-bottom: 120px;
     }
 }

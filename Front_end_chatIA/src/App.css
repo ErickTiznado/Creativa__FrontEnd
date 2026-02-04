@@ -1,5 +1,15 @@
-body{
+body {
   background-color: var(--color-dark-blue);
   margin: 0%;
   padding: 0%;
+}
+
+/* Main App Layout - Reset to simple block context */
+.main-layout {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  /* Global scroll lock */
+  position: relative;
 }

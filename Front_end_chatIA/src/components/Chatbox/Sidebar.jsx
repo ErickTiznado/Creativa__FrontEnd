@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useContext } from 'react';
 import toast from 'react-hot-toast';
 import { Rocket, Search, X, AlertTriangle, AlertCircle } from 'lucide-react';
 import { sendCampaign } from '../../services/designerService';
@@ -9,6 +9,8 @@ import {
   validateCampaignData,
   formatBriefData
 } from '../../config/campaignConfig';
+import { deleteDraft } from '../../services/draftService';
+import sessionContext from "../../context/SessionContextValue";
 
 /**
  * Sidebar - Campaign summary and designer selection component.
@@ -18,7 +20,7 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
   const summaryData = useMemo(() => Array.isArray(briefData) ? briefData : [], [briefData]);
   const { designers } = useDesigners();
   const user = useUser();
-
+  const { activeDraft, setActiveDraft } = useContext(sessionContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDesigner, setSelectedDesigner] = useState(null);
 
@@ -48,6 +50,7 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
         const response = await sendCampaign(campaign);
 
         if (response?.status === 200 || response?.data) {
+          deleteDraft(activeDraft);
           toast.success("Campaña enviada con éxito!", {
             icon: <div style={{ display: 'flex', minWidth: '28px' }}><Rocket size={28} color="var(--color-success)" /></div>
           });
@@ -55,7 +58,7 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
       } catch (e) {
         console.error("Error sending campaign:", e);
         toast.error("Error al enviar la campaña: " + (e.response?.data?.message || e.message), {
-            icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>
+          icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>
         });
       }
     } else {
@@ -63,23 +66,23 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
         toast.error("Error: No se encontró información del usuario. Por favor inicie sesión nuevamente.");
       } else if (!selectedDesigner) {
         toast('Por favor seleccione un diseñador.', {
-            icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertCircle size={28} color="var(--color-warning)" /></div>,
-            style: {
-                border: '1px solid var(--color-warning)',
-                color: 'var(--color-text-primary)',
-                background: 'var(--color-bg-panel)'
-            }
+          icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertCircle size={28} color="var(--color-warning)" /></div>,
+          style: {
+            border: '1px solid var(--color-warning)',
+            color: 'var(--color-text-primary)',
+            background: 'var(--color-bg-panel)'
+          }
         });
       } else if (!isBriefComplete) {
         const missingNames = missingFields.map(getTranslatedLabel).join(', ');
         toast(`Faltan datos obligatorios: ${missingNames}. Por favor completa la conversación.`, {
-            duration: 5000,
-            icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>,
-            style: {
-                border: '1px solid var(--color-error)',
-                color: 'var(--color-text-primary)',
-                background: 'var(--color-bg-panel)'
-            }
+          duration: 5000,
+          icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>,
+          style: {
+            border: '1px solid var(--color-error)',
+            color: 'var(--color-text-primary)',
+            background: 'var(--color-bg-panel)'
+          }
         });
       }
     }

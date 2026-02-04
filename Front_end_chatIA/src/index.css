@@ -13,20 +13,29 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
+html,
+body,
+#root {
   margin: 0;
-  display: block; /* Changed from flex/place-items: center to allow full width flow */
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* Force scroll handling to internal containers */
+}
+
+body {
   min-width: 320px;
-  min-height: 100vh;
+  display: block;
   background-color: var(--color-bg-dark);
 }
 
-#root {
-  width: 100%;
-  height: 100%;
-}
-
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--color-text-primary);
 }
 
