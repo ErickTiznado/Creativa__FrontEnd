@@ -1,7 +1,7 @@
 import { Send, Menu, Sparkles } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import { useChatMessages } from '../../hooks/useChatMessages';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * ChatSection - Main chat interface component.
@@ -20,6 +20,17 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
     handleInputChange,
     sendMessage
   } = useChatMessages(onBriefData);
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Scroll to bottom whenever messages change or loading state changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
 
   // Notify parent when type changes
   useEffect(() => {
@@ -53,6 +64,7 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
             </div>
           </div>
         ) : null}
+        <div ref={messagesEndRef} />
       </div>
 
       <form className="chat-input-area" onSubmit={sendMessage}>

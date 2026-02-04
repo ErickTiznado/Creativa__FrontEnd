@@ -79,9 +79,11 @@ const Login = () => {
           </div>
 
           <ScalePress>
-            <button type="submit" className="login-button">
+           <div className='button-container'>
+             <button type="submit" className="login-button">
               Iniciar Sesión
             </button>
+           </div>
           </ScalePress>
         </form>
 

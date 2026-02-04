@@ -1,26 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './RepositoryView.css';
-import { Check, Trash2 } from 'lucide-react';
+import { Check, Maximize, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import LoadingSpinner from '../animations/LoadingSpinner';
-import ConfirmationModal from '../Modals/ConfirmationModal';
 
-function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [], loading = false, onDelete }) {
-    const [modalOpen, setModalOpen] = React.useState(false);
-    const [modalImage, setModalImage] = React.useState(null);
-    
-    // Delete Modal State
-    const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
-    const [assetToDelete, setAssetToDelete] = React.useState(null);
-    const [isDeleting, setIsDeleting] = React.useState(false);
-
+function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [], loading = false }) {
+    const [activeImageIndex, setActiveImageIndex] = useState(null);
     const timerRef = React.useRef(null);
 
-    const startLongPress = (imgUrl) => {
-        // iniciar temporizador de 500ms
+    // Unified Sorting Logic
+    const sortedAssets = React.useMemo(() => {
+        return [...assets].sort((a, b) => {
+            // 1. Try Date
+            const dateA = a.created_at || a.createdAt || a.date;
+            const dateB = b.created_at || b.createdAt || b.date;
+            if (dateA && dateB) return new Date(dateB) - new Date(dateA);
+
+            // 2. Try Numeric ID
+            const idA = Number(a.id);
+            const idB = Number(b.id);
+            if (!isNaN(idA) && !isNaN(idB)) return idB - idA;
+
+            // 3. Fallback String ID
+            return String(b.id).localeCompare(String(a.id), undefined, { numeric: true });
+        });
+    }, [assets]);
+
+    // Navigation Handlers (Updated to use sortedAssets)
+    const handleNext = (e) => {
+        e?.stopPropagation();
+        setActiveImageIndex((prev) => (prev + 1) % sortedAssets.length);
+    };
+
+    const handlePrev = (e) => {
+        e?.stopPropagation();
+        setActiveImageIndex((prev) => (prev - 1 + sortedAssets.length) % sortedAssets.length);
+    };
+
+    // Keyboard Navigation
+    useEffect(() => {
+        if (activeImageIndex !== null) {
+            const handleKeyDown = (e) => {
+                if (e.key === 'ArrowRight') handleNext();
+                if (e.key === 'ArrowLeft') handlePrev();
+                if (e.key === 'Escape') setActiveImageIndex(null);
+            };
+            window.addEventListener('keydown', handleKeyDown);
+            return () => window.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [activeImageIndex, sortedAssets.length]); // Depend on sortedAssets.length
+
+    const handleExpandClick = (e, index) => {
+        e.stopPropagation();
+        setActiveImageIndex(index);
+    };
+
+    // Long press logic (keeping it just in case, but mapped to same expand action)
+    const startLongPress = (index) => {
         clearLongPress();
         timerRef.current = setTimeout(() => {
-            setModalImage(imgUrl);
-            setModalOpen(true);
+            setActiveImageIndex(index);
             timerRef.current = null;
         }, 500);
     };
@@ -32,55 +70,29 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
         }
     };
 
-    const handleCloseModal = () => {
-        setModalOpen(false);
-        setModalImage(null);
-    };
-
-    const handleDeleteClick = (e, asset) => {
-        e.stopPropagation(); // Prevent selection
-        setAssetToDelete(asset);
-        setDeleteModalOpen(true);
-    };
-
-    const handleConfirmDelete = async () => {
-        if (!assetToDelete || !onDelete) return;
-
-        try {
-            setIsDeleting(true);
-            await onDelete(assetToDelete.id);
-            setDeleteModalOpen(false);
-            setAssetToDelete(null);
-        } catch (error) {
-            console.error("Error deleting asset:", error);
-            // Optionally show error toast here
-        } finally {
-            setIsDeleting(false);
-        }
-    };
-
-    const handleCloseDeleteModal = () => {
-        if (isDeleting) return;
-        setDeleteModalOpen(false);
-        setAssetToDelete(null);
-    };
-    // Bloquear scroll del body mientras el modal está abierto
-    React.useEffect(() => {
-        if (modalOpen) {
+    // Block body scroll when modal is open
+    useEffect(() => {
+        if (activeImageIndex !== null) {
             const prev = document.body.style.overflow;
             document.body.style.overflow = 'hidden';
             return () => { document.body.style.overflow = prev; };
         }
         return undefined;
-    }, [modalOpen]);
+    }, [activeImageIndex]);
+
     return (
-        <>
         <div className='repository-container'>
             <section className='cw-top-section'>
                 {/* Panel Izquierdo: Buscador y Grid */}
                 <div className='cw-panel'>
+                    {console.log("Assets data:", assets)}
                     <div className='cw-panel-header'>
-                        <h3 className='cw-panel-title'>Repositorio de Imágenes</h3>
+                        <h3 className='cw-panel-title'>
+                            Repositorio de Imágenes
+                            <span style={{ fontSize: '0.8em', color: 'var(--color-text-muted)', marginLeft: '8px' }}>
+                                ({assets.length})
+                            </span>
+                        </h3>
                     </div>
 
                     <div className='cw-search-container'>
@@ -101,8 +113,9 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                             <div className="cw-loading">
                                 <LoadingSpinner text="Cargando recursos..." size={30} />
                             </div>
-                        ) : assets.length > 0 ? (
-                            assets.map((asset) => {
+                        ) : sortedAssets.length > 0 ? (
+                            // Robust Sort: Newest First
+                            sortedAssets.map((asset, index) => {
                                 const isSelected = selectedIds.includes(asset.id);
                                 return (
                                     <div
@@ -110,10 +123,10 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                         className={`cw-img-card ${isSelected ? 'selected' : ''}`}
                                         onClick={() => toggleSelection(asset.id)}
                                         style={{ overflow: 'hidden', padding: 0 }}
-                                        onMouseDown={() => startLongPress(asset.img_url?.url || asset.img_url?.thumbnail)}
+                                        onMouseDown={() => startLongPress(index)}
                                         onMouseUp={clearLongPress}
                                         onMouseLeave={clearLongPress}
-                                        onTouchStart={() => startLongPress(asset.img_url?.url || asset.img_url?.thumbnail)}
+                                        onTouchStart={() => startLongPress(index)}
                                         onTouchEnd={clearLongPress}
                                         onTouchMove={clearLongPress}
                                     >
@@ -122,11 +135,11 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                             alt="Thumbnail"
                                             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                                         />
-                                        
-                                        {/* Delete Button */}
-                                        <button 
-                                            className="cw-delete-btn"
-                                            onClick={(e) => handleDeleteClick(e, asset)}
+
+                                        {/* Expand Button (Replacing Delete) */}
+                                        <button
+                                            className="cw-expand-btn"
+                                            onClick={(e) => handleExpandClick(e, index)}
                                             style={{
                                                 position: 'absolute',
                                                 top: '8px',
@@ -141,12 +154,12 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                                 justifyContent: 'center',
                                                 color: 'white',
                                                 zIndex: 10,
-                                                opacity: 0, // Hidden by default
+                                                opacity: 0, // Hidden by default, shown on hover via CSS
                                                 transition: 'opacity 0.2s, background-color 0.2s'
                                             }}
-                                            title="Eliminar imagen"
+                                            title="Ver imagen completa"
                                         >
-                                            <Trash2 size={14} />
+                                            <Maximize size={14} />
                                         </button>
 
                                         {isSelected && <div className='cw-check-icon'><Check size={16} /></div>}
@@ -215,25 +228,31 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                     )}
                 </div>
             </section>
-        </div>
-        {modalOpen && (
-            <div className="rv-modal-overlay" onClick={handleCloseModal}>
-                <div className="rv-modal-content" onClick={(e) => e.stopPropagation()}>
-                    <button className="rv-modal-close" onClick={handleCloseModal} aria-label="Cerrar">×</button>
-                    <img src={modalImage} alt="Preview" />
+
+            {/* Modal Preview with Navigation */}
+            {activeImageIndex !== null && sortedAssets[activeImageIndex] && (
+                <div className="rv-modal-overlay" onClick={() => setActiveImageIndex(null)}>
+                    <div className="rv-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="rv-modal-close" onClick={() => setActiveImageIndex(null)} aria-label="Cerrar">
+                            <X size={24} />
+                        </button>
+
+                        <button className="rv-nav-btn prev" onClick={handlePrev} title="Anterior">
+                            <ChevronLeft size={32} />
+                        </button>
+
+                        <img
+                            src={sortedAssets[activeImageIndex].img_url?.url || sortedAssets[activeImageIndex].img_url?.thumbnail}
+                            alt="Preview"
+                        />
+
+                        <button className="rv-nav-btn next" onClick={handleNext} title="Siguiente">
+                            <ChevronRight size={32} />
+                        </button>
+                    </div>
                 </div>
-            </div>
-        )}
-        
-        <ConfirmationModal
-            isOpen={deleteModalOpen}
-            onClose={handleCloseDeleteModal}
-            onConfirm={handleConfirmDelete}
-            title="¿Eliminar imagen?"
-            message="Esta acción eliminará la imagen y todas sus variaciones de forma permanente. ¿Estás seguro?"
-            isLoading={isDeleting}
-        />
-        </>
+            )}
+        </div>
     );
 }
 
