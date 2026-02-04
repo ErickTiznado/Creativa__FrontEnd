@@ -119,7 +119,8 @@
     border: 2px solid transparent;
     transition: all 0.2s;
     box-sizing: border-box;
-    min-height: 0; /* evitar que las celdas del grid crezcan y se solapen */
+    min-height: 0;
+    /* evitar que las celdas del grid crezcan y se solapen */
 }
 
 .cw-img-card:hover {
@@ -226,7 +227,7 @@
 .rv-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -239,7 +240,7 @@
     border-radius: 12px;
     max-width: 95%;
     max-height: 90%;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     position: relative;
     display: flex;
     align-items: center;
@@ -267,7 +268,8 @@
 }
 
 /* Small touch affordance: prevent text selection while pressing */
-.cw-img-card, .cw-img-card img {
+.cw-img-card,
+.cw-img-card img {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -283,8 +285,10 @@
         max-height: 400px;
         overflow-y: auto;
     }
+
     .cw-img-card {
-        aspect-ratio: 1; /* mantener proporción cuadrada */
+        aspect-ratio: 1;
+        /* mantener proporción cuadrada */
     }
 }
 
@@ -294,12 +298,14 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
-        min-height: auto; /* permitir que los paneles se acomoden verticalmente */
+        min-height: auto;
+        /* permitir que los paneles se acomoden verticalmente */
     }
 
     .cw-top-section .cw-panel {
         width: 100%;
-        padding: 18px; /* reducir padding en mobile para ahorrar espacio */
+        padding: 18px;
+        /* reducir padding en mobile para ahorrar espacio */
     }
 
     /* El segundo panel (detalles) se coloca arriba mediante order */
@@ -308,10 +314,40 @@
     }
 }
 
-.cw-img-card:hover .cw-delete-btn {
+.cw-img-card:hover .cw-expand-btn {
     opacity: 1 !important;
 }
 
-.cw-delete-btn:hover {
-    background-color: #ef4444 !important;
+.cw-expand-btn:hover {
+    background-color: var(--color-primary) !important;
+}
+
+/* Modal Navigation Buttons */
+.rv-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rv-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.rv-nav-btn.prev {
+    left: 20px;
+}
+
+.rv-nav-btn.next {
+    right: 20px;
 }
