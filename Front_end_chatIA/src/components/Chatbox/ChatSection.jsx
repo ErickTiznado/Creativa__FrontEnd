@@ -10,8 +10,9 @@ import { useEffect } from 'react';
  * @param {Function} onToggleSidebar - Callback to toggle sidebar visibility
  * @param {Function} onBriefData - Callback when brief data is received
  * @param {Function} onTypeChange - Callback when chat type changes
+ * @param {Array} initialMessages - Initial chat history from parent
  */
-const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
+const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange, initialMessages = [] }) => {
   const {
     messages,
     isLoading,
@@ -19,7 +20,7 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange }) => {
     type,
     handleInputChange,
     sendMessage
-  } = useChatMessages(onBriefData);
+  } = useChatMessages(onBriefData, initialMessages);
 
   // Notify parent when type changes
   useEffect(() => {

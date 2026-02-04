@@ -1,18 +1,22 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useContext } from "react";
 import { handlesend } from "../../functions/handlesend";
-
+import sessionContext from "../context/SessionContextValue";
+import { saveDraft } from "../services/draftService";
 /**
  * Custom hook for managing chat messages state and operations.
  * Encapsulates message list, loading state, and send logic.
  *
  * @param {Function} onBriefData - Callback when brief data is received from the bot
+ * @param {Array} initialMessages - Initial chat history to load
  * @returns {Object} Chat state and handlers
  */
-export const useChatMessages = (onBriefData) => {
-  const [messages, setMessages] = useState([]);
+export const useChatMessages = (onBriefData, initialMessages = []) => {
+  const [messages, setMessages] = useState(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
   const [inputText, setInputText] = useState("");
   const [type, setType] = useState("");
+
+  const { activeDraft, setActiveDraft } = useContext(sessionContext);
 
   const handleInputChange = useCallback((e) => {
     setInputText(e.target.value);
@@ -29,8 +33,16 @@ export const useChatMessages = (onBriefData) => {
       setInputText("");
       setIsLoading(true);
 
+      // 1. Determine the Session ID to use (Existing or New)
+      let currentSessionId = activeDraft;
+      if (!currentSessionId) {
+        currentSessionId = crypto.randomUUID();
+        setActiveDraft(currentSessionId);
+      }
+
       try {
-        const response = await handlesend(inputText);
+        // 2. Send request to Backend with the Session ID
+        const response = await handlesend(inputText, currentSessionId);
         setType(response.type);
 
         if (response.success) {
@@ -39,11 +51,22 @@ export const useChatMessages = (onBriefData) => {
             sender: "bot",
             text: response.response,
           };
-          setMessages((prev) => [...prev, botMsg]);
+
+          const updatedMessages = [...messages, userMsg, botMsg];
+          setMessages(updatedMessages);
 
           if (response.data && onBriefData) {
             onBriefData(response.data);
           }
+
+          // 3. Save to LocalStorage (Persist the Draft)
+          // Now we allow saveDraft to handle both create (upsert) and update
+          saveDraft(
+            currentSessionId,
+            inputText,
+            response.data,
+            updatedMessages,
+          );
         } else {
           const botMsg = {
             id: Date.now() + 1,
@@ -64,7 +87,7 @@ export const useChatMessages = (onBriefData) => {
         setIsLoading(false);
       }
     },
-    [inputText, onBriefData],
+    [inputText, onBriefData, activeDraft, setActiveDraft, messages],
   );
 
   return {

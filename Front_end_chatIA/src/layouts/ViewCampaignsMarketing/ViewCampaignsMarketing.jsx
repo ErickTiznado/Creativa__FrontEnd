@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Cards from '../../components/Cards/cards.jsx'
 import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx'
 import { handleGetCampaigns } from "../../../functions/handlegetCampaigns.js"
+import { getDrafts } from '../../services/draftService.js'; // Import draft service
 import './ViewCampaignsMarketing.css';
 import { FolderClosed } from 'lucide-react';
 import LoadingSpinner from '../../components/animations/LoadingSpinner.jsx';
+
 const SECTIONS_CONFIG = [
+    { id: 'chat_draft', label: 'Borradores', title: 'Borradores de Chat' }, // New Section
     { id: 'draft', label: 'En proceso', title: 'Campañas en proceso' },
     { id: 'approved', label: 'Aprobadas', title: 'Campañas aprobadas' },
     { id: 'rejected', label: 'Rechazadas', title: 'Campañas rechazadas' },
@@ -13,6 +17,7 @@ const SECTIONS_CONFIG = [
 ];
 
 const STATUS_LABELS = {
+    chat_draft: "Borrador de Chat", // New Label
     draft: "En Proceso",
     approved: "Aprobado",
     rejected: "Rechazado",
@@ -23,15 +28,34 @@ function ViewCampaignsMarketing() {
     const [campaigns, setCampaigns] = useState([])
     const [loading, setLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState('all');
+    const navigate = useNavigate(); // Hook for navigation
 
     useEffect(() => {
         const getCampaigns = async () => {
             try {
                 setLoading(true);
+                
+                // 1. Fetch Local Drafts
+                const localDrafts = getDrafts().map(d => ({
+                    id: d.id,
+                    status: 'chat_draft',
+                    isLocalDraft: true, // Flag to identify local drafts
+                    brief_data: {
+                        nombre_campaing: d.preview || "Nuevo Chat",
+                        fechaPublicacion: new Date(d.lastActive).toLocaleDateString()
+                    }
+                }));
+
+                // 2. Fetch API Campaigns
                 const result = await handleGetCampaigns()
+                let apiCampaigns = [];
                 if (result.success) {
-                    setCampaigns(result.data || [])
+                    apiCampaigns = result.data || [];
                 }
+
+                // 3. Merge Both
+                setCampaigns([...localDrafts, ...apiCampaigns]);
+
             } catch (error) {
                 console.error(error)
             } finally {
@@ -46,6 +70,18 @@ function ViewCampaignsMarketing() {
             return SECTIONS_CONFIG;
         }
         return SECTIONS_CONFIG.filter(section => section.id === activeFilter);
+    };
+
+    const handleCardClick = (campaign) => {
+        if (campaign.isLocalDraft) {
+            // Navigate to Chat with Draft ID to resume
+            navigate(`/chat/${campaign.id}`);
+        } else {
+            // Navigate to standard campaign view (preserving existing behavior if any)
+            // For now, existing campaigns might not have a specific click action defined here,
+            // or if they do, add it here.
+            console.log("Clicked API campaign:", campaign.id);
+        }
     };
 
     if (loading) return (
@@ -102,6 +138,7 @@ function ViewCampaignsMarketing() {
                                             titulo={c.brief_data?.nombre_campaing || "Sin título"}
                                             estado={STATUS_LABELS[c.status]}
                                             fecha={c.brief_data?.fechaPublicacion || "Fecha no disponible"}
+                                            onClick={() => handleCardClick(c)} // Pass click handler
                                         />
                                     ))}
                                 </div>

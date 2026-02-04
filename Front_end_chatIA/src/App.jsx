@@ -11,6 +11,7 @@ import { AuthProvider } from "./context/AuthContext.jsx"
 import PrivateRoute from './components/Guards/PrivateRoute.jsx';
 import RoleRoute from './components/Guards/RoleRoute.jsx';
 import { CampaignProvider } from './context/CampaignContext.jsx';
+import SessionProvider from './context/SessionContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/animations/PageTransition.jsx';
@@ -39,7 +40,7 @@ const AnimatedRoutes = () => {
                 <ViewCampaignsMarketing />
               </PageTransition>
             } />
-            <Route path="/chat" element={
+            <Route path="/chat/:draftId?" element={
               <PageTransition>
                 <ChatPage />
               </PageTransition>
@@ -72,6 +73,7 @@ function App() {
   return (
     <AuthProvider>
       <CampaignProvider>
+        <SessionProvider>
         <Toaster 
           position="top-right" 
           reverseOrder={false}
@@ -100,6 +102,7 @@ function App() {
         <Router>
           <AnimatedRoutes />
         </Router>
+        </SessionProvider>
       </CampaignProvider>
     </AuthProvider >
   )

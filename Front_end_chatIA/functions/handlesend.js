@@ -1,17 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { api } from "../src/services/api";
-let sessionID = null;
-export let briefData = {};
 
-export const handlesend = async (message) => {
-  if (sessionID === null) {
-    sessionID = uuidv4();
-  }
-
+export const handlesend = async (message, sessionId) => {
   const user = JSON.parse(localStorage.getItem("user"));
   try {
     const response = await api.post("/ai/chat", {
-      sessionID: sessionID,
+      sessionID: sessionId,
       userMessage: message,
       userId: user.id,
     });
@@ -23,7 +17,6 @@ export const handlesend = async (message) => {
       type: response.data.type,
     };
   } catch (error) {
-
     return {
       success: false,
       error: error,
