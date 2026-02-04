@@ -11,7 +11,14 @@ const AccessDenied = () => {
     };
 
     const handleGoHome = () => {
-        navigate('/');
+        const user = JSON.parse(localStorage.getItem('user'));
+        const role = user.role;
+        if (role === "designer") {
+            navigate('/designer')
+        }
+        if (role === "marketing") {
+            navigate('/');
+        }
     };
 
     return (
