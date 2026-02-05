@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext } from "react";
+import { useState, useCallback, useContext, useEffect } from "react";
 import { handlesend } from "../../functions/handlesend";
 import sessionContext from "../context/SessionContextValue";
 import { saveDraft } from "../services/draftService";
@@ -17,6 +17,12 @@ export const useChatMessages = (onBriefData, initialMessages = []) => {
   const [type, setType] = useState("");
 
   const { activeDraft, setActiveDraft } = useContext(sessionContext);
+
+  useEffect(() => {
+    if (!activeDraft) {
+      setMessages([]);
+    }
+  }, [activeDraft]);
 
   const handleInputChange = useCallback((e) => {
     setInputText(e.target.value);

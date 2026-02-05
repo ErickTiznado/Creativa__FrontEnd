@@ -2,6 +2,7 @@ import './Chatbox.css';
 import ChatSection from './ChatSection';
 import Sidebar from './Sidebar';
 import { useState } from 'react';
+import { X } from 'lucide-react';
 
 
 
@@ -49,7 +50,7 @@ function Chatbox({ onClose }) {
         <div className="chatbox-overlay">
 
             <div className="chatbox-container">
-                <button className="close-btn" onClick={onClose}>×</button>
+                <button className="close-btn" onClick={onClose}><X size={24} /></button>
                 <div className="app-container">
                     <main className="main-layout">
                         <ChatSection onBriefData={handleBriefData} onToggleSidebar={toggleSidebar} onTypeChange={setType} />

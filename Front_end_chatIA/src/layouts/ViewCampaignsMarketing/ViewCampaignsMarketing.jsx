@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ButtonAdd from '../../components/ButtonAdd/ButtonAdd.jsx';
 import LoadingSpinner from '../../components/animations/LoadingSpinner.jsx';
 import { useCampaigns } from '../../hooks/useCampaigns.js';
+import { Inbox } from 'lucide-react';
 import CampaignFilter from '../../components/Campaigns/CampaignFilter.jsx';
 import CampaignSection from '../../components/Campaigns/CampaignSection.jsx';
 import './ViewCampaignsMarketing.css';
@@ -80,7 +81,7 @@ function ViewCampaignsMarketing() {
 
                 {activeFilter === 'all' && campaigns.length === 0 && (
                     <div className="empty-state-container">
-                        <span className="empty-state-icon">📭</span>
+                        <span className="empty-state-icon"><Inbox size={48} /></span>
                         <p className="empty-state-text">No hay campañas disponibles.</p>
                     </div>
                 )}

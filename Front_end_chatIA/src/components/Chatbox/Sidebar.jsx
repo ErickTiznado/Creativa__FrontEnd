@@ -10,6 +10,7 @@ import {
   formatBriefData
 } from '../../config/campaignConfig';
 import { deleteDraft } from '../../services/draftService';
+import { updateChatSession } from '../../services/chatService';
 import sessionContext from "../../context/SessionContextValue";
 
 /**
@@ -50,7 +51,19 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
         const response = await sendCampaign(campaign);
 
         if (response?.status === 200 || response?.data) {
+          try {
+            const newCampaignId = response.data.id || response.data.data?.id;
+            if (newCampaignId && activeDraft) {
+               await updateChatSession(activeDraft, {
+                  userId: user.id,
+                  campings_id: newCampaignId
+               });
+            }
+          } catch (error) {
+             console.error("Error updating chat session:", error);
+          }
           deleteDraft(activeDraft);
+          setActiveDraft(null);
           toast.success("Campaña enviada con éxito!", {
             icon: <div style={{ display: 'flex', minWidth: '28px' }}><Rocket size={28} color="var(--color-success)" /></div>
           });
@@ -149,7 +162,7 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
             <>
               <img src="https://i.pravatar.cc/150?img=11" alt="u" />
               <span>{selectedDesigner.first_name} {selectedDesigner.last_name}</span>
-              <button className="close-tag" onClick={() => setSelectedDesigner(null)}>×</button>
+              <button className="close-tag" onClick={() => setSelectedDesigner(null)}><X size={14} /></button>
             </>
           ) : (
             <p>No hay diseñador seleccionado</p>

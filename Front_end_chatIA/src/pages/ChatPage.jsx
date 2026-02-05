@@ -34,12 +34,34 @@ function ChatPage() {
                         if (apiChat && apiChat.length > 0) {
                             const session = apiChat[0]; // Assuming array response
                             setActiveDraft(draftId);
-                            // Ensure messages are valid array
-                            if (session.chat && Array.isArray(session.chat)) {
-                                setInitialMessages(session.chat);
+                            
+                            // Handle chat messages
+                            let messagesToSet = [];
+                            if (session.chat && session.chat.message && Array.isArray(session.chat.message)) {
+                                messagesToSet = session.chat.message;
+                            } else if (Array.isArray(session.chat)) {
+                                messagesToSet = session.chat;
                             }
-                            // If there is brief data (campaigns/brief might be separate, but let's check)
-                            // For now, we mainly want to see the chat. 
+
+                            // Transform to frontend format and ensure IDs
+                            const formattedMessages = messagesToSet.map((msg, index) => {
+                                // If already in frontend format
+                                if (msg.sender) return { ...msg, id: msg.id || `msg-${index}` };
+
+                                // Map from Vertex AI / Backend format
+                                return {
+                                    id: `hist-${index}-${Date.now()}`, 
+                                    sender: msg.role === 'model' ? 'bot' : 'user',
+                                    text: msg.parts?.[0]?.text || ''
+                                };
+                            }).filter(msg => msg.text); // Filter out messages without text (e.g. pure function calls)
+
+                            setInitialMessages(formattedMessages);
+
+                            // Handle brief data
+                            if (session.chat && session.chat.data) {
+                                handleBriefData(session.chat.data);
+                            } 
                         }
                     } catch (error) {
                         console.error("Failed to load chat from API:", error);
