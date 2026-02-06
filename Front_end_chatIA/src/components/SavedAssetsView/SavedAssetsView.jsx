@@ -1,5 +1,5 @@
-import { Bookmark, Download, X, Package } from 'lucide-react';
-import { downloadAndSaveAssets } from '../../services/assetService';
+import { Bookmark, Download, X, Package, ThumbsUp } from 'lucide-react';
+import { downloadImagesAsZip } from '../../services/assetService';
 import { useSavedAssets } from '../../hooks/useSavedAssets';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -14,26 +14,21 @@ function SavedAssetsView({ campaignId }) {
 
     const handleDownloadAll = async () => {
         if (savedAssets.length === 0) return;
-        if (!campaignId) {
-            setDownloadError('No se pudo identificar la campaña');
-            return;
-        }
 
         setIsDownloading(true);
         setDownloadError(null);
 
         try {
-            const result = await downloadAndSaveAssets(
-                savedAssets,
-                campaignId,
-                `assets_campaign_${campaignId}`
-            );
-
-
-            // Success feedback could be added here
+            // Generate a sanitized filename based on campaignId
+            const zipFileName = `campaña_${campaignId || 'assets'}_${new Date().toISOString().slice(0, 10)}`;
+            
+            await downloadImagesAsZip(savedAssets, zipFileName);
+            
+            toast.success(`${savedAssets.length} asset(s) descargados como ZIP`);
         } catch (error) {
-            console.error('Error downloading and saving assets:', error);
-            setDownloadError('Error al descargar y guardar assets');
+            console.error('Error downloading assets as ZIP:', error);
+            setDownloadError('Error al crear el archivo ZIP');
+            toast.error('Error al descargar assets');
         } finally {
             setIsDownloading(false);
         }
@@ -163,6 +158,24 @@ function SavedAssetsView({ campaignId }) {
                                     title="Descargar"
                                 >
                                     <Download size={16} />
+                                </button>
+                                <button
+                                    className={`sav-action-btn approve ${img.is_saved ? 'active' : ''}`}
+                                    onClick={async () => {
+                                        if (!img?.id) return;
+                                        try {
+                                            // Ensure we keep it approved (pass false to force true)
+                                            await toggleSaveAsset(img.id, false);
+                                            toast.success('Asset aprobado correctamente', {
+                                                icon: <ThumbsUp size={18} color="var(--color-success)" />
+                                            });
+                                        } catch (error) {
+                                            toast.error('Error al aprobar asset');
+                                        }
+                                    }}
+                                    title="Aprobar (Confirmar guardado)"
+                                >
+                                    <ThumbsUp size={16} fill={img.is_saved ? "currentColor" : "none"} />
                                 </button>
                                 <button
                                     className="sav-action-btn remove"

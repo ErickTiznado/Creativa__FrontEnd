@@ -1,4 +1,4 @@
-import { Send, Menu, Sparkles } from 'lucide-react';
+import { Send, Menu, Sparkles, Loader2 } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import { useChatMessages } from '../../hooks/useChatMessages';
 import { useEffect, useRef } from 'react';
@@ -61,7 +61,7 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange, initialMessag
         {isLoading ? (
           <div className='message-row msg-bot'>
             <div className='bubble typing-indicator'>
-              <span>.</span><span>.</span><span>.</span>
+              <Loader2 className="spinner" size={24} />
             </div>
           </div>
         ) : null}

@@ -22,7 +22,12 @@ export function useSavedAssets(campaignId) {
       setLoading(true);
       setError(null);
       const assets = await fetchSavedAssets(campaignId);
-      setSavedAssets(assets);
+      // Ensure local state reflects saved status since we fetched specifically saved assets
+      // This fixes the UI initial state if the backend doesn't return the is_saved flag explicitly
+      const assetsWithStatus = Array.isArray(assets)
+        ? assets.map((a) => ({ ...a, is_saved: true }))
+        : [];
+      setSavedAssets(assetsWithStatus);
     } catch (err) {
       console.error("Error loading saved assets:", err);
       setError(err);

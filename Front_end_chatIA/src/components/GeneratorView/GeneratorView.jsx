@@ -780,7 +780,8 @@ function GeneratorView({
 
                                             <button
                                                 className="toolbox-tool-item"
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     const imgUrl = getImageUrl(canvasImage);
                                                     if (imgUrl) {
                                                         downloadImage(imgUrl, `generacion_${Date.now()}.png`);
@@ -795,7 +796,8 @@ function GeneratorView({
 
                                             <button
                                                 className={`toolbox-tool-item ${canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'saved' : ''}`}
-                                                onClick={async () => {
+                                                onClick={async (e) => {
+                                                    e.stopPropagation();
                                                     if (!canvasImage?.id) {
                                                         toast.error('Error: ID de asset no encontrado');
                                                         return;

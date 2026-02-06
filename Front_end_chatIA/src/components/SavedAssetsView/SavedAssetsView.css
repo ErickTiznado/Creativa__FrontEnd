@@ -175,6 +175,13 @@
     color: var(--color-rechazado);
 }
 
+.sav-action-btn.approve:hover,
+.sav-action-btn.approve.active {
+    background-color: rgba(0, 255, 0, 0.1);
+    border-color: var(--color-success);
+    color: var(--color-success);
+}
+
 /* Scrollbar */
 .saved-assets-view::-webkit-scrollbar {
     width: 8px;

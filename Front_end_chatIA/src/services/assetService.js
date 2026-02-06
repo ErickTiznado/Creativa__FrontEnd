@@ -61,7 +61,7 @@ export const checkCampaignAssets = async (campaignId) => {
  * @param {string} zipName - Name for the ZIP file
  * @returns {Promise<Blob>} ZIP file blob
  */
-export const downloadImagesAsZip = async (imageUrls) => {
+export const downloadImagesAsZip = async (imageUrls, zipName = "assets") => {
   const zip = new JSZip();
   const folder = zip.folder("assets");
 
@@ -70,18 +70,24 @@ export const downloadImagesAsZip = async (imageUrls) => {
     const urls = imageUrls
       .map((img) => {
         if (typeof img === "string") return img;
+        if (img.preview && typeof img.preview === "string") return img.preview;
         if (img.img_url)
           return typeof img.img_url === "string"
             ? img.img_url
-            : img.img_url.url;
+            : img.img_url.url || img.img_url.thumbnail;
         return null;
       })
       .filter(Boolean);
+
+    if (urls.length === 0) {
+      throw new Error("No valid image URLs found");
+    }
 
     // Download each image and add to ZIP
     const promises = urls.map(async (url, index) => {
       try {
         const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const blob = await response.blob();
         const extension = url.split(".").pop().split("?")[0] || "jpg";
         const fileName = `asset_${index + 1}.${extension}`;
@@ -93,8 +99,9 @@ export const downloadImagesAsZip = async (imageUrls) => {
 
     await Promise.all(promises);
 
-    // Generate ZIP
+    // Generate ZIP and trigger download
     const content = await zip.generateAsync({ type: "blob" });
+    saveAs(content, `${zipName}.zip`);
     return content;
   } catch (error) {
     console.error("Error creating ZIP file:", error);
