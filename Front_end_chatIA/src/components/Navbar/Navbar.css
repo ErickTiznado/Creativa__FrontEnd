@@ -1,13 +1,15 @@
-
 .Navbar{
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 18px;
     width: 100%;
     height: 80px; /* Increased height for better proportions */
     background-color: var(--color-navbar);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
     box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid var(--color-border);
-    padding: 0 var(--spacing-lg);
+    box-sizing: border-box;
     z-index: 100;
 }
 .Notification{
@@ -28,8 +30,9 @@
     transition: all 0.2s ease;
 }
 .Logo{
-    width: 200px;
-    height: auto;
+    height: 44px;
+    width: auto;
+    cursor: pointer;
     display: block;
 }
 .campana{
@@ -49,4 +52,63 @@
     background-color: var(--color-card-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Área de enlaces de administración (debajo o a la derecha según layout) */
+.nav-admin-links {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 18px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+/* Enlace individual estilo "botón" */
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #30425C;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background .12s ease, transform .08s ease, border-color .12s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  background: #e8f4ff;
+  transform: translateY(-1px);
+  border-color: rgba(3, 102, 214, 0.12);
+  text-decoration: none;
+}
+
+/* Marca visible para enlace activo (si se añade clase active) */
+.nav-link.active {
+  background: linear-gradient(90deg,#e6f0ff,#dbeeff);
+  border-color: rgba(3,102,214,0.14);
+  box-shadow: 0 6px 18px rgba(3,102,214,0.06);
+}
+
+/* Ajustes para ImageUser si es necesario */
+.ImageUser {
+  margin-left: 12px;
+}
+
+/* Responsivo: en pantallas pequeñas apilar enlaces */
+@media (max-width: 720px) {
+  .nav-admin-links {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 8px 12px;
+  }
+  .nav-link {
+    width: 100%;
+    justify-content: center;
+  }
 }

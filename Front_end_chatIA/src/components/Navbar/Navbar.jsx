@@ -2,6 +2,7 @@ import Logo_CS from '../../assets/img/logo_CS.png';
 import { Bell } from 'lucide-react';
 import ImageUser from '../ImageUser/ImageUser';
 import './Navbar.css';
+import { Link } from 'react-router-dom';
 
 function Navbar({ role = "Marketing" }) {
     const userStr = localStorage.getItem('user');
@@ -29,6 +30,13 @@ function Navbar({ role = "Marketing" }) {
                 </div>
                 <ImageUser />
             </div>
+            {/* Enlaces exclusivos para administrador */}
+            {role === 'Admin' && (
+                <div className="nav-admin-links">
+                    <Link to="/admin" className="nav-link">Administrar usuarios</Link>
+                    <Link to="/requests" className="nav-link">Solicitudes</Link>
+                </div>
+            )}
         </>
     )
 }
