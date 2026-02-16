@@ -24,6 +24,12 @@ function Navbar({ role = "Marketing" }) {
                     </a>
                 )
                 }
+                {/* agregar logo para admin */}
+                {rol === "admin" && (
+                    <a href="/admin">
+                        <img className='Logo' src={Logo_CS} alt="Logo" />
+                    </a>
+                )}
                 <div className='Notification'>
                     <Bell size={24} className='campana' />
                     <p className='textNotification'>{role}</p>
@@ -32,6 +38,7 @@ function Navbar({ role = "Marketing" }) {
             </div>
             {/* Enlaces exclusivos para administrador */}
             {role === 'Admin' && (
+
                 <div className="nav-admin-links">
                     <Link to="/admin" className="nav-link">Administrar usuarios</Link>
                     <Link to="/requests" className="nav-link">Solicitudes</Link>
