@@ -16,16 +16,29 @@ const Login = () => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+
     try {
       const response = await login(email, password);
 
-      if (response?.role === "marketing") {
-        window.location.href = '/';
-      } if (response?.role === "designer") {
-        window.location.href = '/designer';
-      }
-    } catch (error) {
+      // Chivato en consola para que veas qué datos trae realmente
+      console.log("Datos del usuario logueado:", response);
 
+      // Buscamos el rol donde Supabase lo esconde (user_metadata) o en el rol principal
+      const userRole = response?.user_metadata?.role || response?.role;
+
+      if (userRole === "marketing") {
+        window.location.href = '/';
+      } else if (userRole === "designer") {
+        window.location.href = '/designer';
+      } else {
+        // SALVACAÍDAS: Si por alguna razón el rol es distinto o no viene, te manda al inicio.
+        console.warn("Rol no detectado o distinto, redirigiendo al home por defecto");
+        window.location.href = '/';
+      }
+
+    } catch (error) {
+      // Importante imprimir el error si falla la contraseña
+      console.error("Error atrapado en el componente Login:", error);
     }
   }
   return (
@@ -79,11 +92,11 @@ const Login = () => {
           </div>
 
           <ScalePress>
-           <div className='button-container'>
-             <button type="submit" className="login-button">
-              Iniciar Sesión
-            </button>
-           </div>
+            <div className='button-container'>
+              <button type="submit" className="login-button">
+                Iniciar Sesión
+              </button>
+            </div>
           </ScalePress>
         </form>
 
