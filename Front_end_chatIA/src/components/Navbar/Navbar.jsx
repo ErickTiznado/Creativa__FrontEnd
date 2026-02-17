@@ -9,27 +9,25 @@ function Navbar({ role = "Marketing" }) {
     const user = userStr ? JSON.parse(userStr) : null;
     const rol = user?.role;
 
+    // determinar rol efectivo: prop 'role' tiene prioridad, si no tomar del localStorage
+    const effectiveRole = (role || rol || '').toString().toLowerCase();
+    let logoPath = '/';
+    if (effectiveRole === 'designer' || effectiveRole === 'diseñador') {
+      logoPath = '/designer';
+    } else if (effectiveRole === 'admin') {
+      logoPath = '/admin';
+    } else {
+      logoPath = '/';
+    }
 
     return (
         <>
             <div className='Navbar'>
-                {rol === "marketing" && (
-                    <a href="/">
-                        <img className='Logo' src={Logo_CS} alt="Logo" />
-                    </a>
-                )}
-                {rol === "designer" && (
-                    <a href="/designer">
-                        <img className='Logo' src={Logo_CS} alt="Logo" />
-                    </a>
-                )
-                }
-                {/* agregar logo para admin */}
-                {rol === "admin" && (
-                    <a href="/admin">
-                        <img className='Logo' src={Logo_CS} alt="Logo" />
-                    </a>
-                )}
+                {/* Mostrar siempre el logo, con enlace según el rol efectivo */}
+                <Link to={logoPath}>
+                    <img className='Logo' src={Logo_CS} alt="Logo" />
+                </Link>
+
                 <div className='Notification'>
                     <Bell size={24} className='campana' />
                     <p className='textNotification'>{role}</p>
