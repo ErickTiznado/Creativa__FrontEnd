@@ -2,6 +2,7 @@ import React from 'react';
 import './RecoverAccount.css';
 import FadeIn from '../components/animations/FadeIn';
 import ScalePress from '../components/animations/ScalePress';
+import Logo_CS from '../assets/img/Logo_CS.png';
 
 const RecoverAccount = () => {
   const onSubmit = (e) => {
@@ -12,12 +13,13 @@ const RecoverAccount = () => {
     <FadeIn className="recover-container">
       <div className="recover-card">
         <div className="recover-header">
+          <img src={Logo_CS} alt="Logo" />
           <h2>Recuperar cuenta</h2>
           <p>Si olvidaste tu correo o contraseña, solicita al administrador la recuperación. Completa el formulario y especifica tu caso.</p>
         </div>
 
         <form className="recover-form" onSubmit={onSubmit}>
-          <div className="recover-row">
+          <div className="recover-row options">
             <label className="option-inline">
               <input type="radio" name="recoverType" defaultChecked />
               Olvidé mi contraseña
