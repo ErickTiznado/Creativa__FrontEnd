@@ -139,10 +139,11 @@ export const useCampaignWorkspace = () => {
   // 4. Load All Assets for Repository
   useEffect(() => {
     const loadRepoAssets = async () => {
+      if (!campaign?.id) return; // Wait for campaign ID
       try {
         setLoadingAssets(true);
         // Load ALL assets for the repository view, as requested
-        const allAssets = await getAllAssets();
+        const allAssets = await getAllAssets(campaign.id);
         setAssets(allAssets || []);
       } catch (error) {
         console.error("Error loading repository assets:", error);
@@ -152,7 +153,7 @@ export const useCampaignWorkspace = () => {
     };
 
     loadRepoAssets();
-  }, []);
+  }, [campaign]); // Dependency on campaign (specifically id)
 
   // --- HELPERS ---
 
@@ -229,11 +230,12 @@ export const useCampaignWorkspace = () => {
         useReference: useReference,
         referenceImages: referenceImages,
         campaignId: campaign.id,
+        brandId: campaignData?.brandId // Pass brandId if available
       });
 
       // Extract image URLs from the result
-      // Backend returns: { success: true, data: { assets: [{ id, img_url, ... }] } }
-      const assetObjects = result.data?.assets || result.assets || [];
+      // Backend returns an array of asset objects directly: [{ id, img_url, ... }, ...]
+      const assetObjects = Array.isArray(result) ? result : (result.data?.assets || result.assets || []);
 
       // Store complete asset objects (not just URLs) for inpainting
       // Each asset has: { id, img_url, prompt_used, campaign_assets, ... }

@@ -72,15 +72,17 @@ export const generateImages = async (config) => {
   try {
     const payload = {
       prompt: config.prompt,
-      style: config.style || "cinematic", // ✅ ADDED: Include style from config
-      campaignId: config.campaignId, // ✅ ADDED: Include campaign ID
-      aspectRatio: config.aspectRatio || "1:1",
-      sampleCount: config.quantity || 1, // Backend expects 'sampleCount'
-      useReference: config.useReference || false,
-      referenceImages: config.referenceImages || [],
+      numberOfImages: config.quantity || 1,
+      config: {
+        aspectRatio: config.aspectRatio || "1:1",
+      },
+      brandId: config.brandId || "creativa-default-brand", // Fallback if not provided
+      campaignId: config.campaignId,
+      style: config.style || "cinematic",
+      // References not currently supported in basic generation endpoint on backend
     };
 
-    const response = await api.post("/generator/generate-images", payload);
+    const response = await api.post("/image/generate", payload);
 
     return response.data;
   } catch (error) {
@@ -218,7 +220,7 @@ export const editImage = async (editData) => {
       maskImage: editData.maskImage,
     };
 
-    const response = await api.post("/generator/edit-image", payload);
+    const response = await api.post("/image/edit", payload);
     return response.data;
   } catch (error) {
     console.error("Error editing image:", error);
