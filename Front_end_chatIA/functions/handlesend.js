@@ -1,6 +1,10 @@
-import { v4 as uuidv4 } from "uuid";
 import { api } from "../src/services/api";
 
+/**
+ * Send a message to the AI chat.
+ * NOTE: Chat endpoints are not yet implemented in the hexagonal backend (Dev 3 pending).
+ * Gracefully returns a message indicating the feature is unavailable.
+ */
 export const handlesend = async (message, sessionId) => {
   const user = JSON.parse(localStorage.getItem("user"));
   try {
@@ -17,35 +21,18 @@ export const handlesend = async (message, sessionId) => {
       type: response.data.type,
     };
   } catch (error) {
+    // Graceful degradation if chat route doesn't exist yet
+    if (error.response?.status === 404) {
+      return {
+        success: true,
+        response: "El chat IA aún no está disponible en la nueva arquitectura. Estará disponible pronto.",
+        data: null,
+        type: "info",
+      };
+    }
     return {
       success: false,
       error: error,
     };
   }
 };
-
-/* export const handlesend = async (message) => {
-    if (sessionID === null) {
-        sessionID = uuidv4();
-    }
-    try {
-        const response = await axios.post('http://localhost:3000/ai/chat', {
-            sessionID: sessionID,
-            userMessage: message,
-            token: localStorage.getItem('token')
-        })
-
-
-        return {
-            success: true,
-            response: response.data.text,
-            data: response.data.collectedData
-        }
-    } catch (error) {
-
-        return {
-            success: false,
-            error: error
-        }
-    }
-} */
