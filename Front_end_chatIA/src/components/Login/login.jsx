@@ -88,7 +88,7 @@ const Login = () => {
         </form>
 
         <div className="login-footer">
-          <p>¿Necesitas recuperar tu cuenta? <a href="#">Recuperar ahora</a></p>
+          <p>¿Necesitas recuperar tu cuenta? <a href="/recover">Recuperar ahora</a></p>
         </div>
       </div>
     </FadeIn>

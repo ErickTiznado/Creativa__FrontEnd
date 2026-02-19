@@ -6,6 +6,7 @@ import ViewAssignmentsDesigner from './layouts/ViewAssignmentsDesigner/ViewAssig
 import CampaignWorkspace from './layouts/CampaignWorkspace/CampaignWorkspace.jsx';
 import ChatPage from './pages/ChatPage';
 import Login from './components/Login/login.jsx';
+import RecoverAccount from './pages/RecoverAccount.jsx';
 import './App.css'
 import { AuthProvider } from "./context/AuthContext.jsx"
 import PrivateRoute from './components/Guards/PrivateRoute.jsx';
@@ -15,6 +16,8 @@ import SessionProvider from './context/SessionContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/animations/PageTransition.jsx';
+import AdminPanel from './components/Admin/AdminPanel.jsx';
+import RequestsMailbox from './components/Admin/RequestsMailbox.jsx';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -28,9 +31,28 @@ const AnimatedRoutes = () => {
             <Login />
           </PageTransition>
         } />
-
+        <Route path="/recover" element={
+          <PageTransition>
+            <RecoverAccount />
+          </PageTransition>
+        } />
+      
+        {/* Ruta para ver la vista de administrador (sólo diseño) */}
+          <Route path="/admin" element={
+            <PageTransition>
+              <Navbar role='Admin' />
+              <AdminPanel />
+            </PageTransition>
+          } />
+        {/* Buzón de solicitudes (vista administrador, sólo diseño) */}
+        <Route path="/requests" element={
+          <PageTransition>
+            <Navbar role='Admin' />
+            <RequestsMailbox />
+          </PageTransition>
+        } />
         {/* Protected Routes */}
-        <Route element={<PrivateRoute />}>
+        <Route element={<PrivateRoute />}> 
 
           {/* Marketing Routes */}
           <Route element={<RoleRoute allowedRoles={['marketing']} />}>

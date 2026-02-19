@@ -1,0 +1,398 @@
+/* Contenedor exterior: centra la tarjeta */
+.admin-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* Tarjeta principal */
+.admin-card {
+  width: 100%;
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(11, 22, 40, 0.06);
+  padding: 24px;
+  box-sizing: border-box;
+  display: block;
+  color: var(--color-text-primary, #0b2038); /* asegurar color base */
+}
+
+/* Nuevo layout: contenido en dos columnas */
+.admin-content {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Panel izquierdo: formulario */
+.left-panel {
+  width: 380px; /* ancho fijo para consistencia visual */
+  flex: 0 0 380px;
+}
+
+/* Panel derecho: tabla ocupa resto del espacio */
+.right-panel {
+  flex: 1 1 auto;
+  min-width: 0; /* para permitir overflow-x en el hijo */
+}
+
+/* Header */
+.admin-card .admin-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #0b2038; /* asegurar color oscuro */
+  font-weight: 700;
+}
+
+.admin-card .admin-header p {
+  margin: 4px 0 16px;
+  color: #6b7b8c; /* subtítulo en gris */
+  font-size: 13px;
+}
+
+/* Formulario: campos en vertical */
+.admin-card .admin-form {
+  margin-bottom: 20px;
+  background: #fafafe;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #eef3f8;
+  color: #0b2038; /* forzar color de texto dentro del form */
+ box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+}
+
+.admin-card .admin-form.editing {
+  border-color: #6aa0ff;
+  box-shadow: 0 10px 28px rgba(59,130,246,0.16);
+}
+
+.admin-card .edit-mode-banner {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b2038;
+  background: #e8f1ff;
+  border: 1px solid #cfe0ff;
+  margin-bottom: 12px;
+}
+
+.admin-card .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: stretch;
+}
+
+.admin-card .input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-card .input-group label {
+  font-size: 13px;
+  color: #4b5968;
+  margin-bottom: 6px;
+}
+
+.admin-card .input-group input,
+.admin-card .input-group select {
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #d7e1ea;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  color: #0b2038; /* texto del input */
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.admin-card .input-group input::placeholder {
+  color: #aab6c3;
+}
+
+.admin-card .input-group input:focus,
+.admin-card .input-group select:focus {
+  border-color: #6aa0ff;
+  box-shadow: 0 0 0 4px rgba(106,160,255,0.08);
+}
+
+/* Hint y estilo contraseña (visible por diseño) */
+.admin-card .password-input {
+  background: #f1f5f9;
+  color: #0b2038;
+}
+
+/* Botón crear: queda al final del form y centrado a la izquierda del panel */
+.admin-card .create-button-wrap {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.admin-card .form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.admin-card .create-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg,#3b82f6,#0066ff);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(3,102,214,0.12);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.admin-card .cancel-button {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #d7e1ea;
+  background: #ffffff;
+  color: #0b2038;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.admin-card .cancel-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* Tabla: se mantiene dentro del panel derecho */
+.admin-card .admin-table-section {
+  margin-top: 0;
+}
+
+.admin-card .admin-table-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #0b2038; /* título de la sección visible */
+  font-weight: 700;
+}
+
+.admin-card .table-scroll {
+  overflow-x: auto;
+}
+
+/* Encabezado de la sección con controles */
+.admin-card .admin-table-section .table-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.admin-card .admin-table-section .user-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Estilos del buscador y filtro */
+.admin-card .admin-table-section .user-search {
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7e1ea;
+  background: #fff;
+  color: #0b2038;
+  font-size: 14px;
+  outline: none;
+}
+
+.admin-card .admin-table-section .role-filter {
+  height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #d7e1ea;
+  background: #fff;
+  color: #0b2038;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Wrapper que contiene head-table + body-scroll */
+.admin-card .table-wrapper {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eef3f8;
+}
+
+/* Hacer que ambas tablas usen table-layout fijo para mantener alineación de columnas */
+.admin-card .head-table,
+.admin-card .body-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* estilo del thead (ya existente, reforzar) */
+.admin-card .head-table thead {
+  background: #f5f8fb;
+}
+
+/* Contenedor con scroll para el tbody únicamente */
+.admin-card .table-body-scroll {
+  max-height: 360px; /* ajustar según preferencia */
+  overflow-y: auto;
+}
+
+/* Asegurar que celdas del body tengan mismo padding/estilo que antes */
+.admin-card .body-table td {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #0b2038;
+  border-bottom: 1px solid #eef3f8;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Mantener estilos de th (coincidentes con body) */
+.admin-card .head-table th {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #0b2038;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Definir anchos por columna para alinear head y body */
+.admin-card .head-table th:nth-child(1),
+.admin-card .body-table td:nth-child(1) { width: 16%; }
+.admin-card .head-table th:nth-child(2),
+.admin-card .body-table td:nth-child(2) { width: 16%; }
+.admin-card .head-table th:nth-child(3),
+.admin-card .body-table td:nth-child(3) { width: 36%; }
+.admin-card .head-table th:nth-child(4),
+.admin-card .body-table td:nth-child(4) { width: 16%; }
+.admin-card .head-table th:nth-child(5),
+.admin-card .body-table td:nth-child(5) { width: 16%; }
+
+/* Badges de rol */
+.admin-card .role-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.admin-card .role-badge.marketing {
+  background: linear-gradient(90deg,#ff7a7a,#ff5252);
+}
+
+.admin-card .role-badge.designer {
+  background: linear-gradient(90deg,#7c6bff,#4b39ff);
+}
+
+/* Acciones: botones edit/delete visibles */
+.admin-card .actions-col {
+  width: 120px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-card .icon-btn {
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 8px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+
+.admin-card .icon-btn.edit {
+  background: linear-gradient(180deg,#3b82f6,#0066ff);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(59,130,246,0.14);
+}
+
+.admin-card .icon-btn.delete {
+  background: linear-gradient(180deg,#ff6b6b,#ff3b3b);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(255,66,66,0.12);
+}
+
+.admin-card .icon-btn:hover {
+  transform: translateY(-2px);
+}
+
+.admin-card .icon-btn svg {
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+/* Fila de usuario deshabilitado: fondo y texto atenuado */
+.admin-card .body-table tr.disabled-row {
+  background: #fbfbfd;
+}
+.admin-card .body-table tr.disabled-row td {
+  color: #8a98a9;
+}
+
+/* Acentuar badge si se desea atenuarlo también */
+.admin-card .body-table tr.disabled-row .role-badge {
+  opacity: 0.85;
+  filter: grayscale(0.08) brightness(0.98);
+}
+
+/* Botones deshabilitados: apariencia inactiva y sin interactividad */
+.admin-card .icon-btn[disabled],
+.admin-card .icon-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Asegurar que el botón de "disable"/unlock permanezca visible y activo */
+.admin-card .icon-btn.disable {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* Responsivo: en pantallas pequeñas apilar verticalmente (form encima de tabla) */
+@media (max-width: 900px) {
+  .admin-content { flex-direction: column; }
+  .left-panel { width: 100%; flex: none; }
+  .right-panel { width: 100%; }
+  .admin-card .admin-table { min-width: 520px; }
+  .admin-card .table-header-row { flex-direction: column; align-items: stretch; gap: 8px; }
+  .admin-card .table-body-scroll { max-height: 300px; }
+}
+
+/* Ajustes para móviles pequeños */
+@media (max-width: 720px) {
+  .admin-card .form-row { flex-direction: column; gap: 12px; align-items: stretch; }
+  .admin-card .form-actions { flex-direction: column; align-items: stretch; }
+  .admin-card .create-button-wrap { justify-content: stretch; }
+  .admin-card .create-button { width: 100%; justify-content: center; }
+  .admin-card .cancel-button { width: 100%; }
+  .admin-card .admin-table { min-width: 520px; }
+}
