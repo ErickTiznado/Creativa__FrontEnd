@@ -32,19 +32,22 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await authLogin(email, password);
+
       if (response && response.data) {
-        const { token, ...userData } = response.data;
-        if (token) {
-          localStorage.setItem("token", token);
+        // 👇 Aquí hacemos "match" con lo que devuelve tu backend Hexagonal
+        const { user, session } = response.data;
+
+        // Guardamos el token sacándolo de la sesión de Supabase
+        if (session && session.access_token) {
+          localStorage.setItem("token", session.access_token);
         }
-        // Assuming the rest is user data containing role
-        // Ideally checking structure, but assuming userData is the user object
-        // If userData contains a 'user' property, we should use that
-        const finalUser = userData.user || userData;
-        localStorage.setItem("user", JSON.stringify(finalUser));
-        setUser(finalUser);
-        
-        return finalUser;
+
+        // Guardamos el usuario
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+          setUser(user);
+          return user;
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
