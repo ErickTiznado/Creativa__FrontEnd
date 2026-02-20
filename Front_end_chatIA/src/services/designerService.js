@@ -2,7 +2,7 @@ import { api } from "./api";
 
 export const getDesigners = async () => {
   const response = await api.get("/profile/designers");
-  return response.data;
+  return response.data.data;
 };
 
 export const sendCampaign = async (campaign) => {

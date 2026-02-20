@@ -1,113 +1,77 @@
 import React, { useState, useMemo, useCallback, useContext } from 'react';
 import toast from 'react-hot-toast';
 import { Rocket, Search, X, AlertTriangle, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { sendCampaign } from '../../services/designerService';
 import { useDesigners } from '../../hooks/useDesigners';
 import { useUser } from '../../hooks/useUser';
-import {
-  getTranslatedLabel,
-  validateCampaignData,
-  formatBriefData
-} from '../../config/campaignConfig';
+import { getTranslatedLabel, validateCampaignData, formatBriefData } from '../../config/campaignConfig';
 import { deleteDraft } from '../../services/draftService';
 import { updateChatSession } from '../../services/chatService';
 import sessionContext from "../../context/SessionContextValue";
 
-/**
- * Sidebar - Campaign summary and designer selection component.
- * Uses custom hooks for data fetching and config for constants.
- */
-const Sidebar = ({ className, onToggle, briefData = [] }) => {
+// 💡 Recibimos el registeredCampaignId
+const Sidebar = ({ className, onToggle, briefData = [], isRegisteredCampaign, registeredCampaignId }) => {
   const summaryData = useMemo(() => Array.isArray(briefData) ? briefData : [], [briefData]);
   const { designers } = useDesigners();
   const user = useUser();
   const { activeDraft, setActiveDraft } = useContext(sessionContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDesigner, setSelectedDesigner] = useState(null);
+  const navigate = useNavigate();
 
-  // Memoized filtered designers list
   const filteredDesigners = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    return designers.filter((designer) =>
-      designer.first_name.toLowerCase().includes(term) ||
-      designer.last_name.toLowerCase().includes(term)
-    );
+    return designers.filter((d) => d.first_name.toLowerCase().includes(term) || d.last_name.toLowerCase().includes(term));
   }, [designers, searchTerm]);
 
-  // Handle campaign submission
   const handleSendCampaign = useCallback(async () => {
     const missingFields = validateCampaignData(summaryData);
-    const isBriefComplete = missingFields.length === 0;
-
-    if (isBriefComplete && selectedDesigner && user) {
+    if (missingFields.length === 0 && selectedDesigner && user) {
       try {
-        const formattedBriefData = formatBriefData(summaryData);
         const campaign = {
           user_id: user.id,
-          briefData: formattedBriefData,
-          designer_id: selectedDesigner.id
+          briefData: formatBriefData(summaryData),
+          designer_id: selectedDesigner.id,
+          // 💡 EL FIX FINAL: Le mandamos a tu controlador el ID real de la campaña, NO el del chat
+          idCampaing: isRegisteredCampaign ? registeredCampaignId : undefined
         };
 
         const response = await sendCampaign(campaign);
+        const responseData = response?.data?.data || response?.data;
 
-        if (response?.status === 200 || response?.data) {
+        if (response?.status === 200 || response?.status === 201 || responseData) {
           try {
-            const newCampaignId = response.data.id || response.data.data?.id;
+            const newCampaignId = responseData?.id || responseData?.id_campaing || responseData?.campings_id || registeredCampaignId;
             if (newCampaignId && activeDraft) {
-               await updateChatSession(activeDraft, {
-                  userId: user.id,
-                  campings_id: newCampaignId
-               });
+              // Aquí sí usamos el activeDraft porque es el ID del Chat
+              await updateChatSession(activeDraft, { userId: user.id, campings_id: newCampaignId });
             }
-          } catch (error) {
-             console.error("Error updating chat session:", error);
-          }
+          } catch (error) { }
+
           deleteDraft(activeDraft);
           setActiveDraft(null);
-          toast.success("Campaña enviada con éxito!", {
-            icon: <div style={{ display: 'flex', minWidth: '28px' }}><Rocket size={28} color="var(--color-success)" /></div>
+
+          toast.success(isRegisteredCampaign ? "¡Campaña actualizada y reenviada!" : "¡Campaña enviada con éxito!", {
+            icon: <div style={{ minWidth: '28px' }}><Rocket size={28} color="var(--color-success)" /></div>
           });
+
+          setTimeout(() => navigate('/'), 1500);
         }
       } catch (e) {
-        console.error("Error sending campaign:", e);
-        toast.error("Error al enviar la campaña: " + (e.response?.data?.message || e.message), {
-          icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>
-        });
+        toast.error("Error al enviar.");
       }
     } else {
-      if (!user) {
-        toast.error("Error: No se encontró información del usuario. Por favor inicie sesión nuevamente.");
-      } else if (!selectedDesigner) {
-        toast('Por favor seleccione un diseñador.', {
-          icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertCircle size={28} color="var(--color-warning)" /></div>,
-          style: {
-            border: '1px solid var(--color-warning)',
-            color: 'var(--color-text-primary)',
-            background: 'var(--color-bg-panel)'
-          }
-        });
-      } else if (!isBriefComplete) {
-        const missingNames = missingFields.map(getTranslatedLabel).join(', ');
-        toast(`Faltan datos obligatorios: ${missingNames}. Por favor completa la conversación.`, {
-          duration: 5000,
-          icon: <div style={{ display: 'flex', minWidth: '28px' }}><AlertTriangle size={28} color="var(--color-error)" /></div>,
-          style: {
-            border: '1px solid var(--color-error)',
-            color: 'var(--color-text-primary)',
-            background: 'var(--color-bg-panel)'
-          }
-        });
-      }
+      if (!selectedDesigner) toast.error('Seleccione un diseñador.');
+      else toast.error(`Faltan datos obligatorios en el chat.`);
     }
-  }, [summaryData, selectedDesigner, user]);
+  }, [summaryData, selectedDesigner, user, activeDraft, navigate, setActiveDraft, isRegisteredCampaign, registeredCampaignId]);
 
   return (
     <aside className={`sidebar ${className}`}>
       <div className="sidebar-header">
         <Rocket /> <h3 className='sidebar-h3'>Resumen de Campaña</h3>
-        <button className="close-sidebar-btn" onClick={onToggle}>
-          <X />
-        </button>
+        <button className="close-sidebar-btn" onClick={onToggle}><X /></button>
       </div>
 
       <div className="summary-list">
@@ -119,44 +83,26 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
             </div>
           ))
         ) : (
-          <div className="empty-message">
-            <p>Conversa con el asistente para completar los datos de tu campaña</p>
-          </div>
+          <div className="empty-message"><p>Conversa con el asistente para completar los datos</p></div>
         )}
       </div>
 
       <div className="search-bar">
         <span className="icon"><Search /></span>
-        <input
-          type="text"
-          placeholder="Buscar"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <input type="text" placeholder="Buscar diseñador..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
       </div>
 
       <div className='box-users'>
-        {filteredDesigners.map((designer) => (
-          <div
-            className="user-card"
-            key={designer.id || designer.first_name}
-            onClick={() => setSelectedDesigner(designer)}
-          >
-            <img
-              src="https://i.pravatar.cc/150?img=11"
-              alt={designer.first_name}
-              className="card-avatar"
-            />
-            <div className="user-info">
-              <h4>{designer.first_name} {designer.last_name}</h4>
-              <p>Diseñador</p>
-            </div>
+        {filteredDesigners.map((d) => (
+          <div className={`user-card ${selectedDesigner?.id === d.id ? 'selected' : ''}`} key={d.id} onClick={() => setSelectedDesigner(d)}>
+            <img src="https://i.pravatar.cc/150?img=11" alt="avatar" className="card-avatar" />
+            <div className="user-info"><h4>{d.first_name} {d.last_name}</h4><p>Diseñador</p></div>
           </div>
         ))}
       </div>
 
       <div className="send-action-area">
-        <label>Enviar campaña a:</label>
+        <label>{isRegisteredCampaign ? "Reasignar/Reenviar a:" : "Enviar campaña a:"}</label>
         <div className="recipient-tag">
           {selectedDesigner ? (
             <>
@@ -168,7 +114,9 @@ const Sidebar = ({ className, onToggle, briefData = [] }) => {
             <p>No hay diseñador seleccionado</p>
           )}
         </div>
-        <button className="main-cta-btn" onClick={handleSendCampaign}>Enviar</button>
+        <button className="main-cta-btn" onClick={handleSendCampaign}>
+          {isRegisteredCampaign ? "Actualizar Campaña" : "Enviar"}
+        </button>
       </div>
     </aside>
   );

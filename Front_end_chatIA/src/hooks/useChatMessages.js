@@ -1,28 +1,31 @@
-import { useState, useCallback, useContext, useEffect } from "react";
+import { useState, useCallback, useContext, useEffect, useRef } from "react";
 import { handlesend } from "../../functions/handlesend";
 import sessionContext from "../context/SessionContextValue";
 import { saveDraft } from "../services/draftService";
-/**
- * Custom hook for managing chat messages state and operations.
- * Encapsulates message list, loading state, and send logic.
- *
- * @param {Function} onBriefData - Callback when brief data is received from the bot
- * @param {Array} initialMessages - Initial chat history to load
- * @returns {Object} Chat state and handlers
- */
+import { updateChatSession } from "../services/chatService";
+
 export const useChatMessages = (onBriefData, initialMessages = []) => {
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [inputText, setInputText] = useState("");
   const [type, setType] = useState("");
 
   const { activeDraft, setActiveDraft } = useContext(sessionContext);
+  const hasLoadedHistory = useRef(false);
 
   useEffect(() => {
     if (!activeDraft) {
       setMessages([]);
+      hasLoadedHistory.current = false;
     }
   }, [activeDraft]);
+
+  useEffect(() => {
+    if (initialMessages && initialMessages.length > 0 && !hasLoadedHistory.current) {
+      setMessages(initialMessages);
+      hasLoadedHistory.current = true;
+    }
+  }, [initialMessages]);
 
   const handleInputChange = useCallback((e) => {
     setInputText(e.target.value);
@@ -35,11 +38,13 @@ export const useChatMessages = (onBriefData, initialMessages = []) => {
       if (inputText.trim() === "") return;
 
       const userMsg = { id: Date.now(), sender: "user", text: inputText };
-      setMessages((prev) => [...prev, userMsg]);
+
+      // Actualizamos el estado de los mensajes inmediatamente para que se vea fluido
+      const currentMessages = [...messages, userMsg];
+      setMessages(currentMessages);
       setInputText("");
       setIsLoading(true);
 
-      // 1. Determine the Session ID to use (Existing or New)
       let currentSessionId = activeDraft;
       if (!currentSessionId) {
         currentSessionId = crypto.randomUUID();
@@ -47,7 +52,6 @@ export const useChatMessages = (onBriefData, initialMessages = []) => {
       }
 
       try {
-        // 2. Send request to Backend with the Session ID
         const response = await handlesend(inputText, currentSessionId);
         setType(response.type);
 
@@ -58,28 +62,47 @@ export const useChatMessages = (onBriefData, initialMessages = []) => {
             text: response.response,
           };
 
-          const updatedMessages = [...messages, userMsg, botMsg];
-          setMessages(updatedMessages);
+          const finalMessages = [...currentMessages, botMsg];
+          setMessages(finalMessages);
 
           if (response.data && onBriefData) {
             onBriefData(response.data);
           }
 
-          // 3. Save to LocalStorage (Persist the Draft)
-          // Now we allow saveDraft to handle both create (upsert) and update
+          // 1. Guardamos en LocalStorage (como siempre)
           saveDraft(
             currentSessionId,
             inputText,
             response.data,
-            updatedMessages,
+            finalMessages,
           );
+
+          // 2. EL FIX MÁGICO: Guardamos en Supabase en tiempo real
+          try {
+            // Formateamos los mensajes al estilo que espera la IA/Supabase
+            const formattedForDB = finalMessages.map(msg => ({
+              role: msg.sender === 'bot' ? 'model' : 'user',
+              parts: [{ text: msg.text }]
+            }));
+
+            await updateChatSession(currentSessionId, {
+              chat: {
+                message: formattedForDB,
+                data: response.data || {}
+              }
+            });
+            console.log("💾 [Hook] Mensajes guardados en Supabase.");
+          } catch (dbError) {
+            console.error("❌ [Hook] Error guardando en Supabase en tiempo real:", dbError);
+          }
+
         } else {
           const botMsg = {
             id: Date.now() + 1,
             sender: "bot",
             text: "Error al procesar la solicitud",
           };
-          setMessages((prev) => [...prev, botMsg]);
+          setMessages([...currentMessages, botMsg]);
         }
       } catch (error) {
         console.error("Error en sendMessage:", error);
@@ -88,7 +111,7 @@ export const useChatMessages = (onBriefData, initialMessages = []) => {
           sender: "bot",
           text: "Error de conexión. Intenta de nuevo.",
         };
-        setMessages((prev) => [...prev, botMsg]);
+        setMessages([...currentMessages, botMsg]);
       } finally {
         setIsLoading(false);
       }
