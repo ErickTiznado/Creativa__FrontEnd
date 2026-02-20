@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   fetchSavedAssets,
   updateAssetSaveStatus,
@@ -13,6 +13,7 @@ export function useSavedAssets(campaignId) {
   const [savedAssets, setSavedAssets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const hasFetched = useRef(false);
 
   // Fetch saved assets from backend
   const fetchAssets = useCallback(async () => {
@@ -75,6 +76,8 @@ export function useSavedAssets(campaignId) {
 
   // Load saved assets on mount and when campaignId changes
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     fetchAssets();
   }, [fetchAssets]);
 
@@ -86,3 +89,4 @@ export function useSavedAssets(campaignId) {
     refetch: fetchAssets,
   };
 }
+

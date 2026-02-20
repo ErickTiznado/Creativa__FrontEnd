@@ -10,9 +10,9 @@ import { saveAs } from "file-saver";
 export const getAllAssets = async (campaignId) => {
   try {
     if (!campaignId) {
-        // Without campaignId, backend will return 400. Return empty to be safe.
-        console.warn("getAllAssets called without campaignId");
-        return [];
+      // Without campaignId, backend will return 400. Return empty to be safe.
+      console.warn("getAllAssets called without campaignId");
+      return [];
     }
     const response = await api.get(`/asset?campaign_id=${campaignId}`);
     if (response.data && response.data.success) {
@@ -21,6 +21,46 @@ export const getAllAssets = async (campaignId) => {
     return response.data || [];
   } catch (error) {
     console.error("Error fetching all assets:", error);
+    throw error;
+  }
+};
+
+export const updateAssetApprove = async (assetId) => {
+  try {
+
+    /* {
+      "id": "uuid-del-asset",
+      "is_approved": true,
+      "img_url": {
+        "original": "https://storage.googleapis.com/.../approved/...",
+        "thumbnail": "https://storage.googleapis.com/.../approved/..."
+      },
+      "storage_location": "approved",
+      "...": "otros campos del asset actualizado"
+    }
+     */
+    const response = await api.post(`/asset/${assetId}/approve`);
+    console.log(response)
+    return response.data
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
+/**
+ * Get all globally approved assets across all campaigns.
+ * @returns {Promise<Array>} Array of approved assets
+ */
+export const getGlobalApprovedAssets = async () => {
+  try {
+    const response = await api.get(`/assets?is_approved=true`);
+    if (response.data && response.data.success) {
+      return response.data.data;
+    }
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching global approved assets:", error);
     throw error;
   }
 };
@@ -59,7 +99,7 @@ export const downloadImagesAsZip = async (imageUrls, zipName = "assets") => {
         if (img.img_url)
           return typeof img.img_url === "string"
             ? img.img_url
-            : img.img_url.url || img.img_url.thumbnail;
+            : img.img_url.original || img.img_url.url || img.img_url.thumbnail;
         return null;
       })
       .filter(Boolean);

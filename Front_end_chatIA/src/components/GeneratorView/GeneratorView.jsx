@@ -27,6 +27,7 @@ const ReferenceImagesStrip = ({ images, onDeselect }) => {
                     else if (img.preview && typeof img.preview === 'string') url = img.preview;
                     else if (img.img_url) {
                         if (typeof img.img_url === 'string') url = img.img_url;
+                        else if (img.img_url.original && typeof img.img_url.original === 'string') url = img.img_url.original;
                         else if (img.img_url.url && typeof img.img_url.url === 'string') url = img.img_url.url;
                         else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') url = img.img_url.thumbnail;
                     }
@@ -61,8 +62,10 @@ function GeneratorView({
     setUseReference,
     aspectRatio,
     setAspectRatio,
-    // quantity,
-    // setQuantity,
+    imageSize,
+    setImageSize,
+    quantity,
+    setQuantity,
     handleGenerate,
     generatedImages,
     referenceImages = [],
@@ -165,6 +168,7 @@ function GeneratorView({
         if (img.preview && typeof img.preview === 'string') return img.preview; // For local references
         if (img.img_url) {
             if (typeof img.img_url === 'string') return img.img_url;
+            if (img.img_url.original && typeof img.img_url.original === 'string') return img.img_url.original;
             if (img.img_url.url && typeof img.img_url.url === 'string') return img.img_url.url;
             if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') return img.img_url.thumbnail;
         }
@@ -603,20 +607,38 @@ function GeneratorView({
                                             </div>
                                         </div>
 
+                                        {/* Image Size Dropdown */}
+                                        <div className="control-group" style={{ gridColumn: 'span 2' }}>
+                                            <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Resolución</label>
+                                            <select
+                                                value={imageSize || "2K"}
+                                                onChange={(e) => setImageSize && setImageSize(e.target.value)}
+                                                className="custom-select"
+                                                style={{ width: '100%', cursor: 'pointer' }}
+                                                title="Resolución de la imagen generada"
+                                            >
+                                                <option value="2K">2K (Estándar)</option>
+                                                <option value="4K">4K (Alta calidad)</option>
+                                            </select>
+                                        </div>
+
                                         {/* Quantity Input */}
-                                        {/* {mode === 'create' && (
+                                        {mode === 'create' && (
                                             <div className="control-group">
-                                                <label style={{fontSize: '0.8rem', color: 'var(--color-text-muted)'}}>Cantidad</label>
+                                                <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Cantidad</label>
                                                 <input
                                                     type="number"
                                                     value={quantity}
-                                                    onChange={(e) => setQuantity(Number(e.target.value))}
+                                                    onChange={(e) => {
+                                                        const val = Math.min(4, Math.max(1, Number(e.target.value)));
+                                                        setQuantity(val);
+                                                    }}
                                                     className="qty-input"
                                                     min="1"
                                                     max="4"
                                                 />
                                             </div>
-                                        )} */}
+                                        )}
                                     </div>
                                 </div>
                             </div>

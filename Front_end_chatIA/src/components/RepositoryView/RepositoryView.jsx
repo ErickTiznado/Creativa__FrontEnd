@@ -85,7 +85,6 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
             <section className='cw-top-section'>
                 {/* Panel Izquierdo: Buscador y Grid */}
                 <div className='cw-panel'>
-                    {console.log("Assets data:", assets)}
                     <div className='cw-panel-header'>
                         <h3 className='cw-panel-title'>
                             Repositorio de Imágenes
@@ -116,6 +115,7 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                         ) : sortedAssets.length > 0 ? (
                             // Robust Sort: Newest First
                             sortedAssets.map((asset, index) => {
+                                const { img_url } = asset
                                 const isSelected = selectedIds.includes(asset.id);
                                 return (
                                     <div
@@ -131,7 +131,7 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                         onTouchMove={clearLongPress}
                                     >
                                         <img
-                                            src={asset.img_url?.thumbnail || asset.img_url?.url}
+                                            src={img_url.thumbnail}
                                             alt="Thumbnail"
                                             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                                         />
@@ -215,7 +215,7 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                                 <div key={id} className='cw-selected-thumb' style={{ overflow: 'hidden', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     {asset ? (
                                         <img
-                                            src={asset.img_url?.thumbnail || asset.img_url?.url}
+                                            src={asset.thumbnail_url || (typeof asset.img_url === 'string' ? asset.img_url : asset.img_url?.thumbnail || asset.img_url?.url)}
                                             alt="Selected"
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         />
@@ -242,7 +242,7 @@ function RepositoryView({ campaignData, selectedIds, toggleSelection, assets = [
                         </button>
 
                         <img
-                            src={sortedAssets[activeImageIndex].img_url?.url || sortedAssets[activeImageIndex].img_url?.thumbnail}
+                            src={(typeof sortedAssets[activeImageIndex].img_url === 'string' ? sortedAssets[activeImageIndex].img_url : sortedAssets[activeImageIndex].img_url?.url) || sortedAssets[activeImageIndex].thumbnail_url || sortedAssets[activeImageIndex].img_url?.thumbnail}
                             alt="Preview"
                         />
 

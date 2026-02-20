@@ -37,11 +37,12 @@ export const generateImages = async (config) => {
     const payload = {
       prompt: config.prompt,
       numberOfImages: config.quantity || 1,
-      config: {
-        aspectRatio: config.aspectRatio || "1:1",
-      },
       campaignId: config.campaignId,
       style: config.style || "cinematic",
+      imageConfig: {
+        aspectRatio: config.aspectRatio || "1:1",
+        imageSize: config.imageSize || "2K",
+      }
     };
 
     const response = await api.post("/image/generate", payload);

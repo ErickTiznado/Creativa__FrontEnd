@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { generateImages } from "../services/generatorService";
 import { useCampaignsContext } from "./useCampaignsContext";
-import { getAllAssets, deleteAsset } from "../services/assetService";
+import { getGlobalApprovedAssets, deleteAsset, updateAssetApprove } from "../services/assetService";
 import { useCampaignsById } from "./useDesigners";
 
 export const useCampaignWorkspace = () => {
@@ -73,7 +73,8 @@ export const useCampaignWorkspace = () => {
   const [style, setStyle] = useState("cinematic"); // Default style
   const [useReference, setUseReference] = useState(true);
   const [aspectRatio, setAspectRatio] = useState("1:1");
-  const [quantity, setQuantity] = useState(2);
+  const [imageSize, setImageSize] = useState("2K");
+  const [quantity, setQuantity] = useState(1);
   const [generatedImages, setGeneratedImages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState(null);
@@ -139,11 +140,10 @@ export const useCampaignWorkspace = () => {
   // 4. Load All Assets for Repository
   useEffect(() => {
     const loadRepoAssets = async () => {
-      if (!campaign?.id) return; // Wait for campaign ID
       try {
         setLoadingAssets(true);
-        // Load ALL assets for the repository view, as requested
-        const allAssets = await getAllAssets(campaign.id);
+        // Load ALL globally approved assets for the repository view, regardless of campaign
+        const allAssets = await getGlobalApprovedAssets();
         setAssets(allAssets || []);
       } catch (error) {
         console.error("Error loading repository assets:", error);
@@ -153,7 +153,7 @@ export const useCampaignWorkspace = () => {
     };
 
     loadRepoAssets();
-  }, [campaign]); // Dependency on campaign (specifically id)
+  }, []); // Run once on mount to get global assets
 
   // --- HELPERS ---
 
@@ -217,7 +217,7 @@ export const useCampaignWorkspace = () => {
           .map((asset) =>
             typeof asset.img_url === "string"
               ? asset.img_url
-              : asset.img_url?.url,
+              : asset.img_url?.original || asset.img_url?.url,
           )
         : [];
 
@@ -226,6 +226,7 @@ export const useCampaignWorkspace = () => {
         prompt: prompt,
         style: style, // ✅ ADDED: Send style state
         aspectRatio: aspectRatio,
+        imageSize: imageSize,
         quantity: quantity,
         useReference: useReference,
         referenceImages: referenceImages,
@@ -240,8 +241,21 @@ export const useCampaignWorkspace = () => {
       // Store complete asset objects (not just URLs) for inpainting
       // Each asset has: { id, img_url, prompt_used, campaign_assets, ... }
       if (assetObjects.length > 0) {
+        // Immediately show the new images in the UI
+        setGeneratedImages((prev) => [...prev, ...assetObjects]);
 
-        setGeneratedImages([...generatedImages, ...assetObjects]);
+        // Re-fetch campaign data so campaign.assets is up-to-date
+        // This ensures persistence across page reloads
+        try {
+          const freshData = await fetchCampaignsById(campaignId);
+          setSelectedCamp(freshData);
+
+          // Also refresh repository assets
+          const freshAssets = await getAllAssets(campaign.id);
+          setAssets(freshAssets || []);
+        } catch (refreshError) {
+          console.warn("Could not refresh campaign data after generation:", refreshError);
+        }
       } else {
         setGenerationError("No se generaron imágenes. Intenta de nuevo.");
       }
@@ -259,7 +273,17 @@ export const useCampaignWorkspace = () => {
     // Lógica futura para editar
 
   };
-
+  const handleApproveAsset = async (assetId) => {
+    try {
+      await updateAssetApprove(assetId)
+      console.log("Asset approved:", assetId)
+      setAssets((prevAssets) => {
+        prevAssets.filter((asset) => asset.id !== assetId)
+      })
+    } catch (e) {
+      console.error("Error approving asset:", e)
+    }
+  }
   const handleDeleteAsset = async (assetId) => {
     try {
       await deleteAsset(assetId);
@@ -312,6 +336,8 @@ export const useCampaignWorkspace = () => {
     setUseReference,
     aspectRatio,
     setAspectRatio,
+    imageSize,
+    setImageSize,
     quantity,
     setQuantity,
     generatedImages,
@@ -330,6 +356,7 @@ export const useCampaignWorkspace = () => {
     toggleSaveImg,
     handleGenerateEdit,
     getRefinements, // Helper to get children images
+    handleApproveAsset,
     handleDeleteAsset,
   };
 };
