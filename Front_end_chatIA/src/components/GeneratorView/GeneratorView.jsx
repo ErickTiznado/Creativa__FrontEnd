@@ -354,6 +354,7 @@ function GeneratorView({
             if (!editingImage || !prompt) return;
             setIsRefining(true);
             try {
+                const baseImageURL = getImageUrl(editingImage);
                 const assetId = typeof editingImage === 'object' ? editingImage.id : null;
                 if (!assetId) {
                     throw new Error('No se pudo obtener el ID del asset para refinar.');
@@ -372,11 +373,12 @@ function GeneratorView({
                     result = await editImage({
                         assetId,
                         prompt,
+                        baseImageURL,
                         maskImage
                     });
                 } else {
                     // Fallback to standard refinement if no mask drawn
-                    result = await refineAsset([assetId], prompt, {
+                    result = await refineAsset([assetId], baseImageURL, prompt, {
                         style,
                         aspectRatio,
                         campaignId
@@ -564,7 +566,6 @@ function GeneratorView({
                         </div>
                     )}
 
-                    {/* Parameters - Only in CREATE mode */}
                     {showParameters && (
                         <div className="section-wrapper">
                             <div className="section-header" onClick={() => toggleSection('params')}>
@@ -576,7 +577,6 @@ function GeneratorView({
                                 <div className="control-group">
                                     <div className="parameters-grid">
 
-                                        {/* Aspect Ratio Visual Selector */}
                                         <div className="control-group" style={{ gridColumn: 'span 2' }}>
                                             <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Formato</label>
                                             <div className="aspect-ratio-selector">
@@ -607,7 +607,6 @@ function GeneratorView({
                                             </div>
                                         </div>
 
-                                        {/* Image Size Dropdown */}
                                         <div className="control-group" style={{ gridColumn: 'span 2' }}>
                                             <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Resolución</label>
                                             <select
@@ -622,7 +621,6 @@ function GeneratorView({
                                             </select>
                                         </div>
 
-                                        {/* Quantity Input */}
                                         {mode === 'create' && (
                                             <div className="control-group">
                                                 <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Cantidad</label>
@@ -645,7 +643,6 @@ function GeneratorView({
                         </div>
                     )}
 
-                    {/* Reference Toggle - Only in CREATE mode */}
                     {showReferenceControls && (
                         <div className="section-wrapper">
                             <div className="section-header" onClick={() => toggleSection('refs')}>
@@ -679,7 +676,6 @@ function GeneratorView({
                                         </div>
                                     </div>
 
-                                    {/* Reference Images Strip / Drop Zone */}
                                     {useReference && (
                                         <div
                                             className={`reference-section ${isDragging ? 'dragging' : ''}`}
@@ -712,8 +708,6 @@ function GeneratorView({
                         </div>
                     )}
                 </div>
-
-                {/* Sticky Footer for Primary Action */}
                 <div className="controls-footer">
                     <button
                         className={`generate-btn ${isEditMode ? 'edit-mode' : ''}`}
@@ -945,20 +939,6 @@ function GeneratorView({
                                                 <Pencil size={14} />
 
                                             </button>
-                                            {/* <button 
-                                                className="history-save-btn" 
-                                                onClick={(e) => { 
-                                                    e.stopPropagation();
-                                                    const imgUrl = getImageUrl(img);
-                                                    if (imgUrl) {
-                                                        downloadImage(imgUrl, `historial_${index + 1}_${Date.now()}.png`);
-                                                    }
-                                                }}
-                                                title="Descargar"
-                                                style={{backgroundColor: 'rgba(59, 130, 246, 0.8)', borderColor: 'transparent', marginRight: '4px'}}
-                                            >
-                                                <Download size={14} />
-                                            </button> */}
                                             <button
                                                 className="history-save-btn"
                                                 onClick={(e) => {

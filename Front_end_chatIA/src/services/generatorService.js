@@ -73,6 +73,8 @@ export const editImage = async (editData) => {
     const payload = {
       assetId: editData.assetId,
       prompt: editData.prompt,
+      baseImageURL: editData.baseImageURL,
+      referenceImageURLs: editData.referenceImageURLs || [],
       maskImage: editData.maskImage || null,
       campaignId: editData.campaignId,
       style: editData.style,
@@ -99,13 +101,14 @@ export const editImage = async (editData) => {
  * @param {Object} options - Additional options (style, aspectRatio, campaignId)
  * @returns {Promise<Array>} Array of refined asset objects
  */
-export const refineAsset = async (assetIds, refinementPrompt, options = {}) => {
+export const refineAsset = async (assetIds, baseImageURL, refinementPrompt, options = {}) => {
   try {
     // Process each asset ID through the edit endpoint (no mask = refinement)
     const results = await Promise.all(
       assetIds.map((assetId) =>
         editImage({
           assetId,
+          baseImageURL: baseImageURL,
           prompt: refinementPrompt,
           maskImage: null, // No mask = full image refinement
           style: options.style,
