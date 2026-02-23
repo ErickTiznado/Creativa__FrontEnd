@@ -1,11 +1,13 @@
 import { Bookmark, Download, X, Package, ThumbsUp } from 'lucide-react';
 import { downloadImagesAsZip } from '../../services/assetService';
 import { useSavedAssets } from '../../hooks/useSavedAssets';
+import { useCampaignWorkspace } from '../../hooks/useCampaignWorkspace';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import './SavedAssetsView.css';
 
 function SavedAssetsView({ campaignId }) {
+    const { handleApproveAsset } = useCampaignWorkspace();
     // Backend-integrated saved assets
     const { savedAssets, loading, toggleSaveAsset } = useSavedAssets(campaignId);
 
@@ -21,9 +23,9 @@ function SavedAssetsView({ campaignId }) {
         try {
             // Generate a sanitized filename based on campaignId
             const zipFileName = `campaña_${campaignId || 'assets'}_${new Date().toISOString().slice(0, 10)}`;
-            
+
             await downloadImagesAsZip(savedAssets, zipFileName);
-            
+
             toast.success(`${savedAssets.length} asset(s) descargados como ZIP`);
         } catch (error) {
             console.error('Error downloading assets as ZIP:', error);
@@ -112,6 +114,8 @@ function SavedAssetsView({ campaignId }) {
                                         } else if (img.img_url) {
                                             if (typeof img.img_url === 'string') {
                                                 imgUrl = img.img_url;
+                                            } else if (img.img_url.original && typeof img.img_url.original === 'string') {
+                                                imgUrl = img.img_url.original;
                                             } else if (img.img_url.url && typeof img.img_url.url === 'string') {
                                                 imgUrl = img.img_url.url;
                                             } else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') {
@@ -143,6 +147,8 @@ function SavedAssetsView({ campaignId }) {
                                             } else if (img.img_url) {
                                                 if (typeof img.img_url === 'string') {
                                                     imgUrl = img.img_url;
+                                                } else if (img.img_url.original && typeof img.img_url.original === 'string') {
+                                                    imgUrl = img.img_url.original;
                                                 } else if (img.img_url.url && typeof img.img_url.url === 'string') {
                                                     imgUrl = img.img_url.url;
                                                 } else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') {
@@ -160,12 +166,12 @@ function SavedAssetsView({ campaignId }) {
                                     <Download size={16} />
                                 </button>
                                 <button
-                                    className={`sav-action-btn approve ${img.is_saved ? 'active' : ''}`}
+                                    className={`sav-action-btn approve ${img.is_approved ? 'active' : ''}`}
                                     onClick={async () => {
                                         if (!img?.id) return;
                                         try {
                                             // Ensure we keep it approved (pass false to force true)
-                                            await toggleSaveAsset(img.id, false);
+                                            await handleApproveAsset(img.id);
                                             toast.success('Asset aprobado correctamente', {
                                                 icon: <ThumbsUp size={18} color="var(--color-success)" />
                                             });

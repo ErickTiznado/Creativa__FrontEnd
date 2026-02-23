@@ -28,6 +28,7 @@ const CampaignWorkspace = () => {
         style, setStyle,
         useReference, setUseReference,
         aspectRatio, setAspectRatio,
+        imageSize, setImageSize,
         quantity, setQuantity,
         generatedImages, handleGenerate,
         isGenerating, generationError,
@@ -190,6 +191,8 @@ const CampaignWorkspace = () => {
                         setUseReference={setUseReference}
                         aspectRatio={aspectRatio}
                         setAspectRatio={setAspectRatio}
+                        imageSize={imageSize}
+                        setImageSize={setImageSize}
                         quantity={quantity}
                         setQuantity={setQuantity}
                         handleGenerate={handleGenerate}
