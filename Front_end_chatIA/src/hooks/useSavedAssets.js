@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  fetchSavedAssets,
+  getSavedAssets,
   updateAssetSaveStatus,
-} from "../services/assetsService";
+} from "../services/assetService";
 
 /**
  * Custom hook for managing saved assets with backend persistence
@@ -22,7 +22,7 @@ export function useSavedAssets(campaignId) {
     try {
       setLoading(true);
       setError(null);
-      const assets = await fetchSavedAssets(campaignId);
+      const assets = await getSavedAssets(campaignId);
       // Ensure local state reflects saved status since we fetched specifically saved assets
       // This fixes the UI initial state if the backend doesn't return the is_saved flag explicitly
       const assetsWithStatus = Array.isArray(assets)

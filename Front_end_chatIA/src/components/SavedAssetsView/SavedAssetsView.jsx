@@ -1,16 +1,21 @@
 import { Bookmark, Download, X, Package, ThumbsUp } from 'lucide-react';
 import { downloadImagesAsZip } from '../../services/assetService';
-import { useSavedAssets } from '../../hooks/useSavedAssets';
-import { useCampaignWorkspace } from '../../hooks/useCampaignWorkspace';
+import { getImageUrl, downloadImage } from '../../utils/imageUtils';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import './SavedAssetsView.css';
 
-function SavedAssetsView({ campaignId }) {
-    const { handleApproveAsset } = useCampaignWorkspace();
-    // Backend-integrated saved assets
-    const { savedAssets, loading, toggleSaveAsset } = useSavedAssets(campaignId);
-
+/**
+ * View for displaying and managing saved assets.
+ * Receives all data as props from parent (single source of truth).
+ */
+function SavedAssetsView({
+    campaignId,
+    savedAssets = [],
+    loading = false,
+    toggleSaveAsset,
+    onApprove,
+}) {
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadError, setDownloadError] = useState(null);
 
@@ -21,11 +26,8 @@ function SavedAssetsView({ campaignId }) {
         setDownloadError(null);
 
         try {
-            // Generate a sanitized filename based on campaignId
             const zipFileName = `campaña_${campaignId || 'assets'}_${new Date().toISOString().slice(0, 10)}`;
-
             await downloadImagesAsZip(savedAssets, zipFileName);
-
             toast.success(`${savedAssets.length} asset(s) descargados como ZIP`);
         } catch (error) {
             console.error('Error downloading assets as ZIP:', error);
@@ -36,27 +38,6 @@ function SavedAssetsView({ campaignId }) {
         }
     };
 
-    // Helper function to download images from external URLs
-    const downloadImage = async (imageUrl, filename) => {
-        try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Clean up the blob URL
-            URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-            console.error('Error downloading image:', error);
-            toast.error('Error al descargar la imagen');
-        }
-    };
     return (
         <div className="saved-assets-view">
             <div className="sav-header">
@@ -100,110 +81,70 @@ function SavedAssetsView({ campaignId }) {
                 </div>
             ) : (
                 <div className="sav-grid">
-                    {savedAssets.map((img, index) => (
-                        <div key={index} className="sav-item">
-                            <div className="sav-image-wrapper">
-                                {(() => {
-                                    // Extract URL from various asset structures
-                                    let imgUrl = null;
-                                    if (typeof img === 'string') {
-                                        imgUrl = img;
-                                    } else if (img) {
-                                        if (img.preview && typeof img.preview === 'string') {
-                                            imgUrl = img.preview;
-                                        } else if (img.img_url) {
-                                            if (typeof img.img_url === 'string') {
-                                                imgUrl = img.img_url;
-                                            } else if (img.img_url.original && typeof img.img_url.original === 'string') {
-                                                imgUrl = img.img_url.original;
-                                            } else if (img.img_url.url && typeof img.img_url.url === 'string') {
-                                                imgUrl = img.img_url.url;
-                                            } else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') {
-                                                imgUrl = img.img_url.thumbnail;
-                                            }
-                                        }
-                                    }
-
-                                    return imgUrl ? (
+                    {savedAssets.map((img, index) => {
+                        const imgUrl = getImageUrl(img);
+                        return (
+                            <div key={img.id || index} className="sav-item">
+                                <div className="sav-image-wrapper">
+                                    {imgUrl ? (
                                         <img src={imgUrl} alt={`Asset ${index + 1}`} />
                                     ) : (
                                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333', color: '#888' }}>
                                             Sin imagen
                                         </div>
-                                    );
-                                })()}
-                            </div>
-                            <div className="sav-actions">
-                                <button
-                                    className="sav-action-btn"
-                                    onClick={() => {
-                                        // Extract URL from asset
-                                        let imgUrl = null;
-                                        if (typeof img === 'string') {
-                                            imgUrl = img;
-                                        } else if (img) {
-                                            if (img.preview && typeof img.preview === 'string') {
-                                                imgUrl = img.preview;
-                                            } else if (img.img_url) {
-                                                if (typeof img.img_url === 'string') {
-                                                    imgUrl = img.img_url;
-                                                } else if (img.img_url.original && typeof img.img_url.original === 'string') {
-                                                    imgUrl = img.img_url.original;
-                                                } else if (img.img_url.url && typeof img.img_url.url === 'string') {
-                                                    imgUrl = img.img_url.url;
-                                                } else if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') {
-                                                    imgUrl = img.img_url.thumbnail;
-                                                }
+                                    )}
+                                </div>
+                                <div className="sav-actions">
+                                    <button
+                                        className="sav-action-btn"
+                                        onClick={() => {
+                                            if (imgUrl) {
+                                                downloadImage(imgUrl, `asset_${index + 1}_${Date.now()}.png`);
                                             }
-                                        }
-
-                                        if (imgUrl) {
-                                            downloadImage(imgUrl, `asset_${index + 1}_${Date.now()}.png`);
-                                        }
-                                    }}
-                                    title="Descargar"
-                                >
-                                    <Download size={16} />
-                                </button>
-                                <button
-                                    className={`sav-action-btn approve ${img.is_approved ? 'active' : ''}`}
-                                    onClick={async () => {
-                                        if (!img?.id) return;
-                                        try {
-                                            // Ensure we keep it approved (pass false to force true)
-                                            await handleApproveAsset(img.id);
-                                            toast.success('Asset aprobado correctamente', {
-                                                icon: <ThumbsUp size={18} color="var(--color-success)" />
-                                            });
-                                        } catch (error) {
-                                            toast.error('Error al aprobar asset');
-                                        }
-                                    }}
-                                    title="Aprobar (Confirmar guardado)"
-                                >
-                                    <ThumbsUp size={16} fill={img.is_saved ? "currentColor" : "none"} />
-                                </button>
-                                <button
-                                    className="sav-action-btn remove"
-                                    onClick={async () => {
-                                        if (!img?.id) {
-                                            toast.error('Error: ID de asset no encontrado');
-                                            return;
-                                        }
-                                        try {
-                                            await toggleSaveAsset(img.id, true);
-                                            toast.success('Removido de guardados');
-                                        } catch (error) {
-                                            toast.error('Error al remover asset');
-                                        }
-                                    }}
-                                    title="Quitar de guardados"
-                                >
-                                    <X size={16} />
-                                </button>
+                                        }}
+                                        title="Descargar"
+                                    >
+                                        <Download size={16} />
+                                    </button>
+                                    <button
+                                        className={`sav-action-btn approve ${img.is_approved ? 'active' : ''}`}
+                                        onClick={async () => {
+                                            if (!img?.id || !onApprove) return;
+                                            try {
+                                                await onApprove(img.id);
+                                                toast.success('Asset aprobado correctamente', {
+                                                    icon: <ThumbsUp size={18} color="var(--color-success)" />
+                                                });
+                                            } catch (error) {
+                                                toast.error('Error al aprobar asset');
+                                            }
+                                        }}
+                                        title="Aprobar (Confirmar guardado)"
+                                    >
+                                        <ThumbsUp size={16} fill={img.is_saved ? "currentColor" : "none"} />
+                                    </button>
+                                    <button
+                                        className="sav-action-btn remove"
+                                        onClick={async () => {
+                                            if (!img?.id) {
+                                                toast.error('Error: ID de asset no encontrado');
+                                                return;
+                                            }
+                                            try {
+                                                await toggleSaveAsset(img.id, true);
+                                                toast.success('Removido de guardados');
+                                            } catch (error) {
+                                                toast.error('Error al remover asset');
+                                            }
+                                        }}
+                                        title="Quitar de guardados"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

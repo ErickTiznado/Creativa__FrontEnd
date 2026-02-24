@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { enhancePrompt, refineAsset, editImage } from '../../services/generatorService';
 import { Sparkles, Image as ImageIcon, Wand2, Download, X, Edit3, Bookmark, Square, RectangleHorizontal, RectangleVertical, Lightbulb, Upload, ChevronLeft, ChevronRight, Palette, Maximize, Trash2, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, Undo, RotateCcw, Settings, MoreVertical, Pencil } from 'lucide-react';
-import { useSavedAssets } from '../../hooks/useSavedAssets';
+import { getImageUrl, downloadImage } from '../../utils/imageUtils';
 import InpaintingCanvas from './InpaintingCanvas';
 import LoadingSpinner from '../animations/LoadingSpinner';
 import ScanningPlaceholder from '../animations/ScanningPlaceholder';
@@ -53,11 +53,10 @@ const ReferenceImagesStrip = ({ images, onDeselect }) => {
 };
 
 function GeneratorView({
-
     prompt,
     setPrompt,
-    style, // ✅ ADDED
-    setStyle, // ✅ ADDED
+    style,
+    setStyle,
     useReference,
     setUseReference,
     aspectRatio,
@@ -70,14 +69,14 @@ function GeneratorView({
     generatedImages,
     referenceImages = [],
     onDeselectReference,
+    savedAssets = [],       // Received from parent (single instance)
+    onToggleSaveAsset,      // Received from parent
     isGenerating = false,
     generationError = null,
-    getRefinements = () => [], // Default empty function
-    onDelete, // ✅ ADDED
-    campaignId // ✅ ADDED for Refinement Context
+    getRefinements = () => [],
+    onDelete,
+    campaignId
 }) {
-    // ===== SAVED ASSETS INTEGRATION =====
-    const { savedAssets, toggleSaveAsset } = useSavedAssets(campaignId);
     // ===== STATE MANAGEMENT =====
     const [mode, setMode] = useState('create'); // 'create' | 'edit'
     const [editingImage, setEditingImage] = useState(null);
@@ -161,41 +160,7 @@ function GeneratorView({
         setIsDragging(false);
     };
 
-    // Helper function to extract URL from asset object or string
-    const getImageUrl = (img) => {
-        if (!img) return null;
-        if (typeof img === 'string') return img;
-        if (img.preview && typeof img.preview === 'string') return img.preview; // For local references
-        if (img.img_url) {
-            if (typeof img.img_url === 'string') return img.img_url;
-            if (img.img_url.original && typeof img.img_url.original === 'string') return img.img_url.original;
-            if (img.img_url.url && typeof img.img_url.url === 'string') return img.img_url.url;
-            if (img.img_url.thumbnail && typeof img.img_url.thumbnail === 'string') return img.img_url.thumbnail;
-        }
-        return null;
-    };
-
-    // Helper function to download images from external URLs
-    const downloadImage = async (imageUrl, filename) => {
-        try {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Clean up the blob URL
-            URL.revokeObjectURL(blobUrl);
-        } catch (error) {
-            console.error('Error downloading image:', error);
-            toast.error('Error al descargar la imagen');
-        }
-    };
+    // getImageUrl and downloadImage are now imported from utils/imageUtils
 
     const handleDrop = (e) => {
         e.preventDefault();
@@ -346,9 +311,11 @@ function GeneratorView({
         }
     };
 
+    const combinedReferences = [...referenceImages, ...localReferences];
+
     const handlePrimaryAction = async () => {
         if (mode === 'create') {
-            await handleGenerate();
+            await handleGenerate(combinedReferences);
         } else {
             // Edit/Inpainting mode
             if (!editingImage || !prompt) return;
@@ -374,7 +341,9 @@ function GeneratorView({
                         assetId,
                         prompt,
                         baseImageURL,
-                        maskImage
+                        maskImage,
+                        campaignId,
+                        style
                     });
                 } else {
                     // Fallback to standard refinement if no mask drawn
@@ -385,11 +354,12 @@ function GeneratorView({
                     });
                 }
 
-                const refinedAsset = result.data || result;
+                const refinedData = result.data || result;
+                const newAssets = Array.isArray(refinedData) ? refinedData : [refinedData];
 
-                if (refinedAsset) {
-                    setEditHistory([...editHistory, refinedAsset]);
-                    setEditingImage(refinedAsset);
+                if (newAssets.length > 0) {
+                    setEditHistory([...editHistory, ...newAssets]);
+                    setEditingImage(newAssets[newAssets.length - 1]);
                     setPrompt('');
                     // Clear canvas after successful generation
                     if (canvasRef.current) canvasRef.current.clear();
@@ -431,8 +401,6 @@ function GeneratorView({
     const stylePills = [
         "Cinematic", "Anime", "3D Render", "Oil Painting", "Cyberpunk", "Minimalist"
     ];
-
-    const combinedReferences = [...referenceImages, ...localReferences];
 
     return (
         <div className={`generator-container ${!isControlsOpen ? 'controls-collapsed' : ''}`}>
@@ -820,10 +788,10 @@ function GeneratorView({
                                                     }
                                                     try {
                                                         const currentlySaved = canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage.id);
-                                                        await toggleSaveAsset(canvasImage.id, currentlySaved);
+                                                        await onToggleSaveAsset(canvasImage.id, currentlySaved);
                                                         toast.success(currentlySaved ? 'Removido de guardados' : 'Guardado en Assets!');
                                                     } catch (error) {
-                                                        toast.error('Error al guardar asset');
+                                                        toast.error(`Error al guardar asset: ${error.message}`);
                                                     }
                                                 }}
                                                 title={canvasImage?.is_saved || savedAssets.some(a => a?.id === canvasImage?.id) ? 'Guardado' : 'Guardar en Assets'}

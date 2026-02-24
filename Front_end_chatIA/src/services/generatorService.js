@@ -42,8 +42,19 @@ export const generateImages = async (config) => {
       imageConfig: {
         aspectRatio: config.aspectRatio || "1:1",
         imageSize: config.imageSize || "2K",
-      }
+      },
     };
+
+    if (config.useReference && config.referenceImages && config.referenceImages.length > 0) {
+      // Extract URL string from reference image objects
+      payload.referenceImageURLs = config.referenceImages.map(ref =>
+        typeof ref === 'string' ? ref : (ref.preview || ref.img_url?.original || ref.img_url || ref.url)
+      ).filter(Boolean);
+
+      if (payload.referenceImageURLs.length > 0) {
+        payload.referenceType = "subject";
+      }
+    }
 
     const response = await api.post("/image/generate", payload);
 
