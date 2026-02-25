@@ -1,4 +1,5 @@
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -31,9 +32,20 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
+      Swal.fire({
+                    title: "Acceso denegado",
+                    text: "Contraseña y/o usuario incorrectos",
+                    icon: "error",
+                    iconColor: "#b91c1c",
+                    // border: "1px solid #1f3a60",
+                    background: "#112240",
+                    color: "#f8f8f8",
+                    confirmButtonColor: "#b91c1c",
+                    confirmButtonText: "Aceptar"
+                });
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      //window.location.href = "/login";
     }
     return Promise.reject(error);
   },
