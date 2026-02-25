@@ -7,6 +7,7 @@ import { FolderClosed, Inbox, Search } from 'lucide-react';
 import { DndContext, useDraggable, useDroppable, useSensor, useSensors, PointerSensor, DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core';
 
 import { useCampaignsContext } from '../../hooks/useCampaignsContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Configuration for sections
 const SECTIONS_CONFIG = [
@@ -194,12 +195,21 @@ function ViewAssignmentsDesigner() {
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                 >
-                    {activeSections.map((section) => {
-                        const sectionCampaigns = filteredCampaigns.filter(c => c.status === section.id);
+                    <AnimatePresence mode="popLayout">
+                        {activeSections.map((section) => {
+                            const sectionCampaigns = filteredCampaigns.filter(c => c.status === section.id);
 
-                        return (
-                            <div key={section.id} className="kanban-column">
-                                <div className="column-header">
+                            return (
+                                <motion.div 
+                                    key={section.id} 
+                                    className="kanban-column"
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+                                    <div className="column-header">
                                     <div className="column-title">
                                         <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: section.color }}></span>
                                         {section.title}
@@ -231,9 +241,10 @@ function ViewAssignmentsDesigner() {
                                         </div>
                                     )}
                                 </DroppableSection>
-                            </div>
-                        );
-                    })}
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
 
                     <DragOverlay dropAnimation={{
                         sideEffects: defaultDropAnimationSideEffects({
