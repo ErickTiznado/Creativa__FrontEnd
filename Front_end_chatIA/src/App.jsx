@@ -37,22 +37,24 @@ const AnimatedRoutes = () => {
           </PageTransition>
         } />
       
-        {/* Ruta para ver la vista de administrador (sólo diseño) */}
-          <Route path="/admin" element={
-            <PageTransition>
-              <Navbar role='Admin' />
-              <AdminPanel />
-            </PageTransition>
-          } />
-        {/* Buzón de solicitudes (vista administrador, sólo diseño) */}
-        <Route path="/requests" element={
-          <PageTransition>
-            <Navbar role='Admin' />
-            <RequestsMailbox />
-          </PageTransition>
-        } />
         {/* Protected Routes */}
-        <Route element={<PrivateRoute />}> 
+        <Route element={<PrivateRoute />}>
+
+          {/* Admin Routes */}
+          <Route element={<RoleRoute allowedRoles={['admin', 'marketing']} />}>
+            <Route path="/admin" element={
+              <PageTransition>
+                <Navbar role='Admin' />
+                <AdminPanel />
+              </PageTransition>
+            } />
+            <Route path="/requests" element={
+              <PageTransition>
+                <Navbar role='Admin' />
+                <RequestsMailbox />
+              </PageTransition>
+            } />
+          </Route>
 
           {/* Marketing Routes */}
           <Route element={<RoleRoute allowedRoles={['marketing']} />}>

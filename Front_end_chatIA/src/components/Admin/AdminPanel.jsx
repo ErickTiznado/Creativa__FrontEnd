@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AdminPanel.css';
-import { UserPlus, Edit2, Trash2, Lock, Unlock  } from 'lucide-react';
+import { UserPlus, Edit2, Trash2, Lock, Unlock } from 'lucide-react';
 import FadeIn from '../../components/animations/FadeIn';
-import ScalePress from '../../components/animations/ScalePress'
-
+import ScalePress from '../../components/animations/ScalePress';
+import toast from 'react-hot-toast';
+import { getUsers, createUser, updateUser, deleteUser, toggleUserStatus } from '../../services/adminService';
 
 const initialFormData = {
   firstName: '',
@@ -13,40 +14,60 @@ const initialFormData = {
   role: '',
 };
 
-const sampleUsers = [
-  {
-    id: 'u1',
-    firstName: 'Maria',
-    lastName: 'Lopez',
-    email: 'maria@ejemplo.com',
-    role: 'marketing',
-    password: '••••••••',
-  },
-  {
-    id: 'u2',
-    firstName: 'Andres',
-    lastName: 'Ruiz',
-    email: 'andres@ejemplo.com',
-    role: 'designer',
-    password: '••••••••',
-  },
-  {
-    id: 'u3',
-    firstName: 'Andres',
-    lastName: 'Ruiz',
-    email: 'andres@ejemplo.com',
-    role: 'designer',
-    password: '••••••••',
-    isDisabled: true,
-  },
-];
-
 const AdminPanel = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [isEditing, setIsEditing] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
 
-  const onSubmit = (e) => {
-    e.preventDefault(); // sólo para diseño: evitar recarga
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await getUsers();
+      setUsers(response.data.data);
+    } catch (error) {
+      toast.error('Error al cargar usuarios');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch = !searchTerm ||
+      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = !roleFilter ||
+      (roleFilter === 'lock' ? !user.isActive : user.role === roleFilter);
+    return matchesSearch && matchesRole;
+  });
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEditing) {
+        await updateUser(editingUserId, {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          role: formData.role,
+        });
+        toast.success('Usuario actualizado correctamente');
+      } else {
+        await createUser(formData);
+        toast.success('Usuario creado correctamente');
+      }
+      handleCancelEdit();
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al guardar usuario');
+    }
   };
 
   const handleInputChange = (event) => {
@@ -55,11 +76,12 @@ const AdminPanel = () => {
   };
 
   const handleEditUser = (user) => {
+    setEditingUserId(user.id);
     setFormData({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      password: user.password,
+      password: '',
       role: user.role,
     });
     setIsEditing(true);
@@ -68,6 +90,28 @@ const AdminPanel = () => {
   const handleCancelEdit = () => {
     setFormData(initialFormData);
     setIsEditing(false);
+    setEditingUserId(null);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) return;
+    try {
+      await deleteUser(userId);
+      toast.success('Usuario eliminado correctamente');
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al eliminar usuario');
+    }
+  };
+
+  const handleToggleStatus = async (user) => {
+    try {
+      await toggleUserStatus(user.id, !user.isActive);
+      toast.success(user.isActive ? 'Usuario deshabilitado' : 'Usuario habilitado');
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Error al cambiar estado del usuario');
+    }
   };
 
   return (
@@ -96,6 +140,7 @@ const AdminPanel = () => {
                     placeholder="Nombre"
                     value={formData.firstName}
                     onChange={handleInputChange}
+                    required
                   />
                 </div>
               </div>
@@ -110,6 +155,7 @@ const AdminPanel = () => {
                     placeholder="Apellido"
                     value={formData.lastName}
                     onChange={handleInputChange}
+                    required
                   />
                 </div>
               </div>
@@ -124,24 +170,29 @@ const AdminPanel = () => {
                     placeholder="usuario@ejemplo.com"
                     value={formData.email}
                     onChange={handleInputChange}
+                    required
+                    disabled={isEditing}
                   />
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="input-group">
-                  <label htmlFor="password">Password</label>
-                  <input
-                    id="password"
-                    name="password"
-                    className="password-input"
-                    type="text"
-                    placeholder='••••••••'
-                    value={formData.password}
-                    onChange={handleInputChange}
-                  />
+              {!isEditing && (
+                <div className="form-row">
+                  <div className="input-group">
+                    <label htmlFor="password">Password</label>
+                    <input
+                      id="password"
+                      name="password"
+                      className="password-input"
+                      type="password"
+                      placeholder='••••••••'
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="form-row">
                 <div className="input-group">
@@ -151,11 +202,11 @@ const AdminPanel = () => {
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
+                    required
                   >
                     <option value="" disabled>Selecciona un rol</option>
                     <option value="marketing">Marketing</option>
                     <option value="designer">Diseñador</option>
-                    
                   </select>
                 </div>
               </div>
@@ -188,18 +239,27 @@ const AdminPanel = () => {
               <div className="table-header-row">
                 <h3>Users</h3>
                 <div className="user-controls">
-                  <input className="user-search" type="text" placeholder="Buscar usuario..." />
-                  <select className="role-filter" defaultValue="">
+                  <input
+                    className="user-search"
+                    type="text"
+                    placeholder="Buscar usuario..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <select
+                    className="role-filter"
+                    value={roleFilter}
+                    onChange={(e) => setRoleFilter(e.target.value)}
+                  >
                     <option value="">Filtrar por rol</option>
                     <option value="marketing">Marketing</option>
                     <option value="designer">Diseñador</option>
-                     <option value="lock">Deshabilitados</option>
+                    <option value="lock">Deshabilitados</option>
                   </select>
                 </div>
               </div>
 
               <div className="table-wrapper">
-                {/* tabla solo con el thead */}
                 <table className="admin-table head-table" aria-hidden="true">
                   <thead>
                     <tr>
@@ -212,54 +272,63 @@ const AdminPanel = () => {
                   </thead>
                 </table>
 
-                {/* cuerpo de la tabla: scroll independiente */}
                 <div className="table-body-scroll">
                   <table className="admin-table body-table">
                     <tbody>
-                      {/* Filas de ejemplo para mostrar diseño (sin funcionalidad) */}
-                      {sampleUsers.map((user) => (
-                        <tr key={user.id} className={user.isDisabled ? 'disabled-row' : undefined}>
-                          <td>{user.firstName}</td>
-                          <td>{user.lastName}</td>
-                          <td>{user.email}</td>
-                          <td>
-                            <span className={`role-badge ${user.role}`}>
-                              {user.role === 'marketing' ? 'Marketing' : 'Diseñador'}
-                            </span>
-                          </td>
-                          <td className="actions-col">
-                            <button
-                              type="button"
-                              className="icon-btn edit"
-                              title="Editar usuario"
-                              onClick={() => handleEditUser(user)}
-                              disabled={user.isDisabled}
-                              aria-disabled={user.isDisabled ? 'true' : 'false'}
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                            <button
-                              type="button"
-                              className="icon-btn delete"
-                              title="Eliminar usuario"
-                              disabled={user.isDisabled}
-                              aria-disabled={user.isDisabled ? 'true' : 'false'}
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                            {/* boton adicional de desabilitar */}
-                            <button
-                              type="button"
-                              className="icon-btn disable"
-                              title={user.isDisabled ? 'Habilitar usuario' : 'deshabilitar usuario'}
-                            >
-                              <Unlock size={16} />
-                            </button>
+                      {loading ? (
+                        <tr>
+                          <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>
+                            Cargando usuarios...
                           </td>
                         </tr>
-                      ))}
-                      
-                      
+                      ) : filteredUsers.length === 0 ? (
+                        <tr>
+                          <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>
+                            No se encontraron usuarios
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredUsers.map((user) => (
+                          <tr key={user.id} className={!user.isActive ? 'disabled-row' : undefined}>
+                            <td>{user.firstName}</td>
+                            <td>{user.lastName}</td>
+                            <td>{user.email}</td>
+                            <td>
+                              <span className={`role-badge ${user.role}`}>
+                                {user.role === 'marketing' ? 'Marketing' : 'Diseñador'}
+                              </span>
+                            </td>
+                            <td className="actions-col">
+                              <button
+                                type="button"
+                                className="icon-btn edit"
+                                title="Editar usuario"
+                                onClick={() => handleEditUser(user)}
+                                disabled={!user.isActive}
+                                aria-disabled={!user.isActive ? 'true' : 'false'}
+                              >
+                                <Edit2 size={16} />
+                              </button>
+                              <button
+                                type="button"
+                                className="icon-btn delete"
+                                title="Eliminar usuario"
+                                onClick={() => handleDeleteUser(user.id)}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              <button
+                                type="button"
+                                className="icon-btn disable"
+                                title={user.isActive ? 'Deshabilitar usuario' : 'Habilitar usuario'}
+                                onClick={() => handleToggleStatus(user)}
+                              >
+                                {user.isActive ? <Lock size={16} /> : <Unlock size={16} />}
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>

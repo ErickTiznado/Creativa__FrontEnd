@@ -31,6 +31,8 @@ const Login = () => {
         window.location.href = '/';
       } else if (userRole === "designer") {
         window.location.href = '/designer';
+      } else if (userRole === "admin") {
+        window.location.href = '/admin';
       } else {
         // SALVACAÍDAS: Si por alguna razón el rol es distinto o no viene, te manda al inicio.
         console.warn("Rol no detectado o distinto, redirigiendo al home por defecto");

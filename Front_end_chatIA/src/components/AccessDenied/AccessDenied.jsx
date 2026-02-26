@@ -12,12 +12,15 @@ const AccessDenied = () => {
 
     const handleGoHome = () => {
         const user = JSON.parse(localStorage.getItem('user'));
-        const role = user.role;
+        const role = user?.role;
         if (role === "designer") {
-            navigate('/designer')
-        }
-        if (role === "marketing") {
+            navigate('/designer');
+        } else if (role === "marketing") {
             navigate('/');
+        } else if (role === "admin") {
+            navigate('/admin');
+        } else {
+            navigate('/login');
         }
     };
 

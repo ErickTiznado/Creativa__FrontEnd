@@ -31,7 +31,9 @@ function Navbar({ role = "Marketing" }) {
 
                 <div className='Notification'>
                     <Bell size={24} className={isSubscribed ? 'campana campana--active' : 'campana'} />
-                    <p className='textNotification'>{role}</p>
+                    <p className='textNotification'>
+                        {rol ? (rol.charAt(0).toUpperCase() + rol.slice(1)) : role}
+                    </p>
                 </div>
 
                 <ImageUser />
