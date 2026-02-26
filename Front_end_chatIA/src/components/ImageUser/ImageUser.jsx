@@ -1,10 +1,15 @@
 import './imageUser.css'
+import { useState } from 'react';
 import { CircleUser } from 'lucide-react';
-function ImageUser() {
+
+
+function ImageUser(prop) {
+    //console.log("Email response en ImageUser: " + prop.Initials);
     return (
-        <div className="imgUser">
-            {/* <img src={props.src} alt={props.alt || 'User Image'} className={props.className || 'image-user'} style={props.style || {}} /> */}
-            <CircleUser size={40} className='Userimg' />
+        <div className={prop.nameContainer}>
+            <div className={prop.name}>{prop.Initials}</div>
+            {/* <div className='Userimg'>{prop.Initials}</div> */}
+            {/* <CircleUser size={40} className='Userimg' /> */}
         </div>
     );
 }

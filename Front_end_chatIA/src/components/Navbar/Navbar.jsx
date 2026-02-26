@@ -9,15 +9,18 @@ function Navbar({ role = "Marketing" }) {
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
     const rol = user?.role;
+    //console.log("usuario en Navbar:", user.firstName);
+    let nameUser = user?.firstName || "US";
+    nameUser = nameUser.substring(0, 2).toUpperCase();
 
     const effectiveRole = (role || rol || '').toString().toLowerCase();
     let logoPath = '/';
     if (effectiveRole === 'designer' || effectiveRole === 'diseñador') {
-      logoPath = '/designer';
+        logoPath = '/designer';
     } else if (effectiveRole === 'admin') {
-      logoPath = '/admin';
+        logoPath = '/admin';
     } else {
-      logoPath = '/';
+        logoPath = '/';
     }
 
     const { isSubscribed } = usePushNotifications();
@@ -36,7 +39,7 @@ function Navbar({ role = "Marketing" }) {
                     </p>
                 </div>
 
-                <ImageUser />
+                <ImageUser Initials={nameUser} name="Userimg" nameContainer="imgUser" />
             </div>
 
             {role === 'Admin' && (

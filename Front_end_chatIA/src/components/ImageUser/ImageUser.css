@@ -7,9 +7,33 @@
     margin-right: 10px;
     overflow: hidden;
     cursor: pointer;
+    object-fit: cover;
 }
-
-.imgUser img{
+.Userimg{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: var(--font-primary);
+    user-select: none;
+}
+.UserDesingerImg{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-family: var(--font-primary);
+    user-select: none;
+}
+/* .imgUser img{
     width: 100%;
     height: auto;
-}
+} */

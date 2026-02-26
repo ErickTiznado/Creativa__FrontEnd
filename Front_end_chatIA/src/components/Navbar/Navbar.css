@@ -114,4 +114,7 @@
     width: 100%;
     justify-content: center;
   }
+  .Notification{
+    margin-right: 10px;
+  }
 }

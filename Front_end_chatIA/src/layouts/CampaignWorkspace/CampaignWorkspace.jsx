@@ -8,8 +8,15 @@ import { useSavedAssets } from '../../hooks/useSavedAssets';
 import RepositoryView from '../../components/RepositoryView/RepositoryView';
 import GeneratorView from '../../components/GeneratorView/GeneratorView';
 import SavedAssetsView from '../../components/SavedAssetsView/SavedAssetsView';
+import ImageUser from '../../components/ImageUser/ImageUser';
 
 const CampaignWorkspace = () => {
+    const userStr = localStorage.getItem('user');
+    //console.log("Usuario almacenado en localStorage:", userStr);
+    const user = userStr ? JSON.parse(userStr) : null;
+    let nameUser = user?.firstName || "US";
+    nameUser = nameUser.substring(0, 2).toUpperCase();
+    //console.log("Iniciales del usuario para Avatar:", nameUser);
     const {
         // Data
         campaignData,
@@ -49,8 +56,11 @@ const CampaignWorkspace = () => {
             {/* Sidebar */}
             <aside className={`cw-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className='cw-profile'>
-                    <CircleUser className='cw-avatar' size={80} strokeWidth={1.5} />
-                    <h3 className='cw-user-name'>{campaignData.designer}</h3>
+                    {/* <ImageUserDesinger Initials={nameUser}/> */}
+                    <ImageUser Initials={nameUser} name="UserDesingerImg" nameContainer="imgUserDesinger" />
+                    {/* <CircleUser className='cw-avatar' size={80} strokeWidth={1.5} /> */}
+                    {/* <h3 className='cw-user-name'>{campaignData.designer}</h3> */}
+                    <h3 className='cw-user-name'>{user.firstName + " " + user.lastName}</h3>
                 </div>
 
                 <nav className='cw-nav-menu'>
