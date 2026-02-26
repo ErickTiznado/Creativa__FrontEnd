@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Login.css';
 import { useAuth } from '../../hooks/useAuth';
 /**importar react icons */
@@ -11,6 +11,7 @@ const Login = () => {
 
   const { login } = useAuth()
 
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -73,11 +74,16 @@ const Login = () => {
             <label htmlFor="password">Contraseña</label>
             <div className="input-wrapper">
               <span className="input-icon"><Lock size={20} /></span>
-              <input type="password" id="password" placeholder="••••••••" />
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="••••••••"
+              />
               {/* Icono de ojo para mostrar/ocultar contraseña */}
-              <div style={{ marginBottom: '20px' }} className='eye-password-toggle'>
-                <span onClick={togglePasswordVisibility} className="input-icon eye-icon"><Eye size={20} /></span>
-                <span onClick={togglePasswordVisibility} className="input-icon eye-icon-slash"><EyeOff size={20} /></span>
+              <div style={{ marginBottom: '20px', cursor: 'pointer' }} className='eye-password-toggle' onClick={() => setShowPassword(!showPassword)}>
+                <span className="input-icon eye-icon">
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
               </div>
 
             </div>
