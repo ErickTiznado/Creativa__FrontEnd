@@ -114,20 +114,4 @@ const Login = () => {
   );
 };
 
-/**funcionalidad de mostrar y ocultar contraseña */
-const togglePasswordVisibility = () => {
-  const passwordInput = document.getElementById('password');
-  const eyeIcon = document.querySelector('.eye-icon');
-  const eyeIconSlash = document.querySelector('.eye-icon-slash');
-  if (passwordInput.type === 'password') {
-    passwordInput.type = 'text';
-    eyeIcon.style.display = 'none';
-    eyeIconSlash.style.display = 'inline';
-  } else {
-    passwordInput.type = 'password';
-    eyeIcon.style.display = 'inline';
-    eyeIconSlash.style.display = 'none';
-  }
-};
-
 export default Login;
