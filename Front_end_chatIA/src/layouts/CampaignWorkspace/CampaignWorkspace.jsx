@@ -1,7 +1,8 @@
 import React from 'react';
 import './CampaignWorkspace.css';
 import './ImgGenerated.css';
-import { CircleUser, Menu } from 'lucide-react';
+// Quitamos CircleUser, solo dejamos Menu
+import { Menu } from 'lucide-react';
 import { useCampaignWorkspace } from '../../hooks/useCampaignWorkspace';
 import { useSavedAssets } from '../../hooks/useSavedAssets';
 
@@ -38,6 +39,10 @@ const CampaignWorkspace = () => {
     // Single instance of saved assets — passed as props to children (DRY)
     const { savedAssets, loading: savedLoading, toggleSaveAsset } = useSavedAssets(campaign?.id);
 
+    // --- LÓGICA DEL AVATAR ESTILO WHATSAPP ---
+    const designerName = campaignData.designer || "Diseñador";
+    const initial = designerName.charAt(0).toUpperCase();
+
     return (
         <div className='cw-layout'>
             {/* Overlay for mobile when sidebar is open */}
@@ -49,8 +54,23 @@ const CampaignWorkspace = () => {
             {/* Sidebar */}
             <aside className={`cw-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <div className='cw-profile'>
-                    <CircleUser className='cw-avatar' size={80} strokeWidth={1.5} />
-                    <h3 className='cw-user-name'>{campaignData.designer}</h3>
+                    {/* AVATAR INICIAL ESTILO WHATSAPP */}
+                    <div style={{
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '50%',
+                        backgroundColor: '#00a884', /* Verde tipo WhatsApp oscuro */
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '36px',
+                        fontWeight: 'bold',
+                        margin: '0 auto 10px auto'
+                    }}>
+                        {initial}
+                    </div>
+                    <h3 className='cw-user-name'>{designerName}</h3>
                 </div>
 
                 <nav className='cw-nav-menu'>
@@ -103,7 +123,7 @@ const CampaignWorkspace = () => {
 
                 {activeTab === 'Generador' && (
                     <GeneratorView
-                        designerName={campaignData.designer}
+                        designerName={designerName}
                         prompt={prompt}
                         setPrompt={setPrompt}
                         style={style}
