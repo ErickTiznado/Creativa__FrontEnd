@@ -397,3 +397,42 @@
   .admin-card .cancel-button { width: 100%; }
   .admin-card .admin-table { min-width: 520px; }
 }
+
+/* ── Skeleton loading ───────────────────────────────────────────────── */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-row td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ap-border);
+}
+
+.skeleton-box {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.10) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-text  { width: 70%; height: 16px; }
+.skeleton-email { width: 85%; height: 16px; }
+.skeleton-badge { width: 80px; height: 28px; border-radius: 999px; }
+
+.skeleton-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.skeleton-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}

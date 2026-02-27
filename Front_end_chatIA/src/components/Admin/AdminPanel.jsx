@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './AdminPanel.css';
 import { UserPlus, Edit2, Trash2, Lock, Unlock } from 'lucide-react';
 import FadeIn from '../../components/animations/FadeIn';
 import ScalePress from '../../components/animations/ScalePress';
+import ConfirmationModal from '../Modals/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { getUsers, createUser, updateUser, deleteUser, toggleUserStatus } from '../../services/adminService';
 
@@ -22,6 +24,11 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+
+  // Delete modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -93,24 +100,45 @@ const AdminPanel = () => {
     setEditingUserId(null);
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')) return;
+  const handleDeleteUser = (userId) => {
+    setUserToDelete(userId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+    setIsDeleting(true);
     try {
-      await deleteUser(userId);
+      await deleteUser(userToDelete);
+      // Optimistic removal — no fetchUsers() reload
+      setUsers((prev) => prev.filter((u) => u.id !== userToDelete));
       toast.success('Usuario eliminado correctamente');
-      fetchUsers();
+      setDeleteModalOpen(false);
+      setUserToDelete(null);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error al eliminar usuario');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (isDeleting) return;
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
   };
 
   const handleToggleStatus = async (user) => {
     try {
       await toggleUserStatus(user.id, !user.isActive);
+      // Optimistic update
+      setUsers((prev) =>
+        prev.map((u) => u.id === user.id ? { ...u, isActive: !u.isActive } : u)
+      );
       toast.success(user.isActive ? 'Usuario deshabilitado' : 'Usuario habilitado');
-      fetchUsers();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error al cambiar estado del usuario');
+      fetchUsers(); // Revert on error
     }
   };
 
@@ -276,11 +304,21 @@ const AdminPanel = () => {
                   <table className="admin-table body-table">
                     <tbody>
                       {loading ? (
-                        <tr>
-                          <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>
-                            Cargando usuarios...
-                          </td>
-                        </tr>
+                        Array.from({ length: 5 }).map((_, i) => (
+                          <tr key={`skel-${i}`} className="skeleton-row">
+                            <td><div className="skeleton-box skeleton-text" /></td>
+                            <td><div className="skeleton-box skeleton-text" /></td>
+                            <td><div className="skeleton-box skeleton-email" /></td>
+                            <td><div className="skeleton-box skeleton-badge" /></td>
+                            <td className="actions-col">
+                              <div className="skeleton-actions">
+                                <div className="skeleton-box skeleton-btn" />
+                                <div className="skeleton-box skeleton-btn" />
+                                <div className="skeleton-box skeleton-btn" />
+                              </div>
+                            </td>
+                          </tr>
+                        ))
                       ) : filteredUsers.length === 0 ? (
                         <tr>
                           <td colSpan="5" style={{ textAlign: 'center', padding: '2rem' }}>
@@ -288,46 +326,56 @@ const AdminPanel = () => {
                           </td>
                         </tr>
                       ) : (
-                        filteredUsers.map((user) => (
-                          <tr key={user.id} className={!user.isActive ? 'disabled-row' : undefined}>
-                            <td>{user.firstName}</td>
-                            <td>{user.lastName}</td>
-                            <td>{user.email}</td>
-                            <td>
-                              <span className={`role-badge ${user.role}`}>
-                                {user.role === 'marketing' ? 'Marketing' : 'Diseñador'}
-                              </span>
-                            </td>
-                            <td className="actions-col">
-                              <button
-                                type="button"
-                                className="icon-btn edit"
-                                title="Editar usuario"
-                                onClick={() => handleEditUser(user)}
-                                disabled={!user.isActive}
-                                aria-disabled={!user.isActive ? 'true' : 'false'}
-                              >
-                                <Edit2 size={16} />
-                              </button>
-                              <button
-                                type="button"
-                                className="icon-btn delete"
-                                title="Eliminar usuario"
-                                onClick={() => handleDeleteUser(user.id)}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                              <button
-                                type="button"
-                                className="icon-btn disable"
-                                title={user.isActive ? 'Deshabilitar usuario' : 'Habilitar usuario'}
-                                onClick={() => handleToggleStatus(user)}
-                              >
-                                {user.isActive ? <Lock size={16} /> : <Unlock size={16} />}
-                              </button>
-                            </td>
-                          </tr>
-                        ))
+                        <AnimatePresence>
+                          {filteredUsers.map((user) => (
+                            <motion.tr
+                              key={user.id}
+                              className={!user.isActive ? 'disabled-row' : undefined}
+                              layout
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.5, y: -10 }}
+                              transition={{ duration: 0.25 }}
+                            >
+                              <td>{user.firstName}</td>
+                              <td>{user.lastName}</td>
+                              <td>{user.email}</td>
+                              <td>
+                                <span className={`role-badge ${user.role}`}>
+                                  {user.role === 'marketing' ? 'Marketing' : 'Diseñador'}
+                                </span>
+                              </td>
+                              <td className="actions-col">
+                                <button
+                                  type="button"
+                                  className="icon-btn edit"
+                                  title="Editar usuario"
+                                  onClick={() => handleEditUser(user)}
+                                  disabled={!user.isActive}
+                                  aria-disabled={!user.isActive ? 'true' : 'false'}
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-btn delete"
+                                  title="Eliminar usuario"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-btn disable"
+                                  title={user.isActive ? 'Deshabilitar usuario' : 'Habilitar usuario'}
+                                  onClick={() => handleToggleStatus(user)}
+                                >
+                                  {user.isActive ? <Lock size={16} /> : <Unlock size={16} />}
+                                </button>
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </AnimatePresence>
                       )}
                     </tbody>
                   </table>
@@ -337,6 +385,15 @@ const AdminPanel = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar usuario"
+        message="¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
+        isLoading={isDeleting}
+      />
     </FadeIn>
   );
 };
