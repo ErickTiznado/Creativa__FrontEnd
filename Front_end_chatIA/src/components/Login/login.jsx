@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useAuth } from '../../hooks/useAuth';
-/**importar react icons */
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Logo_CS from '../../assets/img/logo_CS.png';
 import FadeIn from '../../components/animations/FadeIn';
 import ScalePress from '../../components/animations/ScalePress';
+import { useNavigate } from 'react-router-dom'; // 1. Importamos useNavigate
 
 const Login = () => {
-
-  const { login } = useAuth()
-
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate(); // 2. Inicializamos navigate
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -21,43 +20,36 @@ const Login = () => {
     try {
       const response = await login(email, password);
 
-      // Chivato en consola para que veas qué datos trae realmente
-      console.log("Datos del usuario logueado:", response);
+      // 3. Extraemos y normalizamos el rol (minúsculas, sin espacios)
+      const rawRole = response?.user_metadata?.role || response?.role || "";
+      const userRole = String(rawRole).toLowerCase().trim();
 
-      // Buscamos el rol donde Supabase lo esconde (user_metadata) o en el rol principal
-      const userRole = response?.user_metadata?.role || response?.role;
-
+      // 4. Redirigimos usando navigate (evita que la consola se borre)
       if (userRole === "marketing") {
-        window.location.href = '/';
-      } else if (userRole === "designer") {
-        window.location.href = '/designer';
+        navigate('/');
+      } else if (userRole === "designer" || userRole === "diseñador") {
+        navigate('/designer');
       } else if (userRole === "admin") {
-        window.location.href = '/admin';
+        navigate('/admin');
       } else {
-        // SALVACAÍDAS: Si por alguna razón el rol es distinto o no viene, te manda al inicio.
-        console.warn("Rol no detectado o distinto, redirigiendo al home por defecto");
-        window.location.href = '/';
+        console.warn(`Rol no detectado o distinto (${rawRole}), redirigiendo al home por defecto`);
+        navigate('/');
       }
 
     } catch (error) {
-      // Importante imprimir el error si falla la contraseña
       console.error("Error atrapado en el componente Login:", error);
     }
-  }
+  };
+
   return (
     <FadeIn className="login-container">
       <div className="login-card">
-
-        {/* Cabecera del Login */}
         <div className="login-header">
           <img className="login-logo" src={Logo_CS} alt="Creativa Studios Logo" />
           <p>Inicia sesión para continuar</p>
         </div>
 
-        {/* Formulario */}
         <form className="login-form" onSubmit={onSubmit}>
-
-          {/* Campo Email */}
           <div className="input-group">
             <label htmlFor="email">Correo electrónico</label>
             <div className="input-wrapper">
@@ -71,7 +63,6 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Campo Contraseña */}
           <div className="input-group">
             <label htmlFor="password">Contraseña</label>
             <div className="input-wrapper">
@@ -81,17 +72,14 @@ const Login = () => {
                 id="password"
                 placeholder="••••••••"
               />
-              {/* Icono de ojo para mostrar/ocultar contraseña */}
               <div style={{ marginBottom: '20px', cursor: 'pointer' }} className='eye-password-toggle' onClick={() => setShowPassword(!showPassword)}>
                 <span className="input-icon eye-icon">
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </span>
               </div>
-
             </div>
           </div>
 
-          {/* Acciones secundarias */}
           <div className="form-actions">
             <label className="remember-me">
               <input type="checkbox" />

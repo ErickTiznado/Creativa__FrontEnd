@@ -34,15 +34,30 @@ export const AuthProvider = ({ children }) => {
       const response = await authLogin(email, password);
 
       if (response && response.data) {
-        // 👇 Aquí hacemos "match" con lo que devuelve tu backend Hexagonal
         const { user, session } = response.data;
 
-        // Guardamos el token sacándolo de la sesión de Supabase
+        // Guardamos el token INMEDIATAMENTE para que nuestra API esté autorizada
         if (session && session.access_token) {
           localStorage.setItem("token", session.access_token);
+          
+          try {
+            // Ahora que tenemos token, pedimos el perfil completo con el ROL REAL
+            const profileResponse = await getAuthProfile();
+            
+            if (profileResponse && profileResponse.data) {
+              const fullUser = profileResponse.data;
+              
+              // Guardamos el usuario completo y lo retornamos
+              localStorage.setItem("user", JSON.stringify(fullUser));
+              setUser(fullUser);
+              return fullUser; 
+            }
+          } catch (profileError) {
+            console.error("Error obteniendo el perfil completo:", profileError);
+          }
         }
 
-        // Guardamos el usuario
+        // FALLBACK: Si algo falla con el perfil, guardamos el usuario base
         if (user) {
           localStorage.setItem("user", JSON.stringify(user));
           setUser(user);

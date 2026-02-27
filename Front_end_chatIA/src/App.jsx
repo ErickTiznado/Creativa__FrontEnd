@@ -11,6 +11,7 @@ import './App.css'
 import { AuthProvider } from "./context/AuthContext.jsx"
 import PrivateRoute from './components/Guards/PrivateRoute.jsx';
 import RoleRoute from './components/Guards/RoleRoute.jsx';
+import PublicRoute from './components/Guards/PublicRoute.jsx';
 import { CampaignProvider } from './context/CampaignContext.jsx';
 import SessionProvider from './context/SessionContext.jsx';
 import { Toaster } from 'react-hot-toast';
@@ -26,7 +27,7 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
-        <Route path="/login" element={
+        {/* <Route path="/login" element={
           <PageTransition>
             <Login />
           </PageTransition>
@@ -35,7 +36,20 @@ const AnimatedRoutes = () => {
           <PageTransition>
             <RecoverAccount />
           </PageTransition>
-        } />
+        } /> */}
+
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={
+            <PageTransition>
+              <Login />
+            </PageTransition>
+          } />
+          <Route path="/recover" element={
+            <PageTransition>
+              <RecoverAccount />
+            </PageTransition>
+          } />
+        </Route>
       
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
