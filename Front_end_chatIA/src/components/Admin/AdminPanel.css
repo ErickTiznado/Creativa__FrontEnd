@@ -1,3 +1,18 @@
+/* Variables locales / fallbacks (no sobrescriben variables globales si existen) */
+:root {
+  --ap-bg-panel: var(--color-bg-panel, #ffffff);
+  --ap-text: var(--color-text-primary, #0b2038);
+  --ap-muted: var(--color-muted, #6b7b8c);
+  --ap-border: var(--color-border, #eef3f8);
+  --ap-primary: var(--color-primary, #0066ff);
+  --ap-success: var(--color-success, #20c997);
+  --ap-danger: var(--color-error, #ff5252);
+  /* superfícies: usar tonos semitransparentes por defecto (mejor sobre fondo oscuro) */
+  --ap-surface: var(--color-surface, rgba(255,255,255,0.04));
+  --ap-surface-strong: var(--color-surface-strong, rgba(255,255,255,0.06));
+  --ap-input-bg: var(--color-input-bg, rgba(255,255,255,0.06));
+}
+
 /* Contenedor exterior: centra la tarjeta */
 .admin-container {
   display: flex;
@@ -7,15 +22,36 @@
 
 /* Tarjeta principal */
 .admin-card {
+  background: var(--ap-bg-panel);
+  color: var(--ap-text);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(11,22,40,0.06);
+  box-sizing: border-box;
   width: 100%;
   max-width: 100%;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(11, 22, 40, 0.06);
-  padding: 24px;
-  box-sizing: border-box;
+}
+
+/* Header */
+.admin-card .admin-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.admin-card .admin-header .admin-header-logo {
+  height: 44px;
+  width: auto;
+  border-radius: 8px;
   display: block;
-  color: var(--color-text-primary, #0b2038); /* asegurar color base */
+}
+
+.admin-card .admin-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--ap-primary);
+  font-weight: 800;
 }
 
 /* Nuevo layout: contenido en dos columnas */
@@ -31,250 +67,215 @@
   flex: 0 0 380px;
 }
 
-/* Panel derecho: tabla ocupa resto del espacio */
-.right-panel {
-  flex: 1 1 auto;
-  min-width: 0; /* para permitir overflow-x en el hijo */
-}
-
-/* Header */
-.admin-card .admin-header h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #0b2038; /* asegurar color oscuro */
-  font-weight: 700;
-}
-
-.admin-card .admin-header p {
-  margin: 4px 0 16px;
-  color: #6b7b8c; /* subtítulo en gris */
-  font-size: 13px;
-}
-
-/* Formulario: campos en vertical */
 .admin-card .admin-form {
-  margin-bottom: 20px;
-  background: #fafafe;
+  background: var(--ap-surface);
+  border: 1px solid var(--ap-border);
+  padding: 14px;
+  border-radius: 10px;
+}
+
+.admin-card .form-row {
+  margin-bottom: 12px;
+}
+
+.admin-card .input-group label {
+  color: white;
+  font-size: 13px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.admin-card .input-group input,
+.admin-card .input-group select,
+.admin-card .admin-form textarea {
+  width: 100%;
+  height: 42px;
+  padding: 8px 12px;
   border-radius: 8px;
-  padding: 16px;
-  border: 1px solid #eef3f8;
-  color: #0b2038; /* forzar color de texto dentro del form */
- box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+  border: 1px solid var(--ap-border);
+  background: #1F2F4B;
+  color: var(--ap-text);
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color .12s ease, box-shadow .12s ease;
 }
 
-.admin-card .admin-form.editing {
-  border-color: #6aa0ff;
-  box-shadow: 0 10px 28px rgba(59,130,246,0.16);
+.admin-card .admin-form textarea { height: auto; min-height: 96px; padding: 10px 12px; }
+
+/* focus accesible */
+.admin-card .input-group input:focus,
+.admin-card .input-group select:focus,
+.admin-card .admin-form textarea:focus {
+  border-color: rgba(3,102,214,0.18);
+  box-shadow: 0 8px 20px rgba(3,102,214,0.06);
+  outline: none;
 }
 
+/* Banner modo edición */
 .admin-card .edit-mode-banner {
-  display: inline-flex;
-  align-items: center;
+  background: linear-gradient(90deg, rgba(59,130,246,0.08), rgba(0,102,255,0.03));
+  border: 1px solid rgba(59,130,246,0.06);
+  color: var(--ap-primary);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+/* Botones principales */
+.create-button {
+  background: linear-gradient(90deg, #3b82f6, var(--ap-primary));
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(3,102,214,0.08);
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.create-button:active { transform: translateY(1px); }
+
+/* Botón cancelar secundario */
+.cancel-button {
+  margin-left: 12px;
+  background: transparent;
+  color: var(--ap-muted);
+  border: 1px solid transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cancel-button:hover { color: var(--ap-primary); }
+
+/* Panel derecho (tabla) */
+.right-panel { flex: 1 1 auto; min-width: 0; }
+
+.table-wrapper {
+  border: 1px solid var(--ap-border);
+  background: var(--ap-surface);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* head-table y body-table alineadas */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+}
+
+/* cabecera fija estilizada */
+.head-table thead {
+  background: var(--ap-surface-strong);
+}
+
+.head-table th {
+  padding: 12px 14px;
+  font-weight: 700;
+  color: var(--ap-text);
+  text-align: left;
+  border-bottom: 1px solid var(--ap-border);
+}
+
+/* body scroll independiente */
+.table-body-scroll {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+/* filas y celdas del body */
+.body-table td {
+  padding: 12px 14px;
+  color: var(--ap-text);
+  background: transparent; /* prevenir fondo blanco dentro de celdas */
+  border-bottom: 1px solid var(--ap-border);
+  vertical-align: middle;
+}
+
+/* badges de rol coherentes */
+.role-badge {
+  display: inline-block;
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
-  color: #0b2038;
-  background: #e8f1ff;
-  border: 1px solid #cfe0ff;
-  margin-bottom: 12px;
+  color: #fff;
 }
+.role-badge.marketing { background: linear-gradient(90deg,#ff7a7a,#ff5252); }
+.role-badge.designer  { background: linear-gradient(90deg,#7c6bff,#4b39ff); }
 
-.admin-card .form-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 12px;
-  align-items: stretch;
-}
-
-.admin-card .input-group {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.admin-card .input-group label {
-  font-size: 13px;
-  color: #4b5968;
-  margin-bottom: 6px;
-}
-
-.admin-card .input-group input,
-.admin-card .input-group select {
-  height: 40px;
-  padding: 8px 12px;
-  border: 1px solid #d7e1ea;
-  border-radius: 6px;
-  background: #fff;
-  font-size: 14px;
-  color: #0b2038; /* texto del input */
-  outline: none;
-  transition: border-color .15s ease, box-shadow .15s ease;
-}
-
-.admin-card .input-group input::placeholder {
-  color: #aab6c3;
-}
-
-.admin-card .input-group input:focus,
-.admin-card .input-group select:focus {
-  border-color: #6aa0ff;
-  box-shadow: 0 0 0 4px rgba(106,160,255,0.08);
-}
-
-/* Hint y estilo contraseña (visible por diseño) */
-.admin-card .password-input {
-  background: #f1f5f9;
-  color: #0b2038;
-}
-
-/* Botón crear: queda al final del form y centrado a la izquierda del panel */
-.admin-card .create-button-wrap {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 8px;
-}
-
-.admin-card .form-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.admin-card .create-button {
+/* Acciones: icon buttons */
+.icon-btn {
+  border: none;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: linear-gradient(90deg,#3b82f6,#0066ff);
-  color: #fff;
-  border: none;
-  padding: 10px 14px;
+  justify-content: center;
+  padding: 8px;
+  margin-left: 8px;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(3,102,214,0.12);
-  transition: transform .12s ease, box-shadow .12s ease;
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.icon-btn.edit { background: linear-gradient(90deg,#3b82f6,#0066ff); color: #fff; box-shadow: 0 8px 18px rgba(59,130,246,0.08); }
+.icon-btn.delete { background: linear-gradient(90deg,#ff6b6b,#ff3b3b); color: #fff; box-shadow: 0 8px 18px rgba(255,66,66,0.08); }
+.icon-btn.disable { background: linear-gradient(90deg,#f3f4f6,#e6eefc); color: #0b2038; box-shadow: none; border: 1px solid rgba(11,22,40,0.04); }
+
+/* hover */
+.icon-btn:hover { transform: translateY(-2px); }
+
+/* estados disabled / fila deshabilitada */
+.disabled-row { background: #fbfbfd; }
+.disabled-row td { color: #8a98a9; }
+.icon-btn[disabled],
+.icon-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
 }
 
-.admin-card .cancel-button {
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 8px;
-  border: 1px solid #d7e1ea;
-  background: #ffffff;
-  color: #0b2038;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
+/* Asegurar que el botón de toggle permanezca interactivo */
+.icon-btn.disable[aria-disabled="false"] { pointer-events: auto; opacity: 1; }
 
-.admin-card .cancel-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-}
-
-/* Tabla: se mantiene dentro del panel derecho */
-.admin-card .admin-table-section {
-  margin-top: 0;
-}
-
-.admin-card .admin-table-section h3 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  color: #0b2038; /* título de la sección visible */
-  font-weight: 700;
-}
-
-.admin-card .table-scroll {
-  overflow-x: auto;
-}
-
-/* Encabezado de la sección con controles */
-.admin-card .admin-table-section .table-header-row {
+/* Controles del encabezado de la tabla (buscador y filtro) */
+.table-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
   gap: 12px;
+  margin-bottom: 12px;
 }
-
-.admin-card .admin-table-section .user-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* Estilos del buscador y filtro */
-.admin-card .admin-table-section .user-search {
+.user-controls { display:flex; gap:8px; align-items:center; }
+.user-search, .role-filter {
   height: 36px;
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid #d7e1ea;
-  background: #fff;
-  color: #0b2038;
-  font-size: 14px;
-  outline: none;
+  border: 1px solid var(--ap-border);
+  background: #1F2F4B;
+  color: var(--ap-text);
 }
 
-.admin-card .admin-table-section .role-filter {
-  height: 36px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #d7e1ea;
-  background: #fff;
-  color: #0b2038;
-  font-size: 14px;
-  outline: none;
+/* Responsivo */
+@media (max-width: 920px) {
+  .admin-content { flex-direction: column; }
+  .left-panel { width: 100%; flex: none; }
+  .right-panel { width: 100%; }
+  .table-body-scroll { max-height: 320px; }
 }
 
-/* Wrapper que contiene head-table + body-scroll */
-.admin-card .table-wrapper {
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid #eef3f8;
+/* Ajustes para móviles pequeños */
+@media (max-width: 720px) {
+  .admin-card .form-row { flex-direction: column; gap: 12px; align-items: stretch; }
+  .admin-card .form-actions { flex-direction: column; align-items: stretch; }
+  .admin-card .create-button-wrap { justify-content: stretch; }
+  .admin-card .create-button { width: 100%; justify-content: center; }
+  .admin-card .cancel-button { width: 100%; }
+  .admin-card .admin-table { min-width: 520px; }
 }
 
-/* Hacer que ambas tablas usen table-layout fijo para mantener alineación de columnas */
-.admin-card .head-table,
-.admin-card .body-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-/* estilo del thead (ya existente, reforzar) */
-.admin-card .head-table thead {
-  background: #f5f8fb;
-}
-
-/* Contenedor con scroll para el tbody únicamente */
-.admin-card .table-body-scroll {
-  max-height: 360px; /* ajustar según preferencia */
-  overflow-y: auto;
-}
-
-/* Asegurar que celdas del body tengan mismo padding/estilo que antes */
-.admin-card .body-table td {
-  padding: 12px 14px;
-  font-size: 14px;
-  color: #0b2038;
-  border-bottom: 1px solid #eef3f8;
-  text-align: left;
-  vertical-align: middle;
-}
-
-/* Mantener estilos de th (coincidentes con body) */
-.admin-card .head-table th {
-  padding: 12px 14px;
-  font-size: 13px;
-  color: #0b2038;
-  font-weight: 600;
-  text-align: left;
-}
 
 /* Definir anchos por columna para alinear head y body */
 .admin-card .head-table th:nth-child(1),

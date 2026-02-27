@@ -132,7 +132,7 @@ const AdminPanel = () => {
               )}
               <div className="form-row">
                 <div className="input-group">
-                  <label htmlFor="name">Firstname</label>
+                  <label htmlFor="name">Nombre</label>
                   <input
                     id="name"
                     name="firstName"
@@ -147,7 +147,7 @@ const AdminPanel = () => {
 
               <div className="form-row">
                 <div className="input-group">
-                  <label htmlFor="lastname">Lastname</label>
+                  <label htmlFor="lastname">Apellido</label>
                   <input
                     id="lastname"
                     name="lastName"
@@ -162,7 +162,7 @@ const AdminPanel = () => {
 
               <div className="form-row">
                 <div className="input-group">
-                  <label htmlFor="email">Email</label>
+                  <label htmlFor="email">Correo Electronico</label>
                   <input
                     id="email"
                     name="email"
@@ -179,7 +179,7 @@ const AdminPanel = () => {
               {!isEditing && (
                 <div className="form-row">
                   <div className="input-group">
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="password">Contraseña</label>
                     <input
                       id="password"
                       name="password"
@@ -237,7 +237,7 @@ const AdminPanel = () => {
           <div className="right-panel">
             <div className="admin-table-section">
               <div className="table-header-row">
-                <h3>Users</h3>
+                <h3>USUARIOS</h3>
                 <div className="user-controls">
                   <input
                     className="user-search"
@@ -263,11 +263,11 @@ const AdminPanel = () => {
                 <table className="admin-table head-table" aria-hidden="true">
                   <thead>
                     <tr>
-                      <th>Firstname</th>
-                      <th>Lastname</th>
-                      <th>Email</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Correo Electronico</th>
                       <th>Rol</th>
-                      <th className="actions-col">Shares</th>
+                      <th className="actions-col">Acciones</th>
                     </tr>
                   </thead>
                 </table>
