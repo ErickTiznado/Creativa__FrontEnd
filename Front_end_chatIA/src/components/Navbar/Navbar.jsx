@@ -1,11 +1,32 @@
+import React, { useState, useRef, useEffect } from 'react';
 import Logo_CS from '../../assets/img/logo_CS.png';
-import { Bell } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
 import ImageUser from '../ImageUser/ImageUser';
 import './Navbar.css';
 import { Link } from 'react-router-dom';
 import { usePushNotifications } from '../../hooks/usePushNotifications';
+import { useAuth } from '../../hooks/useAuth';
 
 function Navbar({ role = "Marketing" }) {
+    const [showMenu, setShowMenu] = useState(false);
+    const { logout } = useAuth();
+
+    const menuRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
     const rol = user?.role;
@@ -39,7 +60,18 @@ function Navbar({ role = "Marketing" }) {
                     </p>
                 </div>
 
-                <ImageUser Initials={nameUser} name="Userimg" nameContainer="imgUser" />
+                <div className='user-menu-container' ref={menuRef} onClick={() => setShowMenu(!showMenu)}>
+                    <ImageUser Initials={nameUser} name="Userimg" nameContainer="imgUser" />
+
+                    {showMenu && (
+                        <div className='profile-dropdown'>
+                            <button onClick={logout} className='logout-btn'>
+                                <LogOut size={18} />
+                                <span>Cerrar sesión</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {role === 'Admin' && (

@@ -118,3 +118,65 @@
     margin-right: 10px;
   }
 }
+
+/* Contenedor relativo para posicionar el menú justo debajo de la imagen */
+.user-menu-container {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Tarjeta desplegable */
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 15px;
+  /* Espacio desde la imagen de perfil hacia abajo */
+  background-color: #11213b;
+  border: 1px solid var(--color-border, #1f3a60);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  min-width: 180px;
+  z-index: 1000;
+  animation: fadeInDown 0.2s ease-out forwards;
+}
+
+/* Botón de cerrar sesión */
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  background-color: transparent;
+  color: #f87171;
+  /* Rojo de advertencia/salida */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: rgba(248, 113, 113, 0.1);
+}
+
+/* Animación de aparición suave */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
