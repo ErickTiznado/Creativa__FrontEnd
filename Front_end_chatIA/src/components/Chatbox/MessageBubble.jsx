@@ -19,7 +19,7 @@ const MessageBubble = ({ sender, text }) => {
     <div className={`message-row ${isBot ? 'msg-bot' : 'msg-user'}`}>
       {isBot && <div className="">{/*<img src={logoChatbox} alt="Bot" />*/}</div>}
       <div className="bubble markdown-content">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{(text || '').replace(/\n/g, '  \n')}</ReactMarkdown>
       </div>
       {!isBot && <ImageUser Initials={fullName} name="UserimgMarketingChat" nameContainer="imgUserMarketingChat" />}
       {/* {!isBot && <div className="avatar user-avatar"><CircleUser size={30} /></div>} */}

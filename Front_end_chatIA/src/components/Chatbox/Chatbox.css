@@ -189,17 +189,34 @@
   box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
 }
 
-.chat-input-area input {
+.chat-input-area input,
+.chat-input-area textarea {
   flex: 1;
   background: transparent;
   border: none;
   color: var(--color-text-primary);
   outline: none;
   font-size: 1rem;
-  padding: 0 var(--spacing-sm);
+  padding: 11px var(--spacing-sm);
+  resize: none;
+  font-family: inherit;
+  line-height: 1.5;
+  min-height: 44px;
+  max-height: 120px;
+  overflow-y: auto;
 }
 
-.chat-input-area input::placeholder {
+/* Ocultar barra de desplazamiento por defecto para mejor aspecto, pero mantener su función */
+.chat-input-area textarea::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-input-area textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.chat-input-area input::placeholder,
+.chat-input-area textarea::placeholder {
   color: var(--color-text-muted);
 }
 

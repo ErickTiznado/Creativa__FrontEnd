@@ -24,6 +24,16 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange, initialMessag
   } = useChatMessages(onBriefData, initialMessages);
 
   const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      if (inputText) {
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      }
+    }
+  }, [inputText]);
 
   // --- HOOKS PARA EL BOTÓN DE MARKETING ---
   const navigate = useNavigate();
@@ -52,6 +62,13 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange, initialMessag
       onTypeChange(type);
     }
   }, [type, onTypeChange]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(e);
+    }
+  };
 
   return (
     <section className="chat-section">
@@ -109,13 +126,15 @@ const ChatSection = ({ onToggleSidebar, onBriefData, onTypeChange, initialMessag
       </div>
 
       <form className="chat-input-area" onSubmit={sendMessage}>
-        <input
-          type="text"
+        <textarea
+          ref={textareaRef}
           value={inputText}
           placeholder="Escribe ...."
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           disabled={isLoading}
           aria-label="Escribe tu mensaje"
+          rows={1}
         />
         <button className="send-btn" type="submit" aria-label="Enviar mensaje">
           <Send />
