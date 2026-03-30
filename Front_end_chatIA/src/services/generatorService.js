@@ -34,7 +34,7 @@ export const buildPrompt = async (briefData) => {
  */
 export const generateImages = async (config) => {
   try {
-   
+
     const payload = {
       prompt: config.prompt,
       numberOfImages: config.quantity || 1,
@@ -94,9 +94,14 @@ export const editImage = async (editData) => {
       maskImage: editData.maskImage || null,
       campaignId: editData.campaignId,
       style: editData.style,
-      // --- CAMBIO V2.0: Estandarizado a logoType para el endpoint de edición también ---
       logoType: editData.logoType || "Ninguno",
-      config: editData.config || {},
+      resolution: editData.resolution || undefined, // campo directo para el backend
+      config: {
+        ...(editData.config || {}),
+        // Asegurar que aspectRatio y resolution también vayan dentro de config
+        aspectRatio: editData.config?.aspectRatio || editData.aspectRatio || undefined,
+        resolution: editData.resolution || editData.config?.resolution || undefined,
+      },
     };
 
     const response = await api.post("/image/edit", payload);
@@ -130,9 +135,14 @@ export const refineAsset = async (assetIds, baseImageURL, refinementPrompt, opti
           maskImage: null, // No mask = full image refinement
           style: options.style,
           // --- CAMBIO V2.0: Usamos logoType aquí también ---
-          logoType: options.logoType, 
+          logoType: options.logoType,
           campaignId: options.campaignId,
-          config: options.aspectRatio ? { aspectRatio: options.aspectRatio } : {},
+          config: {
+            aspectRatio: options.aspectRatio || undefined,
+            resolution: options.resolution || undefined,
+          },
+          resolution: options.resolution || undefined,
+
         }),
       ),
     );

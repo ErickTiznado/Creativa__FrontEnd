@@ -279,7 +279,7 @@ function GeneratorView({
 
         // 1. Mostrar la imagen original inmediatamente para dar una respuesta rápida en la UI
         setEditHistory([image]);
-        
+
         setShowEditOverlay(true);
         setTimeout(() => {
             setShowEditOverlay(false);
@@ -338,17 +338,23 @@ function GeneratorView({
                         prompt,
                         baseImageURL,
                         maskImage,
-                        logoType, // <-- CAMBIO V2.0
+                        logoType,
                         campaignId,
-                        style
+                        style,
+                        config: {
+                            aspectRatio,         // el backend lo lee en config.aspectRatio
+                            resolution: imageSize, // también en config si hace falta
+                        },
+                        resolution: imageSize,  // campo directo también por compatibilidad
                     });
                 } else {
                     // Fallback to standard refinement if no mask drawn
                     result = await refineAsset([assetId], baseImageURL, prompt, {
                         style,
                         aspectRatio,
-                        logoType, // <-- CAMBIO V2.0
-                        campaignId
+                        logoType,
+                        campaignId,
+                        resolution: imageSize, // <-- resolution desde el selector UI
                     });
                 }
 
@@ -454,20 +460,21 @@ function GeneratorView({
                                         {stylePills.map(s => {
                                             const formattedStyle = s.toLowerCase().replace(" ", "-");
                                             return (
-                                            <button
-                                                key={s}
-                                                className={`style-pill ${style === formattedStyle ? 'active' : ''}`}
-                                                onClick={() => handleStyleClick(s)}
-                                                type="button"
-                                                style={{
-                                                    backgroundColor: style === formattedStyle ? 'var(--color-primary)' : 'var(--bg-secondary)',
-                                                    color: style === formattedStyle ? '#fff' : 'var(--color-text)',
-                                                    border: style === formattedStyle ? '1px solid var(--color-primary)' : '1px solid var(--border-color)',
-                                                }}
-                                            >
-                                                {s}
-                                            </button>
-                                        )})}
+                                                <button
+                                                    key={s}
+                                                    className={`style-pill ${style === formattedStyle ? 'active' : ''}`}
+                                                    onClick={() => handleStyleClick(s)}
+                                                    type="button"
+                                                    style={{
+                                                        backgroundColor: style === formattedStyle ? 'var(--color-primary)' : 'var(--bg-secondary)',
+                                                        color: style === formattedStyle ? '#fff' : 'var(--color-text)',
+                                                        border: style === formattedStyle ? '1px solid var(--color-primary)' : '1px solid var(--border-color)',
+                                                    }}
+                                                >
+                                                    {s}
+                                                </button>
+                                            )
+                                        })}
                                     </div>
                                 </div>
 
@@ -539,7 +546,7 @@ function GeneratorView({
                                         <div className="control-group" style={{ gridColumn: 'span 2' }}>
                                             <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Formato</label>
                                             <div className="aspect-ratio-selector">
-                                                
+
                                                 <button
                                                     className={`ratio-btn ${aspectRatio === '1:1' ? 'active' : ''}`}
                                                     onClick={() => setAspectRatio('1:1')}
@@ -586,7 +593,7 @@ function GeneratorView({
                                         <div className="control-group" style={{ gridColumn: 'span 2' }}>
                                             <label style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Logo</label>
                                             <div className="aspect-ratio-selector">
-                                                
+
                                                 <button
                                                     className={`ratio-btn ${logoType === 'Ninguno' ? 'active' : ''}`} // <-- CAMBIO V2.0
                                                     onClick={() => setLogoType('Ninguno')}                            // <-- CAMBIO V2.0
